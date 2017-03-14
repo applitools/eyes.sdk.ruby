@@ -7,10 +7,10 @@ Gem::Specification.new do |spec|
   spec.name          = 'eyes_images'
   spec.version       = Applitools::VERSION
   spec.authors       = ['Applitools Team']
-  spec.email         = ['team@applitools.com']
+  spec.email         = ['team@eyes_core.com']
   spec.description   = 'Applitools Ruby Images SDK'
   spec.summary       = 'Applitools Ruby Images SDK'
-  spec.homepage      = 'https://www.applitools.com'
+  spec.homepage      = 'https://www.eyes_core.com'
   spec.license       = 'Apache License, Version 2.0'
 
   spec.files         = `git ls-files lib/applitools/images`.split($RS) +
@@ -18,5 +18,5 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = %w(lib)
-  spec.add_dependency 'eyes_core', '>= 3.0.2'
+  spec.add_dependency 'eyes_core', "= #{Applitools::VERSION}"
 end

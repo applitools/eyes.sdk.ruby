@@ -16,3 +16,11 @@ rdoc
 .idea-*/
 spec/reports
 tmp
+ext/eyes_core/Makefile
+ext/eyes_core/resampling_fast.so
+ext/eyes_core/resampling_fast_ext.o
+ext/eyes_core/resampling_fast.bundle
+ext/eyes_core/.*
+
+
+

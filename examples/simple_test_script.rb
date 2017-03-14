@@ -11,7 +11,7 @@ begin
   web_driver = Selenium::WebDriver.for :chrome
   eyes.test(app_name: 'Ruby SDK', test_name: 'Applitools website test', viewport_size: { width: 900, height: 600 },
     driver: web_driver) do |driver|
-    driver.get 'http://www.applitools.com'
+    driver.get 'http://www.eyes_core.com'
     eyes.check_window('initial')
     pricing = driver.find_element(:css, '.pricing a')
     eyes.check_region(pricing, 'pricing element')

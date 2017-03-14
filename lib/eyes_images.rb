@@ -13,4 +13,3 @@ module Applitools::Images
 end
 
 Applitools::Images.require_dir 'images'
-

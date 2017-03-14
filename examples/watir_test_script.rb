@@ -14,7 +14,7 @@ browser = Watir::Browser.new :chrome
 begin
   eyes.test(app_name: 'Ruby SDK', test_name: 'Applitools website test', viewport_size: { width: 900, height: 600 },
     driver: browser.driver) do |driver|
-    driver.get 'http://www.applitools.com'
+    driver.get 'http://www.eyes_core.com'
     eyes.check_window('initial')
     eyes.check_region(:css, '.pricing', tag: 'Pricing button')
     driver.find_element(:css, '.pricing a').click

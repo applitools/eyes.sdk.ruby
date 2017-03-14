@@ -1,6 +1,6 @@
-#include "resampling_fast_ext.h"
+#include "eyes_core.h"
 
-void Init_resampling_fast() {
+void Init_eyes_core() {
   VALUE Applitools = rb_define_module("Applitools");
   VALUE Resampling = rb_define_module_under(Applitools, "ResamplingFast");
   rb_define_method(Resampling, "interpolate_cubic", c_interpolate_cubic, 1);

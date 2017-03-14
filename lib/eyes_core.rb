@@ -1,4 +1,6 @@
 require 'forwardable'
+require 'delegate'
+require 'time'
 
 module Applitools
   # @!visibility private

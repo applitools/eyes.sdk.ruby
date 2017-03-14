@@ -14,7 +14,7 @@ require 'applitools/capybara'
 # The page.driver.browser method will return Applitools::Selenium::Driver instance,
 # based on standard Selenium::Webdriver driver, when eyes have opened.
 # The page.driver.browser method will contain Selenium::Webdriver
-# instance (without applitools wrapper), after eyes have closed
+# instance (without eyes_core wrapper), after eyes have closed
 #
 Applitools.register_capybara_driver :browser => :chrome
 
