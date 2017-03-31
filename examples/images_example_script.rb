@@ -6,7 +6,7 @@ eyes = Applitools::Images::Eyes.new
 eyes.api_key = ENV['APPLITOOLS_API_KEY']
 eyes.log_handler = Logger.new(STDOUT)
 
-viber_home_image_bytes = File.read('./images/viber-home.png', mode:'rb')
+viber_home_image_bytes = File.read('./images/viber-home.png', mode: 'rb')
 viber_home_image = Applitools::Screenshot.new viber_home_image_bytes
 
 eyes.test(app_name: 'Eyes.Java', test_name: 'home1') do

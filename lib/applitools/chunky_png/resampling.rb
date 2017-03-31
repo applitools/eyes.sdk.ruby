@@ -15,7 +15,7 @@ module Applitools::ChunkyPNG
 
       return self unless w_m * h_m > 1
 
-      pixels = scale_points2(dst_width, dst_height, w_m, h_m);
+      pixels = scale_points2(dst_width, dst_height, w_m, h_m)
       replace_canvas!(dst_width, dst_height, pixels)
     end
 
@@ -34,8 +34,8 @@ module Applitools::ChunkyPNG
     def line_with_bounds(y, src_dimension, direction)
       line = (direction ? column(y) : row(y))
       [imaginable_point(line[0], line[1])] + line + [
-          imaginable_point(line[src_dimension - 2], line[src_dimension - 3]),
-          imaginable_point(line[src_dimension - 1], line[src_dimension - 2])
+        imaginable_point(line[src_dimension - 2], line[src_dimension - 3]),
+        imaginable_point(line[src_dimension - 1], line[src_dimension - 2])
       ]
     end
 

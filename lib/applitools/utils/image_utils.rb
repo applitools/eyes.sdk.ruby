@@ -104,11 +104,7 @@ module Applitools::Utils
 
       return image if image.width == new_width && image.height == new_height
 
-      if new_width > image.width || new_height > image.height
-        image.resample_bicubic!(new_width, new_height)
-      else
-        scale_image_incrementally!(image, new_width, new_height)
-      end
+      image.resample_bicubic!(new_width, new_height)
     end
 
     def resize_image(image, new_width, new_height)

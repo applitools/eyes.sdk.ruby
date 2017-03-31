@@ -14,7 +14,7 @@ RSpec::Core::RakeTask.new('spec')
 
 RuboCop::RakeTask.new
 
-task :perform_tests => [:spec, :rubocop]
+task perform_tests: [:spec, :rubocop]
 task :default => :perform_tests
 
 task :export_to_docker do
