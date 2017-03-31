@@ -8,6 +8,3 @@ RSpec::Core::RakeTask.new('spec')
 task :export_to_docker do
   `bin/create_git_archive.sh`
 end
-
-
-

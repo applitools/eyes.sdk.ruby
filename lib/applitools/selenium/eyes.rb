@@ -140,7 +140,7 @@ module Applitools::Selenium
 
       self.eyes_screenshot_factory = lambda do |image|
         Applitools::Selenium::EyesWebDriverScreenshot.new(
-            image, driver: @driver, force_offset: position_provider.force_offset
+          image, driver: @driver, force_offset: position_provider.force_offset
         )
       end
 
