@@ -1,4 +1,3 @@
-require 'pry'
 module Applitools::Selenium
   # @!visibility private
   class ScaledFullPageCaptureAlgorithm
