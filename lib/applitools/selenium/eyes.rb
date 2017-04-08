@@ -437,11 +437,13 @@ module Applitools::Selenium
     end
 
     def capture_screenshot
-      image_provider = Applitools::Selenium::TakesScreenshotImageProvider.new driver,
-        debug_screenshot: debug_screenshot, name_enumerator: screenshot_name_enumerator
       logger.info 'Getting screenshot (capture_screenshot() has been invoked)'
 
       update_scaling_params
+
+      image_provider = Applitools::Selenium::TakesScaledScreenshotImageProvider.new driver,
+        debug_screenshot: debug_screenshot, name_enumerator: screenshot_name_enumerator,
+        device_pixel_ratio: device_pixel_ratio
 
       if hide_scrollbars
         begin
@@ -454,17 +456,18 @@ module Applitools::Selenium
       begin
         if check_frame_or_element
           logger.info 'Check frame/element requested'
-          algo = Applitools::Selenium::FullPageCaptureAlgorithm.new
+          algo = Applitools::Selenium::ScaledFullPageCaptureAlgorithm.new
 
           entire_frame_or_element = algo.get_stiched_region(
             image_provider: image_provider,
             region_to_check: region_to_check,
             origin_provider: position_provider,
             position_provider: position_provider,
-            scale_provider: scale_provider,
+            # scale_provider: scale_provider,
             cut_provider: cut_provider,
             wait_before_screenshots: wait_before_screenshots,
-            eyes_screenshot_factory: eyes_screenshot_factory
+            eyes_screenshot_factory: eyes_screenshot_factory,
+            device_pixel_ratio: device_pixel_ratio
           )
 
           logger.info 'Building screenshot object...'
@@ -476,7 +479,7 @@ module Applitools::Selenium
           logger.info 'Full page screenshot requested'
           original_frame = driver.frame_chain
           driver.switch_to.default_content
-          algo = Applitools::Selenium::FullPageCaptureAlgorithm.new
+          algo = Applitools::Selenium::ScaledFullPageCaptureAlgorithm.new
           region_provider = Object.new
           region_provider.instance_eval do
             def region
@@ -491,17 +494,18 @@ module Applitools::Selenium
                                   region_to_check: region_provider,
                                   origin_provider: Applitools::Selenium::ScrollPositionProvider.new(driver),
                                   position_provider: position_provider,
-                                  scale_provider: scale_provider,
+                                  # scale_provider: scale_provider,
                                   cut_provider: cut_provider,
                                   wait_before_screenshots: wait_before_screenshots,
-                                  eyes_screenshot_factory: eyes_screenshot_factory
+                                  eyes_screenshot_factory: eyes_screenshot_factory,
+                                  device_pixel_ratio: device_pixel_ratio
 
           driver.switch_to.frame original_frame unless driver.frame_chain.empty?
           Applitools::Selenium::EyesWebDriverScreenshot.new full_page_image, driver: driver
         else
           logger.info 'Screenshot requested...'
           image = image_provider.take_screenshot
-          scale_provider.scale_image(image) if scale_provider
+          # scale_provider.scale_image(image) if scale_provider
           cut_provider.cut(image) if cut_provider
           self.screenshot = eyes_screenshot_factory.call(image)
         end

@@ -16,7 +16,7 @@ module Applitools
       def from_any_image(image)
         return from_region(image) if image.is_a? Applitools::Region
         return from_image(image) if image.is_a? ::ChunkyPNG::Image
-        return image if image.is_a?(Image) | image.is_a?(Datastream)
+        return image if image.is_a?(Image) | image.is_a?(Datastream) | image.is_a?(ScaledImage) | image.is_a?(ScaledDatastream)
         from_datastream(image)
       end
     end
@@ -110,5 +110,59 @@ module Applitools
         @image = obj
       end
     end
+
+    module ScaledCanvas
+      def ScaledCanvas.included(base)
+        base.instance_eval do
+          attr_reader :device_pixel_ratio
+        end
+      end
+
+      def initialize(image, device_pixel_ratio)
+        Applitools::ArgumentGuard.not_nil(device_pixel_ratio, :device_pixel_ratio)
+        Applitools::ArgumentGuard.is_a?(device_pixel_ratio, :device_pixel_ratio, Float)
+        super(image)
+        @device_pixel_ratio = device_pixel_ratio
+      end
+
+      def replace!(new_image, left, top)
+        image.replace!(new_image.image, pixel_size(left), pixel_size(top))
+        self
+      end
+
+      def crop!(left, top, width, height)
+        super(pixel_size(left), pixel_size(top), pixel_size(width), pixel_size(height))
+        self
+      end
+
+      def crop(*args)
+        dup.crop!(*args)
+      end
+
+      def replace(*args)
+        dup.replace!(*args)
+      end
+
+      def pixel_size(value)
+        (value.to_f*device_pixel_ratio).round
+      end
+
+      def width
+        (super.to_f / device_pixel_ratio).floor
+      end
+
+      def height
+        (super.to_f / device_pixel_ratio).floor
+      end
+    end
+
+    class ScaledImage < Applitools::Screenshot::Image
+      include ScaledCanvas
+    end
+
+    class ScaledDatastream < Applitools::Screenshot::Datastream
+      include ScaledCanvas
+    end
+
   end
 end
