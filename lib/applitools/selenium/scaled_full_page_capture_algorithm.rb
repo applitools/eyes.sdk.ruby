@@ -13,7 +13,6 @@ module Applitools::Selenium
       region_provider = options[:region_to_check]
       origin_provider = options[:origin_provider]
       position_provider = options[:position_provider]
-      scale_provider = options[:scale_provider]
       cut_provider = options[:cut_provider]
       wait_before_screenshot = options[:wait_before_screenshots]
       eyes_screenshot_factory = options[:eyes_screenshot_factory]
@@ -49,7 +48,7 @@ module Applitools::Selenium
 
       logger.info 'Getting top/left image...'
       image = image_provider.take_screenshot
-      image = scale_provider.scale_image(image) if scale_provider
+
       image = cut_provider.cut(image) if cut_provider
       logger.info 'Done! Creating screenshot object...'
       screenshot = eyes_screenshot_factory.call(image)
@@ -58,8 +57,8 @@ module Applitools::Selenium
         left_top_image = screenshot.sub_screenshot(region_provider.region, region_provider.coordinate_type)
       else
         left_top_image = screenshot.sub_screenshot(
-            Applitools::Region.from_location_size(Applitools::Location.new(0, 0), entire_size),
-            Applitools::EyesScreenshot::COORDINATE_TYPES[:context_relative]
+          Applitools::Region.from_location_size(Applitools::Location.new(0, 0), entire_size),
+          Applitools::EyesScreenshot::COORDINATE_TYPES[:context_relative]
         )
       end
 
@@ -88,7 +87,10 @@ module Applitools::Selenium
       # Notice stitched_image uses the same type of image as the screenshots.
       # stitched_image = Applitools::Screenshot.from_region entire_size
       stitched_image = Applitools::Screenshot::ScaledImage.new(
-        ::ChunkyPNG::Image.new((entire_size.width * device_pixel_ratio).round, (entire_size.height * device_pixel_ratio).round),
+        ::ChunkyPNG::Image.new(
+          (entire_size.width * device_pixel_ratio).round,
+          (entire_size.height * device_pixel_ratio).round
+        ),
         device_pixel_ratio
       )
       logger.info 'Done! Adding initial screenshot..'
@@ -115,13 +117,12 @@ module Applitools::Selenium
         logger.info 'Getting image...'
 
         part_image = image_provider.take_screenshot
-        part_image = scale_provider.scale_image part_image if scale_provider
         part_image = cut_provider.cut part_image if cut_provider
 
         logger.info 'Done!'
         begin
           region_to_check = Applitools::Region.from_location_size(
-              part_region.location.offset(region_provider.region.location), part_region.size
+            part_region.location.offset(region_provider.region.location), part_region.size
           )
           a_screenshot = eyes_screenshot_factory.call(part_image).sub_screenshot(region_to_check,
             Applitools::EyesScreenshot::COORDINATE_TYPES[:context_relative], false)
@@ -137,8 +138,8 @@ module Applitools::Selenium
         last_successful_location = Applitools::Location.for part_region.x, part_region.y
         next unless a_screenshot
         last_successful_part_size = Applitools::RectangleSize.new(
-            a_screenshot.image.width,
-            a_screenshot.image.height
+          a_screenshot.image.width,
+          a_screenshot.image.height
         )
       end
 

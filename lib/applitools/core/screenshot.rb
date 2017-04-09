@@ -16,7 +16,8 @@ module Applitools
       def from_any_image(image)
         return from_region(image) if image.is_a? Applitools::Region
         return from_image(image) if image.is_a? ::ChunkyPNG::Image
-        return image if image.is_a?(Image) | image.is_a?(Datastream) | image.is_a?(ScaledImage) | image.is_a?(ScaledDatastream)
+        return image if image.is_a?(Image) |
+            image.is_a?(Datastream) | image.is_a?(ScaledImage) | image.is_a?(ScaledDatastream)
         from_datastream(image)
       end
     end
@@ -112,7 +113,7 @@ module Applitools
     end
 
     module ScaledCanvas
-      def ScaledCanvas.included(base)
+      def self.included(base)
         base.instance_eval do
           attr_reader :device_pixel_ratio
         end
@@ -144,7 +145,7 @@ module Applitools
       end
 
       def pixel_size(value)
-        (value.to_f*device_pixel_ratio).round
+        (value.to_f * device_pixel_ratio).round
       end
 
       def width
@@ -163,6 +164,5 @@ module Applitools
     class ScaledDatastream < Applitools::Screenshot::Datastream
       include ScaledCanvas
     end
-
   end
 end
