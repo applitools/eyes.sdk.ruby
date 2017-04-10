@@ -252,7 +252,7 @@ module Applitools::Selenium
           " of screenshot bounds [#{frame_window}]"
       end
 
-      sub_screenshot_image = Applitools::Screenshot.from_image image.crop(as_is_subscreenshot_region.left,
+      sub_screenshot_image = Applitools::Screenshot.from_any_image image.crop(as_is_subscreenshot_region.left,
         as_is_subscreenshot_region.top, as_is_subscreenshot_region.width,
         as_is_subscreenshot_region.height)
 

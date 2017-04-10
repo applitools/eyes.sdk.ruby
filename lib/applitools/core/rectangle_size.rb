@@ -48,6 +48,18 @@ module Applitools
       self
     end
 
+    def scale!(scale_factor)
+      Applitools::ArgumentGuard.is_a?(Numeric, scale_factor, :scale_factor)
+      return self if scale_factor == 1
+      self.width = (width * scale_factor).round
+      self.height = (height * scale_factor).round
+      self
+    end
+
+    def scale(scale_factor)
+      dup.scale!(scale_factor)
+    end
+
     def to_hash
       to_h
     end

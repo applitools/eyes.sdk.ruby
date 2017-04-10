@@ -314,8 +314,7 @@ module Applitools::Selenium
           # For Android, we need to rotate images to the right, and for iOS to the left.
           num_quadrants = driver.android? ? 1 : -1
         end
-
-        Applitools::Utils::ImageUtils.quadrant_rotate!(image, num_quadrants)
+        Applitools::Utils::ImageUtils.quadrant_rotate!(image, num_quadrants) if num_quadrants != 0
       end
 
       def normalize_width(driver, image)

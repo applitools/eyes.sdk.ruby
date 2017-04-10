@@ -73,7 +73,7 @@ module Applitools::Selenium
     #   @return [boolean] stitch_mode (:CSS or :SCROLL)
 
     attr_accessor :base_agent_id, :screenshot, :force_full_page_screenshot, :hide_scrollbars,
-      :wait_before_screenshots, :debug_screenshot, :stitch_mode
+      :wait_before_screenshots, :debug_screenshot, :stitch_mode, :disable_scaling
     attr_reader :driver
 
     def_delegators 'Applitools::EyesLogger', :logger, :log_handler, :log_handler=
@@ -94,6 +94,7 @@ module Applitools::Selenium
       self.wait_before_screenshots = DEFAULT_WAIT_BEFORE_SCREENSHOTS
       self.region_visibility_strategy = MoveToRegionVisibilityStrategy.new
       self.debug_screenshot = false
+      self.disable_scaling = false
     end
 
     # Starts a test
@@ -437,11 +438,13 @@ module Applitools::Selenium
     end
 
     def capture_screenshot
-      image_provider = Applitools::Selenium::TakesScreenshotImageProvider.new driver,
-        debug_screenshot: debug_screenshot, name_enumerator: screenshot_name_enumerator
       logger.info 'Getting screenshot (capture_screenshot() has been invoked)'
 
       update_scaling_params
+
+      image_provider = self.class.image_provider_class(disable_scaling).new driver,
+        debug_screenshot: debug_screenshot, name_enumerator: screenshot_name_enumerator,
+        device_pixel_ratio: device_pixel_ratio
 
       if hide_scrollbars
         begin
@@ -454,7 +457,7 @@ module Applitools::Selenium
       begin
         if check_frame_or_element
           logger.info 'Check frame/element requested'
-          algo = Applitools::Selenium::FullPageCaptureAlgorithm.new
+          algo = self.class.full_page_capture_algorithm_class(disable_scaling).new
 
           entire_frame_or_element = algo.get_stiched_region(
             image_provider: image_provider,
@@ -464,7 +467,8 @@ module Applitools::Selenium
             scale_provider: scale_provider,
             cut_provider: cut_provider,
             wait_before_screenshots: wait_before_screenshots,
-            eyes_screenshot_factory: eyes_screenshot_factory
+            eyes_screenshot_factory: eyes_screenshot_factory,
+            device_pixel_ratio: device_pixel_ratio
           )
 
           logger.info 'Building screenshot object...'
@@ -476,7 +480,7 @@ module Applitools::Selenium
           logger.info 'Full page screenshot requested'
           original_frame = driver.frame_chain
           driver.switch_to.default_content
-          algo = Applitools::Selenium::FullPageCaptureAlgorithm.new
+          algo = self.class.full_page_capture_algorithm_class(disable_scaling).new
           region_provider = Object.new
           region_provider.instance_eval do
             def region
@@ -494,14 +498,15 @@ module Applitools::Selenium
                                   scale_provider: scale_provider,
                                   cut_provider: cut_provider,
                                   wait_before_screenshots: wait_before_screenshots,
-                                  eyes_screenshot_factory: eyes_screenshot_factory
+                                  eyes_screenshot_factory: eyes_screenshot_factory,
+                                  device_pixel_ratio: device_pixel_ratio
 
           driver.switch_to.frame original_frame unless driver.frame_chain.empty?
           Applitools::Selenium::EyesWebDriverScreenshot.new full_page_image, driver: driver
         else
           logger.info 'Screenshot requested...'
           image = image_provider.take_screenshot
-          scale_provider.scale_image(image) if scale_provider
+          # scale_provider.scale_image(image) if scale_provider
           cut_provider.cut(image) if cut_provider
           self.screenshot = eyes_screenshot_factory.call(image)
         end
@@ -915,6 +920,22 @@ module Applitools::Selenium
           Applitools::Selenium::ScrollPositionProvider.new(driver)
         when :CSS
           Applitools::Selenium::CssTranslatePositionProvider.new(driver)
+        end
+      end
+
+      def full_page_capture_algorithm_class(should_scale_flag)
+        if should_scale_flag
+          Applitools::Selenium::ScaledFullPageCaptureAlgorithm
+        else
+          Applitools::Selenium::FullPageCaptureAlgorithm
+        end
+      end
+
+      def image_provider_class(should_scale_flag)
+        if should_scale_flag
+          Applitools::Selenium::TakesScaledScreenshotImageProvider
+        else
+          Applitools::Selenium::TakesScreenshotImageProvider
         end
       end
     end
