@@ -72,8 +72,11 @@ module Applitools::Selenium
         return image
       end
 
-      part_image_size = Applitools::RectangleSize.new image.width,
-        [image.height - MAX_SCROLL_BAR_SIZE, MIN_SCREENSHOT_PART_HEIGHT].max
+      # part_image_size = Applitools::RectangleSize.new image.width,
+      #   [image.height - MAX_SCROLL_BAR_SIZE, MIN_SCREENSHOT_PART_HEIGHT].max
+      part_image_size = Applitools::RectangleSize.new image.width, image.height
+
+
 
       logger.info "Total size: #{entire_size}, image_part_size: #{part_image_size}"
 
