@@ -252,9 +252,15 @@ module Applitools::Selenium
           " of screenshot bounds [#{frame_window}]"
       end
 
-      sub_screenshot_image = Applitools::Screenshot.from_any_image image.crop(as_is_subscreenshot_region.left,
-        as_is_subscreenshot_region.top, as_is_subscreenshot_region.width,
-        as_is_subscreenshot_region.height)
+      if (as_is_subscreenshot_region == Applitools::Region.from_location_size(
+        Applitools::Location.new(0,0), Applitools::RectangleSize.new(image.width, image.height)
+      ))
+        sub_screenshot_image = image
+      else
+        sub_screenshot_image = Applitools::Screenshot.from_any_image image.crop(as_is_subscreenshot_region.left,
+          as_is_subscreenshot_region.top, as_is_subscreenshot_region.width,
+          as_is_subscreenshot_region.height)
+      end
 
       context_relative_region_location = convert_location as_is_subscreenshot_region.location,
         Applitools::EyesScreenshot::COORDINATE_TYPES[:screenshot_as_is],

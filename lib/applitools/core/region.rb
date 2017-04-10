@@ -106,6 +106,11 @@ module Applitools
       width == region.width && height == region.height
     end
 
+    def ==(other)
+      return super.==(other) unless other.is_a?(Region)
+      left == other.left && top == other.top && width == other.width && height == other.height
+    end
+
     class << self
       def sub_regions_with_fixed_size(container_region, sub_region)
         Applitools::ArgumentGuard.not_nil container_region, 'container_region'
