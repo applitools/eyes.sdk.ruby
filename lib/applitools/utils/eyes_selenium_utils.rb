@@ -227,7 +227,7 @@ module Applitools::Utils
 
     # @param [Applitools::Selenium::Driver] executor
     def device_pixel_ratio(executor)
-      executor.execute_script(JS_GET_DEVICE_PIXEL_RATIO)
+      executor.execute_script(JS_GET_DEVICE_PIXEL_RATIO).to_f
     end
 
     # @param [Applitools::Selenium::Driver] executor

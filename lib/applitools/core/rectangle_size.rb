@@ -14,8 +14,7 @@ module Applitools
       alias_method :for, :from_any_argument
 
       def from_string(value)
-        width, height = value.split(/x/)
-        new width, height
+        new(*value.split(/x/).map(&:to_i))
       end
 
       def from_hash(value)
@@ -46,6 +45,18 @@ module Applitools
       self.width = width + other.width
       self.height = height + other.height
       self
+    end
+
+    def scale!(scale_factor)
+      Applitools::ArgumentGuard.is_a?(Numeric, scale_factor, :scale_factor)
+      return self if scale_factor == 1
+      self.width = (width * scale_factor).round
+      self.height = (height * scale_factor).round
+      self
+    end
+
+    def scale(scale_factor)
+      dup.scale!(scale_factor)
     end
 
     def to_hash

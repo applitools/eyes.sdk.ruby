@@ -6,8 +6,10 @@ module Applitools::Selenium
 
     attr_accessor :last_state_position
 
-    def initialize(executor)
+    def initialize(executor, max_width = 0, max_height = 0)
       self.executor = executor
+      self.max_width = max_width
+      self.max_height = max_height
     end
 
     def current_position
@@ -47,12 +49,14 @@ module Applitools::Selenium
     def entire_size
       e_size = Applitools::Utils::EyesSeleniumUtils.current_frame_content_entire_size(executor)
       logger.info "Entire size: #{e_size}"
+      result.width = max_width unless max_width == 0
+      result.height = max_height unless max_height == 0
       e_size
     end
 
     private
 
-    attr_accessor :executor
+    attr_accessor :executor, :max_width, :max_height
 
     def get_position_from_transform(transform)
       regexp = /^translate\(\s*(\-?)(\d+)px,\s*(\-?)(\d+)px\s*\)/

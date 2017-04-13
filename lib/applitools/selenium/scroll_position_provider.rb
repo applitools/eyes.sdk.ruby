@@ -5,8 +5,10 @@ module Applitools::Selenium
 
     def_delegators 'Applitools::EyesLogger', :logger, :log_handler, :log_handler=
 
-    def initialize(executor)
+    def initialize(executor, max_width = 0, max_height = 0)
       self.executor = executor
+      self.max_width = max_width
+      self.max_height = max_height
     end
 
     # The scroll position of the current frame
@@ -38,6 +40,8 @@ module Applitools::Selenium
     def entire_size
       result = Applitools::Utils::EyesSeleniumUtils.entire_page_size(executor)
       logger.info "Entire size: #{result}"
+      result.width = max_width unless max_width == 0
+      result.height = max_height unless max_height == 0
       result
     end
 
@@ -47,6 +51,6 @@ module Applitools::Selenium
 
     private
 
-    attr_accessor :executor
+    attr_accessor :executor, :max_width, :max_height
   end
 end
