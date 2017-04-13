@@ -73,7 +73,8 @@ module Applitools::Selenium
     #   @return [boolean] stitch_mode (:CSS or :SCROLL)
 
     attr_accessor :base_agent_id, :screenshot, :force_full_page_screenshot, :hide_scrollbars,
-      :wait_before_screenshots, :debug_screenshot, :stitch_mode, :disable_scaling
+      :wait_before_screenshots, :debug_screenshot, :stitch_mode, :disable_scaling, :disable_horizontal_scrolling,
+      :disable_vertical_scrolling
     attr_reader :driver
 
     def_delegators 'Applitools::EyesLogger', :logger, :log_handler, :log_handler=
@@ -95,6 +96,10 @@ module Applitools::Selenium
       self.region_visibility_strategy = MoveToRegionVisibilityStrategy.new
       self.debug_screenshot = false
       self.disable_scaling = false
+      self.max_scroll_width = 0
+      self.max_scroll_height = 0
+      self.disable_horizontal_scrolling = false
+      self.disable_vertical_scrolling = false
     end
 
     # Starts a test
@@ -137,7 +142,7 @@ module Applitools::Selenium
 
       self.device_pixel_ratio = UNKNOWN_DEVICE_PIXEL_RATIO
 
-      self.position_provider = self.class.position_provider(stitch_mode, driver)
+      self.position_provider = get_position_provider
 
       self.eyes_screenshot_factory = lambda do |image|
         Applitools::Selenium::EyesWebDriverScreenshot.new(
@@ -151,7 +156,7 @@ module Applitools::Selenium
 
     def stitch_mode=(value)
       @stitch_mode = value.to_s.upcase == STICH_MODE[:css].to_s ? STICH_MODE[:css] : STICH_MODE[:scroll]
-      self.position_provider = self.class.position_provider(stitch_mode, driver) unless driver.nil?
+      self.position_provider = get_position_provider unless driver.nil?
       if stitch_mode == STICH_MODE[:css]
         @css_transition_original_hide_scrollbars = hide_scrollbars
         self.hide_scrollbars = true
@@ -382,7 +387,7 @@ module Applitools::Selenium
 
     attr_accessor :check_frame_or_element, :region_to_check, :dont_get_title,
       :device_pixel_ratio, :position_provider, :scale_provider, :tag_for_debug,
-      :region_visibility_strategy, :eyes_screenshot_factory
+      :region_visibility_strategy, :eyes_screenshot_factory, :max_scroll_width, :max_scroll_height
 
     def process_in_frame(options = {})
       unless options[:index] ||
@@ -913,16 +918,22 @@ module Applitools::Selenium
       nil
     end
 
-    class << self
-      def position_provider(stitch_mode, driver)
-        case stitch_mode
-        when :SCROLL
-          Applitools::Selenium::ScrollPositionProvider.new(driver)
-        when :CSS
-          Applitools::Selenium::CssTranslatePositionProvider.new(driver)
-        end
-      end
+    def get_position_provider
+      max_width = 0
+      max_height = 0
 
+      max_width = viewport_size.width if !viewport_size.nil? && disable_horizontal_scrolling
+      max_height = viewport_size.height if !viewport_size.nil? && disable_vertical_scrolling
+
+      case stitch_mode
+        when :SCROLL
+          Applitools::Selenium::ScrollPositionProvider.new(driver, max_width, max_height)
+        when :CSS
+          Applitools::Selenium::CssTranslatePositionProvider.new(driver, max_width, max_height)
+      end
+    end
+
+    class << self
       def full_page_capture_algorithm_class(should_scale_flag)
         if should_scale_flag
           Applitools::Selenium::ScaledFullPageCaptureAlgorithm
