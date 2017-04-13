@@ -14,8 +14,7 @@ module Applitools
       alias_method :for, :from_any_argument
 
       def from_string(value)
-        width, height = value.split(/x/)
-        new width, height
+        new(*value.split(/x/).map(&:to_i))
       end
 
       def from_hash(value)

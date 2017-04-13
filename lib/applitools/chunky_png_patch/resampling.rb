@@ -10,7 +10,7 @@ module Applitools
   end
 end
 
-module Applitools::ChunkyPNG
+module Applitools::ChunkyPNGPatch
   module Resampling
     def resample_bicubic!(dst_width, dst_height)
       new_pixels = resampling_first_step(dst_width, dst_height)
