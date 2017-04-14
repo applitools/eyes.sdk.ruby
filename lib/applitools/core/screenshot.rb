@@ -128,6 +128,20 @@ module Applitools
 
       def replace!(new_image, left, top)
         image.replace!(new_image.image, pixel_size(left), pixel_size(top))
+      rescue
+        old_image = image
+
+        if pixel_size(left) + new_image.image.width > image.width
+          __setobj__(ChunkyPNG::Image.new(pixel_size(left) + new_image.image.width, image.height))
+        end
+
+        if pixel_size(top) + new_image.image.height > image.height
+          __setobj__(ChunkyPNG::Image.new(image.width, pixel_size(top) + new_image.image.height))
+        end
+
+        image.replace!(old_image, 0, 0)
+        image.replace!(new_image.image, pixel_size(left), pixel_size(top))
+      ensure
         self
       end
 

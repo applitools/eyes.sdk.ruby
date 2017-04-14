@@ -72,11 +72,8 @@ module Applitools::Selenium
         return image
       end
 
-      # part_image_size = Applitools::RectangleSize.new image.width,
-      #   [image.height - MAX_SCROLL_BAR_SIZE, MIN_SCREENSHOT_PART_HEIGHT].max
-      part_image_size = Applitools::RectangleSize.new image.width, image.height
-
-
+      part_image_size = Applitools::RectangleSize.new image.width,
+        [image.height - MAX_SCROLL_BAR_SIZE, MIN_SCREENSHOT_PART_HEIGHT].max
 
       logger.info "Total size: #{entire_size}, image_part_size: #{part_image_size}"
 
@@ -127,8 +124,24 @@ module Applitools::Selenium
           region_to_check = Applitools::Region.from_location_size(
             part_region.location.offset(region_provider.region.location), part_region.size
           )
-          a_screenshot = eyes_screenshot_factory.call(part_image).sub_screenshot(region_to_check,
-            Applitools::EyesScreenshot::COORDINATE_TYPES[:context_relative], false)
+
+          a_screenshot = eyes_screenshot_factory.call(part_image)
+
+          region_location_in_screenshot = a_screenshot.convert_location(
+            Applitools::Location.new(region_to_check.left, region_to_check.top),
+            Applitools::EyesScreenshot::COORDINATE_TYPES[:context_relative],
+            Applitools::EyesScreenshot::COORDINATE_TYPES[:screenshot_as_is]
+          )
+
+          logger.debug "Coordinates of region to check (SCREENSHOT_AS_IS coordinates): #{region_location_in_screenshot}"
+
+          unless region_location_in_screenshot == Applitools::Location::TOP_LEFT
+            a_screenshot = a_screenshot.sub_screenshot(
+              region_to_check, Applitools::EyesScreenshot::COORDINATE_TYPES[:context_relative],
+              false
+            )
+          end
+
         rescue Applitools::OutOfBoundsException => e
           logger.error e.message
           break

@@ -14,8 +14,8 @@ module Applitools::Selenium
       self.name_enumerator = options[:name_enumerator]
       self.device_pixel_ratio = options[:device_pixel_ratio]
 
-      raise Applitools::EyesIllegalArgument.new "Expected device_pixel_ratio to be >= 1" \
-        " (got #{device_pixel_ratio})" if device_pixel_ratio < 1
+      raise Applitools::EyesIllegalArgument.new "Expected device_pixel_ratio to be >= 1 (got #{device_pixel_ratio})" if
+          device_pixel_ratio < 1
     end
 
     def take_screenshot
