@@ -1,0 +1,72 @@
+#!/usr/bin/env rake
+require 'rake/clean'
+require 'rspec/core/rake_task'
+require_relative 'spec/docker_files_list'
+require 'knapsack'
+
+CLOBBER.include 'log/*.log'
+RSpec::Core::RakeTask.new('spec')
+
+namespace :docker do
+  desc 'Builds necessary images according to present docker files'
+  task build_images: [:clobber] do
+    DockerFilesList.dockerfiles do |dockerfile, dir|
+      Rake::Task['docker:build_image'].reenable
+      Rake::Task['docker:build_image'].invoke("#{dir}/#{dockerfile}", dockerfile)
+    end
+  end
+
+  task :build_image, [:dockerfile, :tag] do |_t, args|
+    file = args[:dockerfile]
+    tag = args[:tag]
+
+    image_id = `docker images -q #{tag}`
+    if image_id.empty?
+      puts "Building the image: \"#{tag}\""
+      `docker build -t #{tag} -f #{file} ..`
+      puts 'Done!'
+    else
+      puts "Image #{tag} already exists. Skipping it."
+    end
+  end
+
+  desc 'Removes docker images'
+  task :remove_images do
+    DockerFilesList.dockerfiles do |dockerfile, _dir|
+      image_id = `docker images -q #{dockerfile}`
+      `docker rmi -f #{image_id}` unless image_id.empty?
+    end
+  end
+end
+
+desc 'Creates archive of source code to put into docker container'
+task :export_to_docker do
+  `sh $PWD/bin/create_git_archive.sh`
+end
+
+desc 'Run default tests for different ruby versions'
+task prepare_environment_test: ['export_to_docker', 'docker:build_images']
+
+desc 'Run environment test in one thread'
+task :environment_test => :prepare_environment_test do
+  ENV['KNAPSACK_GENERATE_REPORT'] = 'true'
+  Rake::Task['spec'].invoke
+end
+
+task :run_knapsack_test_in_background, [:threads, :index] do |_t, args|
+  pid = Process.spawn(
+    { 'CI_NODE_TOTAL' => args[:threads].to_s, 'CI_NODE_INDEX' => args[:index].to_s },
+    'bundle', 'exec', 'rake', 'knapsack:rspec'
+  )
+  Process.detach pid
+end
+
+desc 'Run environment test in several threads (four by default)'
+task :environment_test_multithread, [:threads] => [:prepare_environment_test] do |_t, args|
+  num_of_threads = args.with_defaults(threads: 4)[:threads].to_i
+  (0...num_of_threads).each do |i|
+    Rake::Task[:run_knapsack_test_in_background].execute(threads: num_of_threads, index: i)
+  end
+end
+
+Knapsack.load_tasks

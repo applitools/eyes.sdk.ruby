@@ -1,0 +1,6 @@
+source :rubygems
+
+gem 'knapsack'
+gem 'rake'
+gem 'rspec'
+gem 'rspec-shell-expectations'

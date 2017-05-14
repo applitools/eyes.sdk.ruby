@@ -1,0 +1,33 @@
+.*.swp
+*.gem
+*.rbc
+.bundle
+.config
+.yardoc
+Gemfile.lock
+!/*/Gemfile.lock
+InstalledFiles
+_yardoc
+coverage
+doc/
+lib/bundler/man
+pkg
+rdoc
+.idea/
+.idea-*/
+spec/reports
+tmp
+# C ext compilation
+ext/eyes_core/Makefile
+
+ext/eyes_core/*.time
+ext/eyes_core/*.o
+ext/eyes_core/*.so
+ext/applitools/*.time
+ext/eyes_core/*.bundle
+
+# Local RVM files
+.ruby-gemset
+!/*/.ruby-gemset
+.ruby-version
+!/*/.ruby-version
