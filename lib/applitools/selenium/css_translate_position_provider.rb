@@ -6,6 +6,13 @@ module Applitools::Selenium
 
     attr_accessor :last_state_position
 
+    # Initialize a class instance.
+    #
+    # @param [Applitools::Selenium::Driver] executor The driver instance.
+    # @param [Boolean] disable_horizontal Whether to disable horizontal movement or not.
+    # @param [Boolean] disable_vertical Whether to disable vertical movement or not.
+    # @param [Integer] max_width The max width.
+    # @param [Integer] max_height The max height.
     def initialize(executor, disable_horizontal = false, disable_vertical = false, max_width: nil, max_height: nil)
       self.executor = executor
       self.disable_horizontal = disable_horizontal
@@ -22,6 +29,9 @@ module Applitools::Selenium
       Applitools::Utils::EyesSeleniumUtils.current_transforms(executor)
     end
 
+    # Restore last state position.
+    #
+    # @param [Applitools::Location] value The location.
     def restore_state(value)
       transforms = value.values.select { |el| !el.empty? }
       Applitools::Utils::EyesSeleniumUtils.set_transforms(executor, value)
@@ -48,6 +58,9 @@ module Applitools::Selenium
 
     alias scroll_to position=
 
+    # Gets the entire size of the frame.
+    #
+    # @return [Applitools::RectangleSize] The entire size of the frame.
     def entire_size
       viewport_size = Applitools::Utils::EyesSeleniumUtils.extract_viewport_size(executor)
       result = Applitools::Utils::EyesSeleniumUtils.current_frame_content_entire_size(executor)

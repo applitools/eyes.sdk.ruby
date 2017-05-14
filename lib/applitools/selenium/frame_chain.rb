@@ -53,6 +53,9 @@ module Applitools::Selenium
       @frames.last
     end
 
+    # Returns the default content scroll position.
+    #
+    # @return [Applitools::Base::Point] The coordinates of the result.
     def default_content_scroll_position
       raise NoFramesException.new 'No frames!' if @frames.empty?
       result = @frames.first.parent_scroll_position

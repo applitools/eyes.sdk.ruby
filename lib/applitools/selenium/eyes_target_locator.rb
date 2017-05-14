@@ -6,6 +6,11 @@ module Applitools::Selenium
 
     attr_reader :driver, :on_will_switch, :scroll_position_provider
 
+    # Initialize a class instance.
+    #
+    # @param [Applitools::Selenium::Driver] driver The wrapped Selenium driver instance.
+    # @param [Applitools::Selenium::EyesTargetLocator] original_target_locator The  target locator.
+    # @param [FrameChangeEventListener] on_will_switch
     def initialize(driver, original_target_locator, on_will_switch)
       super(original_target_locator)
       @driver = driver
@@ -13,11 +18,12 @@ module Applitools::Selenium
       @scroll_position_provider = Applitools::Selenium::ScrollPositionProvider.new(driver)
     end
 
-    # @param [Hash] options
-    # @option options [Fixnum] :index
-    # @option options [String] :name_or_id
-    # @option options [WebElement] :frameElement
-    # @return [Applitools::Selenium::Driver]
+    # Set a certain iframe.
+    #
+    # @param [Hash] options The possible options.
+    # @option options [Fixnum] :index The index of the frame.
+    # @option options [String] :name_or_id The name of the frame.
+    # @option options [WebElement] :frameElement The element with the frame.
     def frame(options = {})
       raise Applitools::EyesIllegalArgument.new 'You must pass :index or :name_or_id or :frame_element option' unless
           options[:index] || options[:name_or_id] || options[:frame_element]
@@ -29,6 +35,9 @@ module Applitools::Selenium
       end
     end
 
+    # Switches to parent frame.
+    #
+    # @return [Applitools::Selenium::Driver] The wrapped Selenium driver instance.
     def parent_frame
       logger.info 'EyesTargetLocator.parent_frame()'
       unless driver.frame_chain.empty?
@@ -40,10 +49,11 @@ module Applitools::Selenium
       driver
     end
 
-    # @param [hash] options
-    # @option options [Applitools::Selenium::FrameChain] :frame_chain
-    # @option options [String] :frames_path
-    # @return Applitools::Selenium::Driver
+    # Sets several frames.
+    #
+    # @param [hash] options The options for the frames.
+    # @option options [Applitools::Selenium::FrameChain] :frame_chain The frame chain.
+    # @option options [String] :frames_path The frames paths.
     def frames(options = {})
       raise Applitools::EyesIllegalArgument.new 'You must pass :frame_chain or :frames_path' if
           options[:frame_chain].nil? & options[:frames_path].nil?
@@ -56,7 +66,9 @@ module Applitools::Selenium
       end
     end
 
-    # A wrapper for the native method +default_content+
+    # A wrapper for the native method +default_content+.
+    #
+    # @return [Applitools::Selenium::Driver] The wrapped Selenium driver instance.
     def default_content
       logger.info 'EyesTargetLocator.default_content()'
       unless driver.frame_chain.empty?
@@ -69,7 +81,9 @@ module Applitools::Selenium
       driver
     end
 
-    # A wrapper for the native method +window+
+    # A wrapper for the native method +window+.
+    #
+    # @return [Applitools::Selenium::Driver] The wrapped Selenium driver instance.
     def window(name_or_handle)
       logger.info 'EyesTargetLocator.window()'
       logger.info 'Making preparaions...'
@@ -80,7 +94,9 @@ module Applitools::Selenium
       driver
     end
 
-    # A wrapper for the native method +active_element+
+    # A wrapper for the native method +active_element+.
+    #
+    # @return [Applitools::Selenium::Element] The wrapped Selenium element instance.
     def active_element
       logger.info 'EyesTargetLocator.active_element()'
       logger.info 'Switching to element...'
@@ -98,7 +114,9 @@ module Applitools::Selenium
       result
     end
 
-    # A wrapper for a native method +alert+
+    # A wrapper for a native method +alert+.
+    #
+    # @return [Applitools::Selenium::EyesTargetLocator] The result .
     def alert
       logger.info 'EyesTargetLocator.alert()'
       logger.info 'Switching to alert...'

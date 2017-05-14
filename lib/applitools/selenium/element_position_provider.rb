@@ -4,6 +4,10 @@ module Applitools::Selenium
     extend Forwardable
     def_delegators 'Applitools::EyesLogger', :logger, :log_handler, :log_handler=
 
+    # Initialize a class instance.
+    #
+    # @param [Applitools::Selenium::Driver] executor The wrapped Selenium driver instance.
+    # @param [Applitools::Selenium::Element] passed_element The wrapped Selenium element instance.
     def initialize(executor, passed_element)
       Applitools::ArgumentGuard.not_nil 'executor', executor
       Applitools::ArgumentGuard.not_nil 'passed_element', passed_element
@@ -13,6 +17,9 @@ module Applitools::Selenium
           element.is_a? Applitools::Selenium::Element
     end
 
+    # Gets the current position.
+    #
+    # @return [Applitools::Location] The location.
     def current_position
       logger.info 'current_position() has called.'
       result = Applitools::Location.for element.scroll_left, element.scroll_top
@@ -20,6 +27,9 @@ module Applitools::Selenium
       result
     end
 
+    # Gets the enitire size of the element.
+    #
+    # @return [Applitools::RectangleSize] The size of the element.
     def entire_size
       logger.info 'entire_size()'
       result = Applitools::RectangleSize.new(element.scroll_width, element.scroll_height)

@@ -5,6 +5,13 @@ module Applitools::Selenium
     def_delegators 'Applitools::EyesLogger', :logger, :log_handler, :log_handler=
 
     attr_accessor :driver, :name_enumerator
+
+    # Initialize an Applitools::Selenium::TakesScreenshotImageProvider.
+    #
+    # @param [Applitools::Selenium::Driver] driver
+    # @param [Hash] options The options for taking a screenshot.
+    # @option options [Boolean] :debug_screenshot
+    # @option options [Enumerator] :name_enumerator The name enumerator.
     def initialize(driver, options = {})
       self.driver = driver
       options = { debug_screenshot: false }.merge! options
@@ -12,6 +19,9 @@ module Applitools::Selenium
       self.name_enumerator = options[:name_enumerator]
     end
 
+    # Takes a screenshot.
+    #
+    # @return [Applitools::Screenshot::Datastream] The screenshot.
     def take_screenshot
       logger.info 'Getting screenshot...'
       if debug_screenshot

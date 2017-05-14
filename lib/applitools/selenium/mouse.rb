@@ -3,6 +3,10 @@ module Applitools::Selenium
   class Mouse
     attr_reader :driver, :mouse
 
+    # Creates a new Applitools::Selenium::Mouse instance.
+    #
+    # @param [Applitools::Selenium::Driver] driver The driver instance.
+    # @param [Selenium::WebDriver::Mouse] mouse The mouse instance.
     def initialize(driver, mouse)
       @driver = driver
       @mouse = mouse
@@ -28,6 +32,11 @@ module Applitools::Selenium
       extract_trigger_and_perform(:up, element)
     end
 
+    # Moves the mouse to a certain region.
+    #
+    # @param [Applitools::Selenium::Element] element The element to move the mouse to.
+    # @param [Integer] right_by The amount to move to the right.
+    # @param [Integer] down_by The amount to move down.
     def move_to(element, right_by = nil, down_by = nil)
       element = element.web_element if element.is_a?(Applitools::Selenium::Element)
       location = element.location
@@ -39,6 +48,10 @@ module Applitools::Selenium
       mouse.move_to(element, right_by, down_by)
     end
 
+    # Moves the mouse to a certain point.
+    #
+    # @param [Integer] right_by The amount to move to the right.
+    # @param [Integer] down_by The amount to move down.
     def move_by(right_by, down_by)
       right = [0, right_by].max.round
       down = [0, down_by].max.round

@@ -22,6 +22,10 @@ module Applitools::Selenium
     class << self
       alias _new new
 
+      # Creates new image.
+      #
+      # @param [Array] *args The arguments.
+      # @return [Applitools::Screenshot] The image.
       def new(*args)
         image = args.shift
         raise Applitools::EyesIllegalArgument.new 'image is expected to be Applitools::Screenshot!' unless
@@ -37,6 +41,12 @@ module Applitools::Selenium
         raise Applitools::EyesIllegalArgument.new "#{self.class}.initialize(): Hash is expected as an argument!"
       end
 
+      # Calculates the frame location in the screenshot.
+      #
+      # @param [Applitools::Selenium::FrameChain] frame_chain The driver's frame chain.
+      # @param [String] screenshot_type The type of the screenshot.
+      # @param [Logger] logger The logger instance.
+      # @return [Applitools::Location] The location in the screenshot.
       def calc_frame_location_in_screenshot(frame_chain, screenshot_type, logger)
         frame_chain = Applitools::Selenium::FrameChain.new other: frame_chain
         logger.info 'Getting first frame...'
@@ -64,6 +74,13 @@ module Applitools::Selenium
       end
     end
 
+    # Initialize element.
+    #
+    # @param [Hash] options The options.
+    # @option options [Symbol] :driver Applitools driver instance.
+    # @option options [Symbol] :entire_frame_size The size of the entire frame.
+    # @option options [Symbol] :entire_frame The frame instance.
+    # @option options [Symbol] :frame_location_in_screenshot The location of the frame in the screenshot.
     def initialize_for_element(options = {})
       Applitools::ArgumentGuard.not_nil options[:driver], 'options[:driver]'
       Applitools::ArgumentGuard.not_nil options[:entire_frame_size], 'options[:entire_frame_size]'
@@ -78,6 +95,16 @@ module Applitools::Selenium
       self.frame_window = Applitools::Region.new(0, 0, entire_frame_size.width, entire_frame_size.height)
     end
 
+    # Initializes class properties.
+    #
+    # @param [Hash] options The options.
+    # @option options [Symbol] :driver Wrapped Selenium driver instance.
+    # @option options [Symbol] :position_provider The ScrollPositionProvider.
+    # @option options [Symbol] :viewport The viewport instance.
+    # @option options [Symbol] :entire_frame The entire frame instance.
+    # @option options [Symbol] :screenshot_type The screenshot type.
+    # @option options [Symbol] :frame_location_in_screenshot The frame location in the screenshot.
+    # @option options [Symbol] :force_offset Whether to force offset or not.
     def initialize_main(options = {})
       # options = {screenshot_type: SCREENSHOT_TYPES[:viewport]}.merge options
 
@@ -150,6 +177,12 @@ module Applitools::Selenium
     #   end
     # end
 
+    # Convert the location.
+    #
+    # @param [Applitools::Location] location.
+    # @param [Applitools::EyesScreenshot::COORDINATE_TYPES] from Source.
+    # @param [Applitools::EyesScreenshot::COORDINATE_TYPES] to Destination.
+    # @return [Applitools::Location] The converted location.
     def convert_location(location, from, to)
       Applitools::ArgumentGuard.not_nil location, 'location'
       Applitools::ArgumentGuard.not_nil from, 'from'
@@ -197,6 +230,14 @@ module Applitools::Selenium
       Applitools::Selenium::FrameChain.new other: @frame_chain
     end
 
+    # Returns the intersected region.
+    #
+    # @param [Applitools::Selenium::Region] region The relevant region.
+    # @param [Applitools::EyesScreenshot::COORDINATE_TYPES] original_coordinate_types The type of
+    # the original coordinates.
+    # @param [Applitools::EyesScreenshot::COORDINATE_TYPES] result_coordinate_types The type of the
+    # original coordinates.
+    # @return [Applitools::Region] The intersected region.
     def intersected_region(region, original_coordinate_types, result_coordinate_types)
       return Applitools::Region::EMPTY if region.empty?
       intersected_region = convert_region_location(
@@ -223,6 +264,11 @@ module Applitools::Selenium
       )
     end
 
+    # Returns the location in the screenshot.
+    #
+    # @param [Applitools::Location] location The location.
+    # @param [Applitools::EyesScreenshot::COORDINATE_TYPES] coordinate_type The type of the coordinate.
+    # @return [Applitools::Location] The location instance in the screenshot.
     def location_in_screenshot(location, coordinate_type)
       location = convert_location(
         location, coordinate_type, Applitools::EyesScreenshot::COORDINATE_TYPES[:screenshot_as_is]
@@ -235,6 +281,12 @@ module Applitools::Selenium
       location
     end
 
+    # Gets a sub-screenshot of a region.
+    #
+    # @param [Applitools::Region] region The relevant region for taking screenshot.
+    # @param [Applitools::EyesScreenshot::COORDINATE_TYPES] coordinate_type The coordinate type.
+    # @param [Boolean] throw_if_clipped Whether to throw if screenshot is out of bounds.
+    # @return [Applitools::Screenshot] The sub screenshot.
     def sub_screenshot(region, coordinate_type, throw_if_clipped = false, force_nil_if_clipped = false)
       logger.info "get_subscreenshot(#{region}, #{coordinate_type}, #{throw_if_clipped})"
       Applitools::ArgumentGuard.not_nil region, 'region'

@@ -59,6 +59,10 @@ module Applitools::Selenium
     MAX_SCROLLBAR_SIZE = 50
     OVERFLOW_HIDDEN = 'hidden'.freeze
 
+    # Initialize class instance.
+    #
+    # @param [Applitools::Selenium::Driver] driver The wrapped Selenium driver.
+    # @param [Applitools::Selenium::Eyes] eyes The eyes instance.
     def initialize(driver, eyes)
       @driver = driver
       @eyes = eyes
@@ -80,6 +84,10 @@ module Applitools::Selenium
       end
     end
 
+    # Gets the normalization factor.
+    #
+    # @param [ChunkyPNG::Canvas] image The image to normalize.
+    # @return [Integer] The image normalization factor.
     def image_normalization_factor(image)
       # If the user manually set the scale ratio, we use that.
       return @eyes.scale_ratio unless @eyes.scale_ratio.nil?
@@ -92,6 +100,9 @@ module Applitools::Selenium
       1.to_f / device_pixel_ratio
     end
 
+    # The dimensions of the entire page.
+    #
+    # @return [Applitools::Base::Dimension] The dimensions of the entire page.
     def entire_page_size
       max_document_element_height = [page_metrics[:client_height], page_metrics[:scroll_height]].max
       max_body_height = [page_metrics[:body_client_height], page_metrics[:body_scroll_height]].max
@@ -102,6 +113,9 @@ module Applitools::Selenium
       Applitools::Base::Dimension.new(total_width, total_height)
     end
 
+    # Returns the current scroll position.
+    #
+    # @return [Applitools::Base::Point] The coordinates of the scroll position.
     def current_scroll_position
       position = Applitools::Utils.underscore_hash_keys(execute_script(JS_GET_CURRENT_SCROLL_POSITION))
       Applitools::Base::Point.new(position[:left], position[:top])
@@ -135,6 +149,9 @@ module Applitools::Selenium
       set_transform("translate(-#{point.left}px, -#{point.top}px)")
     end
 
+    # Takes a full page screenshot.
+    #
+    # @return [ChunkyPNG::Canvas] image The result of the screenshot.
     def fullpage_screenshot
       # Scroll to the top/left corner of the screen.
       original_scroll_position = current_scroll_position

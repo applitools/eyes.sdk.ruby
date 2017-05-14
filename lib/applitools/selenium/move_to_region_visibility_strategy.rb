@@ -8,6 +8,12 @@ module Applitools::Selenium
     def_delegators 'Applitools::EyesLogger', :logger, :log_handler, :log_handler=
     attr_accessor :original_position
 
+    # Set the location of the position provider.
+    #
+    # @param [Applitools::Selenium::CssTranslatePositionProvider, Applitools::Selenium::ScrollPositionProvider]
+    # position_provider The position provider type (e.g. Applitools::Selenium::CssTranslatePositionProvider,
+    # Applitools::Selenium::ScrollPositionProvider).
+    # @param [Applitools::Location] location The location to move to.
     def move_to_region(position_provider, location)
       logger.info 'Getting current position state...'
       self.original_position = position_provider.state
@@ -24,6 +30,11 @@ module Applitools::Selenium
       logger.info 'Done!'
     end
 
+    # Return the position provider to its original position.
+    #
+    # @param [Applitools::Selenium::CssTranslatePositionProvider, Applitools::Selenium::ScrollPositionProvider]
+    # position_provider The position provider type (e.g. Applitools::Selenium::CssTranslatePositionProvider,
+    # Applitools::Selenium::ScrollPositionProvider).
     def return_to_original_position(position_provider)
       return if original_position.nil?
       logger.info 'Returning to original position...'

@@ -35,7 +35,13 @@ module Applitools::Selenium
     def_delegators :@browser, :user_agent
     def_delegators 'Applitools::EyesLogger', :logger, :log_handler, :log_handler=
 
+    # Initializes a class instance.
+    #
     # If driver is not provided, Applitools::Selenium::Driver will raise an EyesError exception.
+    # @param eyes [Applitools::Selenium::Eyes] The eyes instance.
+    # @param options [Hash] The options.
+    # @option options [Selenium::WebDriver::Driver] :driver The Selenium webdriver instance.
+    # @option options [Boolean] :is_mobile_device Whether is a mobile device or not.
     def initialize(eyes, options)
       super(options[:driver])
       @is_mobile_device = options.fetch(:is_mobile_device, false)
@@ -46,17 +52,22 @@ module Applitools::Selenium
       Applitools::EyesLogger.warn '"screenshot_as" method not found!' unless driver.respond_to? :screenshot_as
     end
 
-    # Executes javascript in browser context
+    # Executes javascript in browser context.
+    #
     # @raise [Applitools::EyesDriverOperationException]
     def execute_script(*args)
       raises_error { __getobj__.execute_script(*args) }
     end
 
+    # Returns the platform name.
+    #
     # @return [String] The platform name or +nil+ if it is undefined.
     def platform_name
       capabilities['platformName']
     end
 
+    # Returns the platform version.
+    #
     # @return [String] The platform version or +nil+ if it is undefined.
     def platform_version
       version = capabilities['platformVersion']
@@ -88,6 +99,7 @@ module Applitools::Selenium
     end
 
     # Returns native driver
+    #
     # @return Selenium::WebDriver
     def remote_web_driver
       driver
@@ -95,7 +107,8 @@ module Applitools::Selenium
 
     alias set_overflow overflow=
 
-    # Takes a screenshot
+    # Takes a screenshot.
+    #
     # @param [:Symbol] format A format to store screenshot (one of +:base64+ or +:png+)
     # @return [String] A byte string, representing the screenshot
     def screenshot_as(format)
@@ -123,6 +136,11 @@ module Applitools::Selenium
     # @return [Applitools::Selenium::Element]
     # @!parse def find_element(how, what); end
 
+    # Finds an element in a window.
+    #
+    # @param [Array] *args The arguments for finding the element (at most contains 2 params).
+    # @option args [Symbol] :by By what means to search for the element (e.g. :css, :id).
+    # @option args [String] Name of element.
     def find_element(*args)
       how, what = extract_args(args)
 
@@ -147,6 +165,11 @@ module Applitools::Selenium
     # @return [ [Applitools::Selenium::Element] ]
     # @!parse def find_elements(how, what); end
 
+    # Finds elements in a window.
+    #
+    # @param [Array] *args The arguments for finding the element (at most contains 2 params).
+    # @option args [Symbol] :by By what means to search for the element (e.g. :css, :id).
+    # @option args [String] Name of elements.
     def find_elements(*args)
       how, what = extract_args(args)
 
@@ -166,7 +189,9 @@ module Applitools::Selenium
     end
 
     # Returns a copy of current frame chain. Frame chain stores information about all parent frames,
-    #   including scroll offset an frame coordinates
+    #   including scroll offset an frame coordinates.
+    #
+    # @return [Applitools::Selenium::FrameChain] The frame chain.
     def frame_chain
       Applitools::Selenium::FrameChain.new other: @frame_chain
     end
@@ -177,10 +202,11 @@ module Applitools::Selenium
       @frame_chain
     end
 
-    # Gets +default_content_viewport_size+
+    # Gets +default_content_viewport_size+.
+    #
     # @param [Boolean] force_query if set to true, forces querying of viewport size from the browser,
-    #   otherwise returns cached value
-    # @return [Applitools::RectangleSize]
+    #   otherwise returns cached value.
+    # @return [Applitools::RectangleSize] The default content viewport size.
     def default_content_viewport_size(force_query = false)
       logger.info('default_content_viewport_size()')
       if cached_default_content_viewport_size && !force_query

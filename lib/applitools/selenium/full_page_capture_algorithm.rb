@@ -7,6 +7,18 @@ module Applitools::Selenium
     MAX_SCROLL_BAR_SIZE = 50
     MIN_SCREENSHOT_PART_HEIGHT = 10
 
+    # Returns the stitched image.
+    #
+    # @param [Hash] options The options.
+    # @option [Applitools::Selenium::TakesScreenshotImageProvider] :image_provider
+    # @option [Applitools::Region] :region_to_check
+    # @option [Applitools::Selenium::ScrollPositionProvider] :origin_provider
+    # @option [Applitools::Selenium::ElementPositionProvider] :position_provider
+    # @option [Applitools::Selenium::ContextBasedScaleProvider] :scale_provider
+    # @option [Applitools::FixedCutProvider] :cut_provider
+    # @option [Integer] :wait_before_screenshots The time to wait before taking screenshot.
+    # @option [Faraday::Request::UrlEncoded] :eyes_screenshot_factory The images.
+    # @return [Applitools::Image] The entire image.
     def get_stiched_region(options = {})
       logger.info 'get_stiched_region() has been invoked.'
       image_provider = options[:image_provider]

@@ -5,6 +5,11 @@ module Applitools::Selenium
 
     def_delegators 'Applitools::EyesLogger', :logger, :log_handler, :log_handler=
 
+    # Creates a new Applitools::Selenium::ScrollPositionProvider instance.
+    #
+    # @param [Applitools::Selenium::Driver] executor The instance that of the driver.
+    # @param [Boolean] disable_horizontal Whether to disable horizontal movement or not.
+    # @param [Boolean] disable_vertical Whether to disable vertical movement or not.
     def initialize(executor, disable_horizontal = false, disable_vertical = false, max_width: nil, max_height: nil)
       self.executor = executor
       self.disable_horizontal = disable_horizontal
@@ -13,7 +18,9 @@ module Applitools::Selenium
       self.max_height = max_height
     end
 
-    # The scroll position of the current frame
+    # The scroll position of the current frame.
+    #
+    # @return [Applitools::Location] The current position of the ScrollPositionProvider.
     def current_position
       logger.info 'current_position()'
       result = Applitools::Utils::EyesSeleniumUtils.current_scroll_position(executor)
@@ -39,6 +46,9 @@ module Applitools::Selenium
 
     alias scroll_to position=
 
+    # Returns the entire size of the viewport.
+    #
+    # @return [Applitools::RectangleSize] The viewport size.
     def entire_size
       viewport_size = Applitools::Utils::EyesSeleniumUtils.extract_viewport_size(executor)
       result = Applitools::Utils::EyesSeleniumUtils.entire_page_size(executor)

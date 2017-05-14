@@ -25,6 +25,10 @@ module Applitools::Selenium
     VERIFY_RETRIES = 3
     BROWSER_SIZE_CALCULATION_RETRIES = 2
 
+    # Initialize a Applitools::Selenium::ViewportSize instance.
+    #
+    # @param [Applitools::Selenium::Driver] driver The driver instance.
+    # @param [Applitools::Base::Dimension] dimension The dimension of the viewport size.
     def initialize(driver, dimension = nil)
       @driver = driver
       @dimension = dimension.nil? ? nil : setup_dimension(dimension)
@@ -40,6 +44,9 @@ module Applitools::Selenium
 
     alias extract_viewport_from_browser! extract_viewport_size!
 
+    # Extract the viewport size.
+    #
+    # @return [Applitools::Base::Dimension] The dimensions of the viewport size.
     def extract_viewport_size
       width = nil
       height = nil
@@ -64,6 +71,7 @@ module Applitools::Selenium
     alias viewport_size extract_viewport_size
     alias extract_viewport_from_browser extract_viewport_size
 
+    # Set the viewport size.
     def set
       Applitools::EyesLogger.debug "Set viewport size #{@dimension}"
       # Before resizing the window, set its position to the upper left corner (otherwise, there might not be enough
@@ -124,7 +132,6 @@ module Applitools::Selenium
     # tries to resize browser, yields a block (which should check if an attempt was successful) before each iteration.
     # If the block returns true, stop trying and returns true (resize was successful)
     # Otherwise, returns false after VERIFY_RETRIES iterations
-
     def resize_attempt
       actual_viewport_size = extract_viewport_size
       Applitools::EyesLogger.debug "Actual viewport size #{actual_viewport_size}"

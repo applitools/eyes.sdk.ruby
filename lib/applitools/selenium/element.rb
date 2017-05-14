@@ -30,6 +30,10 @@ module Applitools::Selenium
 
     # def_delegators 'Applitools::EyesLogger', :logger, :log_handler, :log_handler=
 
+    # Initialize class instance.
+    #
+    # @param [Applitools::Selenium::Driver] driver The wrapped Selenium driver instance.
+    # @param [Applitools::Selenium::Element] element The wrapped Selenium element instance.
     def initialize(driver, element)
       super(element)
 
@@ -62,6 +66,10 @@ module Applitools::Selenium
 
     alias eql? ==
 
+    # Types content into text box.
+    #
+    # @param [Array] *args The arguments.
+    # @option *args [String] The content to type.
     def send_keys(*args)
       Selenium::WebDriver::Keys.encode(args).each do |key|
         @driver.add_text_trigger(self, key.to_s)
@@ -70,6 +78,9 @@ module Applitools::Selenium
     end
     alias send_key send_keys
 
+    # Gets the bounds of the element.
+    #
+    # @return [Applitools::Base::Region] An instance of the region.
     def bounds
       point = location
       left = point.x

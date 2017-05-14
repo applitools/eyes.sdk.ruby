@@ -36,6 +36,10 @@ module Applitools::Selenium
         end
       end
 
+      # Set the viewport size.
+      #
+      # @param [Applitools::Selenium::Driver] driver The driver instance.
+      # @param [Hash] viewport_size The required browser's viewport size.
       def set_viewport_size(driver, viewport_size)
         Applitools::ArgumentGuard.not_nil(driver, 'Driver')
         Applitools::ArgumentGuard.not_nil(viewport_size, 'viewport_size')
@@ -84,7 +88,8 @@ module Applitools::Selenium
 
     # Creates a new (possibly disabled) Eyes instance that interacts with the
     # Eyes Server at the specified url.
-    # @param server_url The Eyes Server URL
+    #
+    # @param server_url The Eyes Server URL.
     def initialize(server_url = nil)
       super
       self.base_agent_id = "eyes.selenium.ruby/#{Applitools::VERSION}".freeze
@@ -104,6 +109,7 @@ module Applitools::Selenium
     end
 
     # Starts a test
+    #
     # @param options [Hash] options
     # @option options :driver The driver that controls the browser hosting the application
     #   under the test. (*Required* option)
@@ -157,6 +163,12 @@ module Applitools::Selenium
       @driver
     end
 
+    # Sets the stitch mode.
+    #
+    # @param [Hash] value The desired type of stitching (:SCROLL is default).
+    # @option value [Symbol] :css use Css to perform stitching.
+    # @option value [Symbol] :scroll Scroll to perform stitching.
+    # @return [Symbol] The type of stitching.
     def stitch_mode=(value)
       @stitch_mode = value.to_s.upcase == STICH_MODE[:css].to_s ? STICH_MODE[:css] : STICH_MODE[:scroll]
       unless driver.nil?
@@ -174,6 +186,7 @@ module Applitools::Selenium
     end
 
     # Takes a snapshot of the application under test and matches it with the expected output.
+    #
     # @param [String] tag An optional tag to be assosiated with the snapshot.
     # @param [Fixnum] match_timeout The amount of time to retry matching (seconds)
     def check_window(tag = nil, match_timeout = USE_DEFAULT_MATCH_TIMEOUT)
@@ -227,6 +240,11 @@ module Applitools::Selenium
       Applitools::Utils::EyesSeleniumUtils.extract_viewport_size(driver)
     end
 
+    # Takes a snapshot and matches it with the expected output.
+    #
+    # @param [String] name The name of the tag.
+    # @param [Applitools::Selenium::Target] target which area of the window to check.
+    # @return [Applitools::MatchResult] The match results.
     def check(name, target)
       Applitools::ArgumentGuard.is_a? target, 'target', Applitools::Selenium::Target
       original_overflow = nil
@@ -301,6 +319,10 @@ module Applitools::Selenium
       end
     end
 
+    # Validates the contents of an iframe and matches it with the expected output.
+    #
+    # @param [Hash] options The specific parameters of the desired screenshot.
+    # @option options [Array] :target_frames The frames to check.
     def check_in_frame(options)
       frames = options.delete :target_frames
 
@@ -323,6 +345,10 @@ module Applitools::Selenium
       driver.switch_to.frames frame_chain: original_frame_chain
     end
 
+    # Creates a region instance.
+    #
+    # @param [Applitools::Element] element The element.
+    # @return [Applitools::Region] The relevant region.
     def region_for_element(element)
       return element if element.is_a? Applitools::Region
 
@@ -342,6 +368,9 @@ module Applitools::Selenium
       )
     end
 
+    # Returns the region of a given iframe.
+    #
+    # @return [Applitools::Region] The region of the iframe.
     def region_provider_for_frame
       Object.new.tap do |provider|
         current_frame_size = lambda do
@@ -375,6 +404,7 @@ module Applitools::Selenium
 
     # Takes a snapshot of the application under test and matches a region of
     # a specific element with the expected region output.
+    #
     # @param [Applitools::Selenium::Element] element Represents a region to check.
     # @param [Symbol] how a finder, such :css or :id. Selects a finder will be used to find an element
     #   See Selenium::Webdriver::Element#find_element documentation for full list of possible finders.
@@ -401,6 +431,14 @@ module Applitools::Selenium
       end
     end
 
+    # Validates the contents of an iframe and matches it with the expected output.
+    #
+    # @param [Hash] options The specific parameters of the desired screenshot.
+    # @option options [Fixnum] :timeout The amount of time to retry matching. (Seconds)
+    # @option options [String] :tag An optional tag to be associated with the snapshot.
+    # @option options [String] :frame_key The key of the relevant frame.
+    # @option options [String] :name_or_id The name or id of the screenshot.
+    # @return [Applitools::MatchResult] The match results.
     def check_frame(options = {})
       options = { timeout: USE_DEFAULT_MATCH_TIMEOUT, tag: nil }.merge!(options)
 
@@ -417,8 +455,15 @@ module Applitools::Selenium
       end
     end
 
-    # @param [hash] options
-    # @option options []
+    # Validates the contents of a region in an iframe and matches it with the expected output.
+    #
+    # @param [Hash] options The specific parameters of the desired screenshot.
+    # @option options [String] :name_or_id The name or id of the frame.
+    # @option options [String] :tag An optional tag to be associated with the snapshot.
+    # @option options [Symbol] :by By which identifier to find the region (e.g :css, :id).
+    # @option options [Fixnum] :timeout The amount of time to retry matching. (Seconds)
+    # @option options [Boolean] :stitch_content Whether to stitch the content or not.
+    # @return [Applitools::MatchResult] The match results.
     def check_region_in_frame(options = {})
       options = { timeout: USE_DEFAULT_MATCH_TIMEOUT, tag: nil, stitch_content: false }.merge!(options)
       Applitools::ArgumentGuard.not_nil options[:by], 'options[:by]'
@@ -472,14 +517,17 @@ module Applitools::Selenium
       end
     end
 
-    # @param [Hash] options
-    # @option [Fixnum] :index
-    # @option [String] :name_or_id
-    # @option [Applitools::Selenium::Element] :frame_element
+    # Validates the contents of an iframe and matches it with the expected output.
+    #
+    # @param [Hash] options The options.
+    # @option [Fixnum] :index The index of the iframe.
+    # @option [String] :name_or_id The name or id of the screenshot.
+    # @option [Applitools::Selenium::Element] :frame_element The relevant frame.
     # @option [Array] :frames_path
     # @option [Applitools::Selenium::FrameChain] :frame_chain
-    # @option [Fixnum] :timeout
-    # @option [String] :tag
+    # @option [Fixnum] :timeout The amount of time to retry matching. (Seconds)
+    # @option [String] :tag An optional tag to be associated with the snapshot.
+    # @option [String] :frame_key The key of the relevant frame.
     def check_frame__(options = {})
       options = { timeout: USE_DEFAULT_MATCH_TIMEOUT, tag: nil }.merge!(options)
 
@@ -919,6 +967,7 @@ module Applitools::Selenium
     end
 
     # check a region, specified by element_or_selector parameter
+    #
     # @param [Array] element_or_selector Array, which contains Applitools::Selenium::Element or [:finder, :value]
     #    pair should be used in find_element
     # @param [Hash] options
@@ -980,6 +1029,7 @@ module Applitools::Selenium
     end
 
     # Checks an element, specified by +element_or_selector+ parameter
+    #
     # @param [Array] element_or_selector Array, which contains Applitools::Selenium::Element or [:finder, :value]
     #    pair should be used in find_element
     # @param [Hash] options
@@ -1096,6 +1146,7 @@ module Applitools::Selenium
     end
 
     # Resets screenshot_names sequence to initial state.
+    #
     # @param [Boolean] value should be false or nil to reset the sequence. Takes no effect if +true+ passed
     def screenshot_name_enumerator=(value)
       @name_enumerator = nil unless value
