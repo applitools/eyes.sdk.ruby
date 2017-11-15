@@ -257,19 +257,32 @@ module Applitools::Selenium
           end
 
           check_window = false
-          if !target.frames.empty? && eyes_element.is_a?(Applitools::Region)
-            # check_current_frame
-            logger.info "check_region_in_frame(#{eyes_element})"
-            region_provider = region_provider_for_frame
-
+          if !driver.frame_chain.empty?
+            if target.coordinate_type.nil?
+              # check_current_frame
+              logger.info "check_frame(#{eyes_element})"
+              region_provider = region_provider_for_frame
+              if force_full_page_screenshot
+                self.check_frame_or_element = true
+                self.region_to_check = region_provider
+              end
+            else
+              logger.info "check_region_in_frame(#{eyes_element})"
+              region_provider = Applitools::RegionProvider.new(
+                region_for_element(eyes_element), target.coordinate_type
+              )
+              if force_full_page_screenshot
+                self.check_frame_or_element = true
+                self.region_to_check = region_provider_for_frame
+              end
+            end
           elsif eyes_element.is_a? Applitools::Selenium::Element
             # check_element
             logger.info 'check_region(' \
               "#{Applitools::Region.from_location_size(eyes_element.location, eyes_element.size)})"
 
             use_coordinates =
-              if position_provider.is_a?(Applitools::Selenium::CssTranslatePositionProvider) &&
-                  driver.frame_chain.empty?
+              if position_provider.is_a?(Applitools::Selenium::CssTranslatePositionProvider)
                 Applitools::EyesScreenshot::COORDINATE_TYPES[:context_as_is]
               else
                 target.coordinate_type
@@ -335,10 +348,12 @@ module Applitools::Selenium
       return yield if block_given? && frames.empty?
 
       original_frame_chain = driver.frame_chain
+
       logger.info 'Switching to target frame according to frames path...'
       driver.switch_to.frames(frames_path: frames)
       logger.info 'Done!'
 
+      #frame_chain is correct here
       yield if block_given?
 
       logger.info 'Switching back into top level frame...'

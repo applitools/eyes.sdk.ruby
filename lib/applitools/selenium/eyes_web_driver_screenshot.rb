@@ -101,6 +101,7 @@ module Applitools::Selenium
           options[:frame_location_in_screenshot].is_a? Applitools::Location
       self.frame_location_in_screenshot = Applitools::Location.new(0, 0)
       self.frame_window = Applitools::Region.new(0, 0, entire_frame_size.width, entire_frame_size.height)
+      self.force_offset = Applitools::Location::TOP_LEFT
     end
 
     # Initializes class properties.
