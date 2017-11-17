@@ -353,7 +353,6 @@ module Applitools::Selenium
       driver.switch_to.frames(frames_path: frames)
       logger.info 'Done!'
 
-      #frame_chain is correct here
       yield if block_given?
 
       logger.info 'Switching back into top level frame...'
