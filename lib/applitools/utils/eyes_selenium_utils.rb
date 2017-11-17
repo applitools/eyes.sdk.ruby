@@ -332,7 +332,13 @@ module Applitools::Utils
     end
 
     def set_browser_size_by_viewport_size(executor, actual_viewport_size, required_size)
-      browser_size = Applitools::RectangleSize.from_any_argument(executor.manage.window.size)
+      browser_size = executor.manage.window.size
+      raise(
+        Applitools::EyesError,
+        'driver.manage.window.size returned nil values. ' \
+        'Please ensure that you use the latest version of browser and its driver!'
+      ) if browser_size.width.nil? || browser_size.height.nil?
+      browser_size = Applitools::RectangleSize.from_any_argument(browser_size)
       Applitools::EyesLogger.info "Current browser size: #{browser_size}"
       required_browser_size = browser_size + required_size - actual_viewport_size
       set_browser_size(executor, required_browser_size)
