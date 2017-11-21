@@ -155,9 +155,14 @@ module Applitools::Selenium
 
       if options[:frame_location_in_screenshot].nil?
         if !frame_chain.empty?
-          self.frame_location_in_screenshot = self.class.calc_frame_location_in_screenshot(
-            frame_chain, screenshot_type, logger
-          )
+          self.frame_location_in_screenshot = case driver.browser.running_browser_name
+                                              when :firefox
+                                                Applitools::Location.new(0, 0)
+                                              else
+                                                self.class.calc_frame_location_in_screenshot(
+                                                  frame_chain, screenshot_type, logger
+                                                )
+                                              end
         else
           self.frame_location_in_screenshot = Applitools::Location.new(0, 0)
         end
