@@ -8,6 +8,7 @@ module Applitools::Selenium
 
     MAX_SCROLL_BAR_SIZE = 50
     MIN_SCREENSHOT_PART_HEIGHT = 10
+    MIN_SCREENSHOT_PART_WIDTH = 10
 
     def initialize(options = {})
       @debug_screenshot_provider = options[:debug_screenshot_provider] ||
@@ -37,6 +38,7 @@ module Applitools::Selenium
       wait_before_screenshot = options[:wait_before_screenshots]
       eyes_screenshot_factory = options[:eyes_screenshot_factory]
       stitching_overlap = options[:stitching_overlap] || MAX_SCROLL_BAR_SIZE
+      top_left_position = options[:top_left_position] || Applitools::Location::TOP_LEFT
 
       logger.info "Region to check: #{region_provider.region}"
       logger.info "Coordinates type: #{region_provider.coordinate_type}"
@@ -45,17 +47,19 @@ module Applitools::Selenium
       current_position = nil
       set_position_retries = 3
       while current_position.nil? ||
-          (current_position.x.nonzero? || current_position.y.nonzero?) && set_position_retries > 0
-        origin_provider.position = Applitools::Location.new(0, 0)
+          (current_position == top_left_position) && set_position_retries > 0
+        origin_provider.position = top_left_position
         sleep wait_before_screenshot
         current_position = origin_provider.current_position
         set_position_retries -= 1
       end
 
-      unless current_position.x.zero? && current_position.y.zero?
+      unless current_position == top_left_position
         origin_provider.restore_state original_position
         raise Applitools::EyesError.new 'Couldn\'t set position to the top/left corner!'
       end
+
+      logger.info "Current position: #{current_position}"
 
       begin
         entire_size = position_provider.entire_size
@@ -100,8 +104,10 @@ module Applitools::Selenium
         return image
       end
 
-      part_image_size = Applitools::RectangleSize.new image.width,
+      part_image_size = Applitools::RectangleSize.new(
+        [image.width - stitching_overlap, MIN_SCREENSHOT_PART_WIDTH].max,
         [image.height - stitching_overlap, MIN_SCREENSHOT_PART_HEIGHT].max
+      )
 
       logger.info "Total size: #{entire_size}, image_part_size: #{part_image_size}"
 
@@ -132,7 +138,7 @@ module Applitools::Selenium
         next unless i > 0
         logger.info "Taking screenshot for #{part_region}"
 
-        position_provider.position = part_region.location
+        position_provider.position = part_region.location.offset(top_left_position)
         sleep wait_before_screenshot
         current_position = position_provider.current_position
         logger.info "Set position to #{current_position}"
