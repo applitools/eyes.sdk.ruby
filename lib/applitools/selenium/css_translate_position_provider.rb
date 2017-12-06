@@ -62,7 +62,7 @@ module Applitools::Selenium
     # Gets the entire size of the frame.
     #
     # @return [Applitools::RectangleSize] The entire size of the frame.
-    def entire_size
+    def entire_size(image_width, image_height)
       viewport_size = Applitools::Utils::EyesSeleniumUtils.extract_viewport_size(executor)
       result = Applitools::Utils::EyesSeleniumUtils.current_frame_content_entire_size(executor)
       logger.info "Entire size: #{result}"
@@ -71,7 +71,14 @@ module Applitools::Selenium
       result.width = [viewport_size.width, result.width].min if disable_horizontal
       result.height = [viewport_size.height, result.height].min if disable_vertical
       logger.info "Actual size to scroll: #{result}"
-      result
+      return result unless executor.frame_chain.empty?
+
+      spp = Applitools::Selenium::ScrollPositionProvider.new(executor)
+      original_scroll_position = spp.current_position
+      spp.scroll_to_bottom_right
+      bottom_right_position = spp.current_position
+      spp.restore_state(original_scroll_position)
+      Applitools::RectangleSize.new(bottom_right_position.x + image_width, bottom_right_position.y + image_height)
     end
 
     private

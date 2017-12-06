@@ -77,6 +77,36 @@ module Applitools::Utils
       window.scrollTo(%{left}, %{top});
     JS
 
+    # IMPORTANT: Notice there's a major difference between scrollWidth
+    # and scrollHeight. While scrollWidth is the maximum between an
+    # element's width and its content width, scrollHeight might be
+    # smaller (!) than the clientHeight, which is why we take the
+    # maximum between them.
+
+    # @!visibility private
+    JS_COMPUTE_CONTENT_ENTIRE_SIZE = <<-JS.freeze
+      var scrollWidth = document.documentElement.scrollWidth;
+      var bodyScrollWidth = document.body.scrollWidth;
+      var totalWidth = Math.max(scrollWidth, bodyScrollWidth);
+      var clientHeight = document.documentElement.clientHeight;
+      var bodyClientHeight = document.body.clientHeight;
+      var scrollHeight = document.documentElement.scrollHeight;
+      var bodyScrollHeight = document.body.scrollHeight;
+      var maxDocElementHeight = Math.max(clientHeight, scrollHeight);
+      var maxBodyHeight = Math.max(bodyClientHeight, bodyScrollHeight);
+      var totalHeight = Math.max(maxDocElementHeight, maxBodyHeight);
+    JS
+
+    # @!visibility private
+    JS_RETURN_CONTENT_ENTIRE_SIZE = <<-JS.freeze
+      #{JS_COMPUTE_CONTENT_ENTIRE_SIZE}; return [totalWidth, totalHeight];
+    JS
+
+    # @!visibility private
+    JS_SCROLL_TO_BOTTOM_RIGHT = <<-JS.freeze
+      #{JS_COMPUTE_CONTENT_ENTIRE_SIZE}; window.scrollTo(totalWidth, totalHeight);
+    JS
+
     # @!visibility private
     JS_GET_CURRENT_TRANSFORM = <<-JS.freeze
       return document.body.style.transform;
@@ -344,6 +374,10 @@ module Applitools::Utils
       Applitools::EyesLogger.info "Current browser size: #{browser_size}"
       required_browser_size = browser_size + required_size - actual_viewport_size
       set_browser_size(executor, required_browser_size)
+    end
+
+    def scroll_to_bottom_right(executor)
+      executor.execute_script(JS_SCROLL_TO_BOTTOM_RIGHT)
     end
 
     private
