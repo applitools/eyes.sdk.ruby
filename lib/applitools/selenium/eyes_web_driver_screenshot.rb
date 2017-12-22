@@ -304,7 +304,7 @@ module Applitools::Selenium
     # @param [Applitools::EyesScreenshot::COORDINATE_TYPES] coordinate_type The coordinate type.
     # @param [Boolean] throw_if_clipped Whether to throw if screenshot is out of bounds.
     # @return [Applitools::Screenshot] The sub screenshot.
-    def sub_screenshot(region, coordinate_type, throw_if_clipped = false, force_nil_if_clipped = false)
+    def sub_screenshot_old(region, coordinate_type, throw_if_clipped = false, force_nil_if_clipped = false)
       logger.info "get_subscreenshot(#{region}, #{coordinate_type}, #{throw_if_clipped})"
       Applitools::ArgumentGuard.not_nil region, 'region'
       Applitools::ArgumentGuard.not_nil coordinate_type, 'coordinate_type'
@@ -335,6 +335,14 @@ module Applitools::Selenium
         frame_location_in_screenshot: context_relative_region_location
       logger.info 'Done!'
       result
+    end
+
+    def sub_screenshot(region, coordinate_type, throw_if_clipped = false, force_nil_if_clipped = false)
+      region.intersect(Applitools::Region.from_location_size(Applitools::Location::TOP_LEFT, Applitools::RectangleSize.new(image.width, image.height)))
+      cropped_image = Applitools::Screenshot.from_image image.crop(region.x, region.y, region.width, region.height)
+      self.class.new cropped_image, driver: driver,
+                     entire_frame_size: Applitools::RectangleSize.new(cropped_image.width, cropped_image.height),
+                     frame_location_in_screenshot: Applitools::Location::TOP_LEFT
     end
 
     private

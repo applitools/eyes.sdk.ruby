@@ -258,79 +258,81 @@ module Applitools::Selenium
               Applitools::Location.new(eyes_element.location.x.to_i, eyes_element.location.y.to_i)
           end
 
-          check_window = false
-          if !driver.frame_chain.empty?
-            self.full_page_capture_algorithm_left_top_offset =
-              if stitch_mode == :CSS && driver.browser.running_browser_name != :firefox
-                Applitools::Selenium::EyesWebDriverScreenshot.calc_frame_location_in_screenshot(
-                  driver.frame_chain,
-                  Applitools::Selenium::EyesWebDriverScreenshot::SCREENSHOT_TYPES[:entire_frame],
-                  logger
-                ).negative_part
-              else
-                self.full_page_capture_algorithm_left_top_offset = Applitools::Location::TOP_LEFT
-              end
-            if target.coordinate_type.nil?
-              # check_current_frame
-              logger.info "check_frame(#{eyes_element})"
-              region_provider = region_provider_for_frame
-              if force_full_page_screenshot
-                self.check_frame_or_element = true
-                self.region_to_check = region_provider
-              end
-            else
-              logger.info "check_region_in_frame(#{eyes_element})"
-              region_provider = Applitools::RegionProvider.new(
-                region_for_element(eyes_element), target.coordinate_type
-              )
-              if force_full_page_screenshot
-                self.check_frame_or_element = true
-                self.region_to_check = region_provider_for_frame
-              end
-            end
-          elsif eyes_element.is_a? Applitools::Selenium::Element
-            # check_element
-            logger.info 'check_region(' \
-              "#{Applitools::Region.from_location_size(eyes_element.location, eyes_element.size)})"
+          region_provider = Applitools::Selenium::RegionProvider.new(driver, region_for_element(eyes_element))
 
-            use_coordinates =
-              if position_provider.is_a?(Applitools::Selenium::CssTranslatePositionProvider)
-                Applitools::EyesScreenshot::COORDINATE_TYPES[:context_as_is]
-              else
-                target.coordinate_type
-              end
+          # check_window = false
+          # if !driver.frame_chain.empty?
+          #   self.full_page_capture_algorithm_left_top_offset =
+          #     if stitch_mode == :CSS && driver.browser.running_browser_name != :firefox
+          #       Applitools::Selenium::EyesWebDriverScreenshot.calc_frame_location_in_screenshot(
+          #         driver.frame_chain,
+          #         Applitools::Selenium::EyesWebDriverScreenshot::SCREENSHOT_TYPES[:entire_frame],
+          #         logger
+          #       ).negative_part
+          #     else
+          #       self.full_page_capture_algorithm_left_top_offset = Applitools::Location::TOP_LEFT
+          #     end
+          #   if target.coordinate_type.nil?
+          #     # check_current_frame
+          #     logger.info "check_frame(#{eyes_element})"
+          #     region_provider = region_provider_for_frame
+          #     if force_full_page_screenshot
+          #       self.check_frame_or_element = true
+          #       self.region_to_check = region_provider
+          #     end
+          #   else
+          #     logger.info "check_region_in_frame(#{eyes_element})"
+          #     region_provider = Applitools::RegionProvider.new(
+          #       region_for_element(eyes_element), target.coordinate_type
+          #     )
+          #     if force_full_page_screenshot
+          #       self.check_frame_or_element = true
+          #       self.region_to_check = region_provider_for_frame
+          #     end
+          #   end
+          # elsif eyes_element.is_a? Applitools::Selenium::Element
+          #   # check_element
+          #   logger.info 'check_region(' \
+          #     "#{Applitools::Region.from_location_size(eyes_element.location, eyes_element.size)})"
+          #
+          #   use_coordinates =
+          #     if position_provider.is_a?(Applitools::Selenium::CssTranslatePositionProvider)
+          #       Applitools::EyesScreenshot::COORDINATE_TYPES[:context_as_is]
+          #     else
+          #       target.coordinate_type
+          #     end
+          #
+          #   region_provider = Applitools::RegionProvider.new(
+          #     region_for_element(eyes_element), use_coordinates
+          #   )
+          # else
+          #   # check_window
+          #   logger.info "check_window(match_timeout: #{timeout}, tag: #{match_data.tag})"
+          #   region_provider = Applitools::RegionProvider.new(
+          #     region_for_element(eyes_element),
+          #     target.coordinate_type
+          #   )
+          #   check_window = true
+          # end
 
-            region_provider = Applitools::RegionProvider.new(
-              region_for_element(eyes_element), use_coordinates
-            )
-          else
-            # check_window
-            logger.info "check_window(match_timeout: #{timeout}, tag: #{match_data.tag})"
-            region_provider = Applitools::RegionProvider.new(
-              region_for_element(eyes_element),
-              target.coordinate_type
-            )
-            check_window = true
-          end
-
-          if target.options[:stitch_content]
-            check_window ? self.force_full_page_screenshot = true : self.check_frame_or_element = true
-            if eyes_element.is_a? Applitools::Selenium::Element
-              self.position_provider = Applitools::Selenium::ElementPositionProvider.new driver, eyes_element
-
-              original_overflow = eyes_element.overflow
-              eyes_element.overflow = 'hidden'
-            end
-
-            region_provider = Applitools::RegionProvider.new(region_provider.region, target.coordinate_type)
-
-            self.region_to_check = region_provider
-
-            region_provider = Applitools::RegionProvider.new(
-              Applitools::Region::EMPTY,
-              nil
-            )
-          end
+          # if target.options[:stitch_content]
+          #   check_window ? self.force_full_page_screenshot = true : self.check_frame_or_element = true
+          #   if eyes_element.is_a? Applitools::Selenium::Element
+          #     self.position_provider = Applitools::Selenium::ElementPositionProvider.new driver, eyes_element
+          #
+          #     original_overflow = eyes_element.overflow
+          #     eyes_element.overflow = 'hidden'
+          #   end
+          #
+          #   region_provider = Applitools::RegionProvider.new(region_provider.region, target.coordinate_type)
+          #
+          #   self.region_to_check = region_provider
+          #
+          #   region_provider = Applitools::RegionProvider.new(
+          #     Applitools::Region::EMPTY,
+          #     nil
+          #   )
+          # end
 
           check_window_base(
             region_provider, timeout, match_data

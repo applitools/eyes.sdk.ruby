@@ -8,7 +8,7 @@ module Applitools::Selenium
         send("#{param}=", options[param])
       end
 
-      raise 'options[:location] must be instance of Applitools::Base::Point' unless
+      raise 'options[:location] must be instance of Applitools::Base::Location' unless
           location.is_a? Applitools::Location
 
       raise 'options[:parent_scroll_position] must be instance of Applitools::Location' unless
