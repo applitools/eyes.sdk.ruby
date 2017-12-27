@@ -6,7 +6,7 @@ require 'applitools/capybara'
 require 'openssl'
 OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
 
-Applitools.register_capybara_driver :browser => :chrome
+Applitools.register_capybara_driver :browser => :firefox
 
 RSpec.describe 'Layout Check frame and element example', :type => :feature, :js => true do
   let(:eyes) do
@@ -21,7 +21,7 @@ RSpec.describe 'Layout Check frame and element example', :type => :feature, :js 
   end
 
   it 'Eyes test' do
-    eyes.open driver: page, app_name: 'Ruby SDK', test_name: 'Applitools frame and element example',
+    eyes.open driver: page, app_name: 'Ruby SDK UPD', test_name: 'Applitools frame and element example',
       viewport_size: { width: 800, height: 600 }
     visit 'https://astappev.github.io/test-html-pages/'
     eyes.check_window 'Whole page'

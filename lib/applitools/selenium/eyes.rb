@@ -590,16 +590,8 @@ module Applitools::Selenium
           algo = Applitools::Selenium::FullPageCaptureAlgorithm.new(
             debug_screenshot_provider: debug_screenshot_provider
           )
-          region_provider = Object.new
-          region_provider.instance_eval do
-            def region
-              Applitools::Region::EMPTY
-            end
+          region_provider = Applitools::Selenium::RegionProvider.new(driver, Applitools::Region::EMPTY)
 
-            def coordinate_type
-              nil
-            end
-          end
           full_page_image = algo.get_stitched_region image_provider: image_provider,
                                   region_to_check: region_provider,
                                   origin_provider: Applitools::Selenium::ScrollPositionProvider.new(driver),

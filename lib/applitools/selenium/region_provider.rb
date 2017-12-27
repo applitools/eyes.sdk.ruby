@@ -15,6 +15,7 @@ module Applitools
           return frame_window if eye_region.is_a?(Applitools::Region) && eye_region.empty?
           region.location = region.location.offset(frame_window.location)
           region.intersect(frame_window) unless frame_window.empty?
+          #exception if empty
         end
         region
       end
@@ -49,6 +50,7 @@ module Applitools
             frames_offset = frame.location.offset(frames_offset).offset_negative(frame.parent_scroll_position)
             window = Applitools::Region.from_location_size(frame.location, frame.size) unless window
             window.intersect(Applitools::Region.from_location_size(frame.location, frame.size))
+            #exception if empty window
           end
           window
         end

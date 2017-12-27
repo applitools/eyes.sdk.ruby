@@ -79,19 +79,26 @@ module Applitools::Selenium
         entire_size = Applitools::RectangleSize.new image.width, image.height
       end
 
-      if region_provider.coordinate_type
+      if region_provider.region.size.square > 0
         left_top_image = screenshot.sub_screenshot(region_provider.region, region_provider.coordinate_type)
-        debug_screenshot_provider.save_subscreenshot(left_top_image, region_provider.region)
       else
-        left_top_image = screenshot.sub_screenshot(
-          Applitools::Region.from_location_size(Applitools::Location.new(0, 0), entire_size),
-          Applitools::EyesScreenshot::COORDINATE_TYPES[:context_relative]
-        )
-        debug_screenshot_provider.save_subscreenshot(
-          left_top_image,
-          Applitools::Region.from_location_size(Applitools::Location.new(0, 0), entire_size)
-        )
+        left_top_image = screenshot.image
       end
+      debug_screenshot_provider.save_subscreenshot(left_top_image, region_provider.region)
+
+      # if region_provider.coordinate_type
+      #   left_top_image = screenshot.sub_screenshot(region_provider.region, region_provider.coordinate_type)
+      #   debug_screenshot_provider.save_subscreenshot(left_top_image, region_provider.region)
+      # else
+      #   left_top_image = screenshot.sub_screenshot(
+      #     Applitools::Region.from_location_size(Applitools::Location.new(0, 0), entire_size),
+      #     Applitools::EyesScreenshot::COORDINATE_TYPES[:context_relative]
+      #   )
+      #   debug_screenshot_provider.save_subscreenshot(
+      #     left_top_image,
+      #     Applitools::Region.from_location_size(Applitools::Location.new(0, 0), entire_size)
+      #   )
+      # end
 
       image = left_top_image.image
 
@@ -150,24 +157,35 @@ module Applitools::Selenium
         debug_screenshot_provider.save(part_image, 'cutted')
 
         logger.info 'Done!'
-        begin
-          region_to_check = Applitools::Region.from_location_size(
-            part_region.location.offset(region_provider.region.location), part_region.size
-          )
-          a_screenshot = eyes_screenshot_factory.call(part_image).sub_screenshot(region_to_check,
-            Applitools::EyesScreenshot::COORDINATE_TYPES[:context_relative], false)
-          debug_screenshot_provider.save_subscreenshot(a_screenshot, region_to_check)
-        rescue Applitools::OutOfBoundsException => e
-          logger.error e.message
-          break
-        end
+
+        a_screenshot = eyes_screenshot_factory.call(part_image).sub_screenshot(
+          region_provider.region,
+          Applitools::EyesScreenshot::COORDINATE_TYPES[:context_relative],
+          false
+        )
+
+
+        # begin
+        #   region_to_check = Applitools::Region.from_location_size(
+        #     part_region.location.offset(region_provider.region.location), part_region.size
+        #   )
+        #   a_screenshot = eyes_screenshot_factory.call(part_image).sub_screenshot(region_to_check,
+        #     Applitools::EyesScreenshot::COORDINATE_TYPES[:context_relative], false)
+        #   debug_screenshot_provider.save_subscreenshot(a_screenshot, region_to_check)
+        # rescue Applitools::OutOfBoundsException => e
+        #   logger.error e.message
+        #   break
+        # end
 
         logger.info 'Stitching part into the image container...'
 
-        stitched_image.replace! a_screenshot.image, part_region.x, part_region.y
+        # stitched_image.replace! a_screenshot.image, part_region.x, part_region.y
+
+        current_position = position_provider.current_position
+        stitched_image.replace! a_screenshot.image, current_position.x, current_position.y
         logger.info 'Done!'
 
-        last_successful_location = Applitools::Location.for part_region.x, part_region.y
+        last_successful_location = Applitools::Location.for current_position.x, current_position.y
         next unless a_screenshot
         last_successful_part_size = Applitools::RectangleSize.new(
           a_screenshot.image.width,

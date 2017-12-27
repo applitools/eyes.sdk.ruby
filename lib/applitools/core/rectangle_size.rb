@@ -48,6 +48,18 @@ module Applitools
       self
     end
 
+    def square
+      width * height
+    end
+
+    def >(other)
+      square > other.square
+    end
+
+    def<(other)
+      square < other.square
+    end
+
     def to_hash
       to_h
     end
