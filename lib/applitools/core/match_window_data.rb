@@ -225,7 +225,7 @@ module Applitools
     def convert_floating_regions_coordinates
       return unless @need_convert_floating_regions_coordinates
       self.floating_regions = @floating_regions.map do |r|
-        r.location = app_output.screenshot.convert_location(
+        r.location = app_output.screenshot.convert_region_location(
           r.location,
           Applitools::EyesScreenshot::COORDINATE_TYPES[:context_relative],
           Applitools::EyesScreenshot::COORDINATE_TYPES[:screenshot_as_is]

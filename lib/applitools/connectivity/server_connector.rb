@@ -100,12 +100,13 @@ module Applitools::Connectivity
     end
 
     def start_session(session_start_info)
-      res = post(
-        endpoint_url, body: Oj.dump(
-          startInfo:  Applitools::Utils.camelcase_hash_keys(session_start_info.to_hash)
-        )
+      request_body = Oj.dump(
+        startInfo: Applitools::Utils.camelcase_hash_keys(session_start_info.to_hash)
       )
-      raise Applitools::EyesError.new("Request failed: #{res.status} #{res.body}") unless res.success?
+      res = post(
+        endpoint_url, body: request_body
+      )
+      raise Applitools::EyesError.new("Request failed: #{res.status} #{res.body} #{request_body}") unless res.success?
 
       response = Oj.load(res.body)
       Applitools::Session.new(response['id'], response['url'], res.status == HTTP_STATUS_CODES[:created])
