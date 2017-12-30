@@ -77,7 +77,8 @@ module Applitools::Selenium
 
     attr_accessor :base_agent_id, :screenshot, :force_full_page_screenshot, :hide_scrollbars,
       :wait_before_screenshots, :debug_screenshot, :stitch_mode, :disable_horizontal_scrolling,
-      :disable_vertical_scrolling, :explicit_entire_size, :debug_screenshot_provider, :stitching_overlap
+      :disable_vertical_scrolling, :explicit_entire_size, :debug_screenshot_provider, :stitching_overlap,
+      :full_page_capture_algorithm_left_top_offset
     attr_reader :driver
 
     def_delegators 'Applitools::EyesLogger', :logger, :log_handler, :log_handler=
@@ -107,6 +108,7 @@ module Applitools::Selenium
       self.explicit_entire_size = nil
       self.force_driver_resolution_as_viewport_size = false
       self.stitching_overlap = DEFAULT_STITCHING_OVERLAP
+      self.full_page_capture_algorithm_left_top_offset = Applitools::Location::TOP_LEFT
     end
 
     # Starts a test
@@ -261,19 +263,42 @@ module Applitools::Selenium
           end
 
           check_window = false
-          if !target.frames.empty? && eyes_element.is_a?(Applitools::Region)
-            # check_current_frame
-            logger.info "check_region_in_frame(#{eyes_element})"
-            region_provider = region_provider_for_frame
-
+          if !driver.frame_chain.empty?
+            self.full_page_capture_algorithm_left_top_offset =
+              if stitch_mode == :CSS && driver.browser.running_browser_name != :firefox
+                Applitools::Selenium::EyesWebDriverScreenshot.calc_frame_location_in_screenshot(
+                  driver.frame_chain,
+                  Applitools::Selenium::EyesWebDriverScreenshot::SCREENSHOT_TYPES[:entire_frame],
+                  logger
+                ).negative_part
+              else
+                self.full_page_capture_algorithm_left_top_offset = Applitools::Location::TOP_LEFT
+              end
+            if target.coordinate_type.nil?
+              # check_current_frame
+              logger.info "check_frame(#{eyes_element})"
+              region_provider = region_provider_for_frame
+              if force_full_page_screenshot
+                self.check_frame_or_element = true
+                self.region_to_check = region_provider
+              end
+            else
+              logger.info "check_region_in_frame(#{eyes_element})"
+              region_provider = Applitools::RegionProvider.new(
+                region_for_element(eyes_element), target.coordinate_type
+              )
+              if force_full_page_screenshot
+                self.check_frame_or_element = true
+                self.region_to_check = region_provider_for_frame
+              end
+            end
           elsif eyes_element.is_a? Applitools::Selenium::Element
             # check_element
             logger.info 'check_region(' \
               "#{Applitools::Region.from_location_size(eyes_element.location, eyes_element.size)})"
 
             use_coordinates =
-              if position_provider.is_a?(Applitools::Selenium::CssTranslatePositionProvider) &&
-                  driver.frame_chain.empty?
+              if position_provider.is_a?(Applitools::Selenium::CssTranslatePositionProvider)
                 Applitools::EyesScreenshot::COORDINATE_TYPES[:context_as_is]
               else
                 target.coordinate_type
@@ -320,6 +345,7 @@ module Applitools::Selenium
           self.force_full_page_screenshot = original_force_full_page_screenshot
           self.position_provider = original_position_provider
           self.region_to_check = nil
+          self.full_page_capture_algorithm_left_top_offset = Applitools::Location::TOP_LEFT
           region_visibility_strategy.return_to_original_position position_provider
         end
         # rubocop:enable BlockLength
@@ -339,6 +365,7 @@ module Applitools::Selenium
       return yield if block_given? && frames.empty?
 
       original_frame_chain = driver.frame_chain
+
       logger.info 'Switching to target frame according to frames path...'
       driver.switch_to.frames(frames_path: frames)
       logger.info 'Done!'
@@ -549,7 +576,8 @@ module Applitools::Selenium
             cut_provider: cut_provider,
             wait_before_screenshots: wait_before_screenshots,
             eyes_screenshot_factory: eyes_screenshot_factory,
-            stitching_overlap: stitching_overlap
+            stitching_overlap: stitching_overlap,
+            top_left_position: full_page_capture_algorithm_left_top_offset
           )
 
           logger.info 'Building screenshot object...'

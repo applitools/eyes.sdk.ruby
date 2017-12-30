@@ -102,6 +102,7 @@ module Applitools::Selenium
           options[:frame_location_in_screenshot].is_a? Applitools::Location
       self.frame_location_in_screenshot = Applitools::Location.new(0, 0)
       self.frame_window = Applitools::Region.new(0, 0, entire_frame_size.width, entire_frame_size.height)
+      self.force_offset = Applitools::Location::TOP_LEFT
     end
 
     # Initializes class properties.
@@ -161,9 +162,14 @@ module Applitools::Selenium
 
       if options[:frame_location_in_screenshot].nil?
         if !frame_chain.empty?
-          self.frame_location_in_screenshot = self.class.calc_frame_location_in_screenshot(
-            frame_chain, screenshot_type, logger
-          )
+          self.frame_location_in_screenshot = case driver.browser.running_browser_name
+                                              when :firefox
+                                                Applitools::Location.new(0, 0)
+                                              else
+                                                self.class.calc_frame_location_in_screenshot(
+                                                  frame_chain, screenshot_type, logger
+                                                )
+                                              end
         else
           self.frame_location_in_screenshot = Applitools::Location.new(0, 0)
         end
@@ -175,12 +181,17 @@ module Applitools::Selenium
       self.force_offset = options[:force_offset] if options[:force_offset]
 
       logger.info 'Calculating frame window..'
+
       self.frame_window = Applitools::Region.from_location_size(frame_location_in_screenshot, frame_size)
       frame_window.intersect Applitools::Region.new(0, 0, image.width, image.height)
 
       raise Applitools::EyesError.new 'Got empty frame window for screenshot!' if
           frame_window.width <= 0 || frame_window.height <= 0
 
+      logger.info "Frame location in screenshot: #{frame_location_in_screenshot}"
+      logger.info "Frame size: #{frame_size}"
+      logger.info "Image: #{image.width} x #{image.height}"
+      logger.info "Frame window: #{frame_window}"
       logger.info 'Done!'
     end
 
@@ -214,7 +225,7 @@ module Applitools::Selenium
         case to
         when Applitools::EyesScreenshot::COORDINATE_TYPES[:screenshot_as_is]
           result.offset_negative scroll_position
-          result.offset frame_location_in_screenshot
+          result = result.offset(frame_location_in_screenshot).positive_part
         else
           raise Applitools::EyesCoordinateTypeConversionException.new "Can't convert coordinates from #{from} to #{to}"
         end

@@ -16,6 +16,7 @@ RSpec.describe Applitools::Selenium::Eyes do
         .with(Applitools::Utils::EyesSeleniumUtils::JS_GET_CURRENT_SCROLL_POSITION)
         .and_return(left: 0, top: 0)
       allow(d).to receive(:user_agent).and_return(nil)
+      allow(d).to receive(:frame_chain).and_return([])
     end
   end
   let(:driver) { Applitools::Selenium::Driver.new(subject, driver: original_driver) }

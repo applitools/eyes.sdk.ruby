@@ -5,6 +5,10 @@ describe 'passthrough methods' do
   let(:eyes) { Applitools::Selenium::Eyes.new }
   let(:web_driver) { Selenium::WebDriver.for :phantomjs }
 
+  before do
+    pending('phantomJS is no longer supported by Selenium') unless RUBY_KEY == RUBY_1_9_3
+  end
+
   before do |example|
     eyes.api_key = 'dummy_key'
 
