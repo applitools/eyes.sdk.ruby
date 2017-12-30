@@ -41,7 +41,7 @@ module Applitools
     end
 
     def location
-      Location.new left, top
+      Applitools::Location.new left, top
     end
 
     def location=(other_location)
@@ -89,6 +89,14 @@ module Applitools
       mid_x = width / 2
       mid_y = height / 2
       Applitools::Location.for(mid_x.round, mid_y.round)
+    end
+
+    def scale_it!(scale_factor)
+      @left = (@left * scale_factor).to_i
+      @top = (@top * scale_factor).to_i
+      @width = (@width * scale_factor).to_i
+      @height = (@height * scale_factor).to_i
+      self
     end
 
     def sub_regions(subregion_size, is_fixed_size = false)

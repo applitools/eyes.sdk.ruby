@@ -608,6 +608,8 @@ module Applitools
         screenshot = screenshot.sub_screenshot region, region_provider.coordinate_type, false
       end
 
+      screenshot = yield(screenshot) if block_given?
+
       logger.info 'Compressing screenshot...'
       compress_result = compress_screenshot64 screenshot, last_screenshot
       logger.info 'Done! Getting title...'

@@ -1,6 +1,14 @@
 require_relative 'match_level_setter'
 module Applitools::FluentInterface
   include Applitools::MatchLevelSetter
+
+  def self.included(base)
+    base.define_singleton_method(:===) do |other|
+      return name == other if other.is_a? String
+      super(other)
+    end
+  end
+
   def ignore_caret(value = false)
     options[:ignore_caret] = value ? true : false
     self

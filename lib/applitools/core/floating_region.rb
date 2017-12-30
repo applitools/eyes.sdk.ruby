@@ -32,6 +32,7 @@ module Applitools
     end
 
     attr_accessor :max_top_offset, :max_right_offset, :max_bottom_offset, :max_left_offset
+
     NAMES = [
       :left, :top, :width, :height, :max_left_offset, :max_top_offset, :max_right_offset, :max_bottom_offset
     ].freeze
@@ -60,12 +61,24 @@ module Applitools
         raise(
           Applitools::EyesIllegalArgument,
           'Expected Applitools::FloatingRegion.new to be called as ' \
-          'Applitools::FloatingRegion.new(region, floating_bounds)' \
-          'or ' \
-          'Applitools::FloatingRegion.new(left, top, width, height, ' \
-          'bounds_leeft, bounds_top, bounds_right, bounds_bottom)'
+             'Applitools::FloatingRegion.new(region, floating_bounds)' \
+             'or ' \
+             'Applitools::FloatingRegion.new(left, top, width, height, ' \
+             'bounds_leeft, bounds_top, bounds_right, bounds_bottom)'
         )
       end
+    end
+
+    def scale_it!(scale_factor)
+      self.left *= scale_factor
+      self.top *= scale_factor
+      self.width *= scale_factor
+      self.height *= scale_factor
+      self.max_left_offset *= scale_factor
+      self.max_top_offset *= scale_factor
+      self.max_right_offset *= scale_factor
+      self.max_bottom_offset *= scale_factor
+      self
     end
 
     def to_hash
