@@ -13,6 +13,12 @@ module Applitools::Selenium
 
     DEFAULT_STITCHING_OVERLAP = 50 # Pixels
 
+    ENTIRE_ELEMENT_SCREENSHOT = 0
+
+    FULLPAGE_SCREENSHOT = 1
+
+    VIEWPORT_SCREENSHOT = 2
+
     extend Forwardable
     # @!visibility public
 
@@ -30,6 +36,20 @@ module Applitools::Selenium
           end
           raise Applitools::EyesError.new "Unknown driver #{driver}!"
         end
+      end
+
+      def obtain_screenshot_type(is_element, inside_a_frame, stitch_content, force_fullpage)
+        if stitch_content or force_fullpage
+          unless inside_a_frame
+            return FULLPAGE_SCREENSHOT if force_fullpage and !stitch_content
+            return FULLPAGE_SCREENSHOT if stitch_content and !is_element
+          end
+          return ENTIRE_ELEMENT_SCREENSHOT if inside_a_frame
+          return ENTIRE_ELEMENT_SCREENSHOT if stitch_content
+        else
+          return VIEWPORT_SCREENSHOT unless stitch_content or force_fullpage
+        end
+        VIEWPORT_SCREENSHOT
       end
 
       # Set the viewport size.
@@ -78,7 +98,7 @@ module Applitools::Selenium
     attr_accessor :base_agent_id, :screenshot, :force_full_page_screenshot, :hide_scrollbars,
       :wait_before_screenshots, :debug_screenshot, :stitch_mode, :disable_horizontal_scrolling,
       :disable_vertical_scrolling, :explicit_entire_size, :debug_screenshot_provider, :stitching_overlap,
-      :full_page_capture_algorithm_left_top_offset
+      :full_page_capture_algorithm_left_top_offset, :screenshot_type
     attr_reader :driver
 
     def_delegators 'Applitools::EyesLogger', :logger, :log_handler, :log_handler=
@@ -240,7 +260,7 @@ module Applitools::Selenium
       timeout = target.options[:timeout] || USE_DEFAULT_MATCH_TIMEOUT
       self.eyes_screenshot_factory = lambda do |image|
         Applitools::Selenium::EyesWebDriverScreenshot.new(
-          image, driver: driver, force_offset: position_provider.force_offset
+            image, driver: driver, force_offset: position_provider.force_offset
         )
       end
 
@@ -260,6 +280,43 @@ module Applitools::Selenium
 
           region_provider = Applitools::Selenium::RegionProvider.new(driver, region_for_element(eyes_element))
 
+          self.region_to_check = region_provider
+
+          is_element = eyes_element.is_a? Applitools::Selenium::Element
+          inside_a_frame = !driver.frame_chain.empty?
+
+          self.screenshot_type = self.class.obtain_screenshot_type(is_element, inside_a_frame, target.options[:stitch_content], force_full_page_screenshot)
+
+          # if eyes_element.is_a? Applitools::Selenium::Element
+          #   if target.options[:stitch_content]
+          #     self.screenshot_type = ENTIRE_ELEMENT_SCREENSHOT
+          #   else
+          #     self.screenshot_type = force_full_page_screenshot ? FULLPAGE_SCREENSHOT : VIEPORT_SCREENSHOT
+          #   end
+          # else
+          #   self.screenshot_type = (target.options[:stitch_content] | force_full_page_screenshot) ? FULLPAGE_SCREENSHOT : VIEPORT_SCREENSHOT
+          # end
+
+          case screenshot_type
+            when ENTIRE_ELEMENT_SCREENSHOT
+              if eyes_element.is_a? Applitools::Selenium::Element
+                original_overflow = eyes_element.overflow
+                eyes_element.overflow = 'hidden'
+                self.position_provider = Applitools::Selenium::ElementPositionProvider.new driver, eyes_element
+              end
+          end
+
+          # if target.options[:stitch_content] == true
+          #   # self.check_frame_or_element = true
+          #   self.region_to_check = region_provider
+          #
+          #   # if eyes_element.is_a? Applitools::Selenium::Element
+          #   #   self.position_provider = Applitools::Selenium::ElementPositionProvider.new driver, eyes_element
+          #   #
+          #   #   original_overflow = eyes_element.overflow
+          #   #   eyes_element.overflow = 'hidden'
+          #   # end
+          # end
           # check_window = false
           # if !driver.frame_chain.empty?
           #   self.full_page_capture_algorithm_left_top_offset =
@@ -368,6 +425,7 @@ module Applitools::Selenium
       driver.switch_to.frames(frames_path: frames)
       logger.info 'Done!'
 
+      self.force_full_page_screenshot = false
       yield if block_given?
 
       logger.info 'Switching back into top level frame...'
@@ -401,6 +459,10 @@ module Applitools::Selenium
     end
 
     # Returns the region of a given iframe.
+    # algo = Applitools::Selenium::FullPageCaptureAlgorithm.new(
+    #   debug_screenshot_provider: debug_screenshot_provider
+    # )
+
     #
     # @return [Applitools::Region] The region of the iframe.
     def region_provider_for_frame
@@ -543,9 +605,11 @@ module Applitools::Selenium
       :device_pixel_ratio, :position_provider, :scale_provider, :tag_for_debug,
       :region_visibility_strategy, :eyes_screenshot_factory, :force_driver_resolution_as_viewport_size
 
+    def image_provider
+      Applitools::Selenium::TakesScreenshotImageProvider.new driver, debug_screenshot_provider: debug_screenshot_provider
+    end
+
     def capture_screenshot
-      image_provider = Applitools::Selenium::TakesScreenshotImageProvider.new driver,
-        debug_screenshot_provider: debug_screenshot_provider
       logger.info 'Getting screenshot (capture_screenshot() has been invoked)'
 
       update_scaling_params
@@ -559,65 +623,16 @@ module Applitools::Selenium
       end
 
       begin
-        if check_frame_or_element
-          logger.info 'Check frame/element requested'
-          algo = Applitools::Selenium::FullPageCaptureAlgorithm.new(
+        algo = Applitools::Selenium::FullPageCaptureAlgorithm.new(
             debug_screenshot_provider: debug_screenshot_provider
-          )
-
-          entire_frame_or_element = algo.get_stitched_region(
-            image_provider: image_provider,
-            region_to_check: region_to_check,
-            origin_provider: position_provider,
-            position_provider: position_provider,
-            scale_provider: scale_provider,
-            cut_provider: cut_provider,
-            wait_before_screenshots: wait_before_screenshots,
-            eyes_screenshot_factory: eyes_screenshot_factory,
-            stitching_overlap: stitching_overlap,
-            top_left_position: full_page_capture_algorithm_left_top_offset
-          )
-
-          logger.info 'Building screenshot object...'
-          self.screenshot = Applitools::Selenium::EyesWebDriverScreenshot.new entire_frame_or_element,
-            driver: driver,
-            entire_frame_size: Applitools::RectangleSize.new(entire_frame_or_element.width,
-              entire_frame_or_element.height)
-        elsif force_full_page_screenshot
-          logger.info 'Full page screenshot requested'
-          original_frame = driver.frame_chain
-          driver.switch_to.default_content
-          algo = Applitools::Selenium::FullPageCaptureAlgorithm.new(
-            debug_screenshot_provider: debug_screenshot_provider
-          )
-          region_provider = Applitools::Selenium::RegionProvider.new(driver, Applitools::Region::EMPTY)
-
-          full_page_image = algo.get_stitched_region image_provider: image_provider,
-                                  region_to_check: region_provider,
-                                  origin_provider: Applitools::Selenium::ScrollPositionProvider.new(driver),
-                                  position_provider: position_provider,
-                                  scale_provider: scale_provider,
-                                  cut_provider: cut_provider,
-                                  wait_before_screenshots: wait_before_screenshots,
-                                  eyes_screenshot_factory: eyes_screenshot_factory,
-                                  stitching_overlap: stitching_overlap
-
-          unless driver.frame_chain.empty?
-            logger.info 'Switching back to original frame...'
-            driver.switch_to.frame original_frame
-            logger.info 'Done switching!'
-          end
-          logger.info 'Creating EyesWebDriver screenshot instance..'
-          ewd_screenshot = Applitools::Selenium::EyesFullPageScreenshot.new(full_page_image)
-          logger.info 'Done creating EyesWebDriver screenshot instance!'
-          ewd_screenshot
-        else
-          logger.info 'Screenshot requested...'
-          sleep wait_before_screenshots
-          image = image_provider.take_screenshot
-          scale_provider.scale_image(image) if scale_provider
-          cut_provider.cut(image) if cut_provider
-          self.screenshot = eyes_screenshot_factory.call(image)
+        )
+        case screenshot_type
+          when ENTIRE_ELEMENT_SCREENSHOT
+            self.screenshot = entire_element_screenshot(algo)
+          when FULLPAGE_SCREENSHOT
+            self.screenshot = full_page_screenshot(algo)
+          when VIEWPORT_SCREENSHOT
+            self.screenshot = viewport_screenshot
         end
       ensure
         begin
@@ -626,6 +641,63 @@ module Applitools::Selenium
           logger.warn "Failed to revert overflow! Error: #{e.message}"
         end
       end
+    end
+
+    def full_page_screenshot(algo)
+      logger.info 'Full page screenshot requested'
+      original_frame = driver.frame_chain
+      driver.switch_to.default_content
+      region_provider = Applitools::Selenium::RegionProvider.new(driver, Applitools::Region::EMPTY)
+
+      full_page_image = algo.get_stitched_region image_provider: image_provider,
+                                                 region_to_check: region_provider,
+                                                 origin_provider: Applitools::Selenium::ScrollPositionProvider.new(driver),
+                                                 position_provider: position_provider,
+                                                 scale_provider: scale_provider,
+                                                 cut_provider: cut_provider,
+                                                 wait_before_screenshots: wait_before_screenshots,
+                                                 eyes_screenshot_factory: eyes_screenshot_factory,
+                                                 stitching_overlap: stitching_overlap
+
+      unless driver.frame_chain.empty?
+        logger.info 'Switching back to original frame...'
+        driver.switch_to.frame original_frame
+        logger.info 'Done switching!'
+      end
+      logger.info 'Creating EyesWebDriver screenshot instance..'
+      result = Applitools::Selenium::EyesFullPageScreenshot.new(full_page_image)
+      logger.info 'Done creating EyesWebDriver screenshot instance!'
+      result
+    end
+
+    def entire_element_screenshot(algo)
+      logger.info 'Entire element screenshot requested'
+      entire_frame_or_element = algo.get_stitched_region(
+          image_provider: image_provider,
+          region_to_check: region_to_check,
+          origin_provider: position_provider,
+          position_provider: position_provider,
+          scale_provider: scale_provider,
+          cut_provider: cut_provider,
+          wait_before_screenshots: wait_before_screenshots,
+          eyes_screenshot_factory: eyes_screenshot_factory,
+          stitching_overlap: stitching_overlap,
+          top_left_position: full_page_capture_algorithm_left_top_offset
+      )
+
+      logger.info 'Building screenshot object (EyesStitchedElementScreenshot)...'
+      result = Applitools::Selenium::EyesStitchedElementScreenshot.new entire_frame_or_element
+      logger.info 'Done!'
+      result
+    end
+
+    def viewport_screenshot
+      logger.info 'Viewport screenshot requested'
+      sleep wait_before_screenshots
+      image = image_provider.take_screenshot
+      scale_provider.scale_image(image) if scale_provider
+      cut_provider.cut(image) if cut_provider
+      eyes_screenshot_factory.call(image)
     end
 
     def vp_size=(value, skip_check_if_open = false)

@@ -80,7 +80,7 @@ module Applitools::Selenium
       end
 
       if region_provider.region.size.square > 0
-        left_top_image = screenshot.sub_screenshot(region_provider.region, region_provider.coordinate_type)
+        left_top_image = screenshot.sub_screenshot(region_provider.region, region_provider.coordinate_type).image
       else
         left_top_image = screenshot.image
       end
@@ -117,7 +117,7 @@ module Applitools::Selenium
       # "getImagePart", since "entirePageSize" might be that of a frame.
       if image.width >= entire_size.width && image.height >= entire_size.height
         origin_provider.restore_state original_position
-        return image
+        return left_top_image
       end
 
       image_parts = entire_page.sub_regions(part_image_size)
@@ -137,6 +137,13 @@ module Applitools::Selenium
       last_successful_part_size = Applitools::RectangleSize.new image.width, image.height
 
       original_stitched_state = position_provider.state
+
+      stitched_image_region = Applitools::Region.new(
+          0,
+          0,
+          stitched_image.width,
+          stitched_image.height
+      )
 
       logger.info 'Getting the rest of the image parts...'
 
@@ -158,11 +165,32 @@ module Applitools::Selenium
 
         logger.info 'Done!'
 
-        a_screenshot = eyes_screenshot_factory.call(part_image).sub_screenshot(
+        a_screenshot = eyes_screenshot_factory.call(part_image)
+
+        a_screenshot = a_screenshot.sub_screenshot(
           region_provider.region,
           Applitools::EyesScreenshot::COORDINATE_TYPES[:context_relative],
           false
+        ) if region_provider.region.size.square > 0
+
+        replacement_region = Applitools::Region.new(
+          current_position.x,
+          current_position.y,
+          a_screenshot.width,
+          a_screenshot.height
         )
+
+        replacement_size = stitched_image_region.dup.intersect(replacement_region).size
+        replacement_region_in_screenshot = Applitools::Region.from_location_size(
+          Applitools::Location::TOP_LEFT,
+          replacement_size
+        )
+
+        image_to_stitch = a_screenshot.sub_screenshot(
+          replacement_region_in_screenshot,
+          Applitools::EyesScreenshot::COORDINATE_TYPES[:context_relative],
+          false
+        ).image
 
 
         # begin
@@ -181,15 +209,16 @@ module Applitools::Selenium
 
         # stitched_image.replace! a_screenshot.image, part_region.x, part_region.y
 
-        current_position = position_provider.current_position
-        stitched_image.replace! a_screenshot.image, current_position.x, current_position.y
+        stitched_image.replace! image_to_stitch, current_position.x, current_position.y
         logger.info 'Done!'
 
         last_successful_location = Applitools::Location.for current_position.x, current_position.y
-        next unless a_screenshot
+        # require 'pry'
+        # binding.pry
+        next unless image_to_stitch.area > 0
         last_successful_part_size = Applitools::RectangleSize.new(
-          a_screenshot.image.width,
-          a_screenshot.image.height
+          image_to_stitch.width,
+          image_to_stitch.height
         )
       end
 

@@ -1,6 +1,7 @@
 module Applitools
   module Selenium
     class RegionProvider
+
       def initialize(driver, eye_region)
         self.driver = driver
         self.eye_region = eye_region
@@ -23,6 +24,7 @@ module Applitools
       def coordinate_type
         nil
       end
+
       private
       attr_accessor :driver, :eye_region, :scroll_position_provider
 
