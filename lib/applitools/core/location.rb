@@ -44,7 +44,7 @@ module Applitools
       @y = y
     end
 
-    TOP_LEFT = Location.new(0, 0)
+    TOP_LEFT = Location.new(0, 0).freeze
 
     def to_s
       "#{x} x #{y}"

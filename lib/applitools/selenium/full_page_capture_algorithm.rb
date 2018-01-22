@@ -180,6 +180,8 @@ module Applitools::Selenium
           a_screenshot.height
         )
 
+        p replacement_region
+
         replacement_size = stitched_image_region.dup.intersect(replacement_region).size
         replacement_region_in_screenshot = Applitools::Region.from_location_size(
           Applitools::Location::TOP_LEFT,

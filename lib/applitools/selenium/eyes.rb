@@ -686,7 +686,9 @@ module Applitools::Selenium
       )
 
       logger.info 'Building screenshot object (EyesStitchedElementScreenshot)...'
-      result = Applitools::Selenium::EyesStitchedElementScreenshot.new entire_frame_or_element
+      result = Applitools::Selenium::EyesStitchedElementScreenshot.new(entire_frame_or_element).tap do |s|
+        s.top_left_location = region_to_check.entire_element_screenshot_offset
+      end
       logger.info 'Done!'
       result
     end
@@ -697,7 +699,9 @@ module Applitools::Selenium
       image = image_provider.take_screenshot
       scale_provider.scale_image(image) if scale_provider
       cut_provider.cut(image) if cut_provider
-      eyes_screenshot_factory.call(image)
+      eyes_screenshot_factory.call(image).tap do |s|
+        s.top_left_location = region_to_check.viewport_screenshot_offset
+      end
     end
 
     def vp_size=(value, skip_check_if_open = false)

@@ -20,5 +20,13 @@ module Applitools::Selenium
       return if reference.is_a? Applitools::Selenium::Element
       raise 'options[:reference] must be instance of Applitools::Selenium::Element'
     end
+
+    def dup
+      super.tap do |r|
+        r.location = location.dup
+        r.size = size.dup
+        r.parent_scroll_position = parent_scroll_position.dup
+      end
+    end
   end
 end
