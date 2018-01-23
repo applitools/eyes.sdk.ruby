@@ -1,10 +1,8 @@
+require_relative 'eyes_screenshot'
 module Applitools::Selenium
   # @!visibility private
-  class EyesWebDriverScreenshot < Applitools::EyesScreenshot
+  class EyesWebDriverScreenshot < Applitools::Selenium::EyesScreenshot
     attr_accessor :top_left_location
-    def initialize(*args)
-      super(args.shift)
-    end
 
     def sub_screenshot(region, coordinate_type, throw_if_clipped = false, force_nil_if_clipped = false)
       logger.info "get_subscreenshot(#{region}, #{throw_if_clipped})"
@@ -27,7 +25,7 @@ module Applitools::Selenium
         )
       )
 
-      self.class.new(cropped_image).tap do |s|
+      self.class.new(cropped_image, driver: driver).tap do |s|
         s.top_left_location = top_left_location.dup.offset(region.location)
       end
     end

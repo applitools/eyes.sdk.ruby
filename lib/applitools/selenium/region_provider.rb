@@ -31,7 +31,7 @@ module Applitools
         if eye_region.is_a?(Applitools::Region) && eye_region.empty?
           eye_region.location
         else
-          region.location
+          region.location.offset scroll_position_provider.current_position
         end
       end
 

@@ -665,7 +665,7 @@ module Applitools::Selenium
         logger.info 'Done switching!'
       end
       logger.info 'Creating EyesWebDriver screenshot instance..'
-      result = Applitools::Selenium::EyesFullPageScreenshot.new(full_page_image)
+      result = Applitools::Selenium::EyesFullPageScreenshot.new(full_page_image, driver: driver)
       logger.info 'Done creating EyesWebDriver screenshot instance!'
       result
     end
@@ -686,7 +686,7 @@ module Applitools::Selenium
       )
 
       logger.info 'Building screenshot object (EyesStitchedElementScreenshot)...'
-      result = Applitools::Selenium::EyesStitchedElementScreenshot.new(entire_frame_or_element).tap do |s|
+      result = Applitools::Selenium::EyesStitchedElementScreenshot.new(entire_frame_or_element, driver: driver).tap do |s|
         s.top_left_location = region_to_check.entire_element_screenshot_offset
       end
       logger.info 'Done!'

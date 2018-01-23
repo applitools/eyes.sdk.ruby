@@ -1,10 +1,7 @@
+require_relative 'eyes_screenshot'
 module Applitools::Selenium
   # @!visibility private
-  class EyesStitchedElementScreenshot < Applitools::EyesScreenshot
-    def initialize(*args)
-      super(args.shift)
-    end
-
+  class EyesStitchedElementScreenshot < Applitools::Selenium::EyesScreenshot
     def sub_screenshot(*_args)
       self
     end
