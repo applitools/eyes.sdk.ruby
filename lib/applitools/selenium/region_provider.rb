@@ -28,11 +28,7 @@ module Applitools
       end
 
       def entire_element_screenshot_offset
-        if eye_region.is_a?(Applitools::Region) && eye_region.empty?
-          eye_region.location
-        else
-          region.location.offset scroll_position_provider.current_position
-        end
+        eye_region.location
       end
 
       def viewport_screenshot_offset
