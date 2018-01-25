@@ -425,7 +425,7 @@ module Applitools::Selenium
       driver.switch_to.frames(frames_path: frames)
       logger.info 'Done!'
 
-      self.force_full_page_screenshot = false
+      # self.force_full_page_screenshot = false
       yield if block_given?
 
       logger.info 'Switching back into top level frame...'
