@@ -86,20 +86,6 @@ module Applitools::Selenium
       end
       debug_screenshot_provider.save_subscreenshot(left_top_image, region_provider.region)
 
-      # if region_provider.coordinate_type
-      #   left_top_image = screenshot.sub_screenshot(region_provider.region, region_provider.coordinate_type)
-      #   debug_screenshot_provider.save_subscreenshot(left_top_image, region_provider.region)
-      # else
-      #   left_top_image = screenshot.sub_screenshot(
-      #     Applitools::Region.from_location_size(Applitools::Location.new(0, 0), entire_size),
-      #     Applitools::EyesScreenshot::COORDINATE_TYPES[:context_relative]
-      #   )
-      #   debug_screenshot_provider.save_subscreenshot(
-      #     left_top_image,
-      #     Applitools::Region.from_location_size(Applitools::Location.new(0, 0), entire_size)
-      #   )
-      # end
-
       image = left_top_image.image
 
       part_image_size = Applitools::RectangleSize.new(
@@ -124,8 +110,6 @@ module Applitools::Selenium
 
       logger.info "Creating stitchedImage container. Size: #{entire_size}"
 
-      # Notice stitched_image uses the same type of image as the screenshots.
-      # stitched_image = Applitools::Screenshot.from_region entire_size
       stitched_image = ::ChunkyPNG::Image.new(entire_size.width, entire_size.height)
       logger.info 'Done! Adding initial screenshot..'
       logger.info "Initial part:(0,0) [#{image.width} x #{image.height}]"
@@ -180,8 +164,6 @@ module Applitools::Selenium
           a_screenshot.height
         )
 
-        p replacement_region
-
         replacement_size = stitched_image_region.dup.intersect(replacement_region).size
         replacement_region_in_screenshot = Applitools::Region.from_location_size(
           Applitools::Location::TOP_LEFT,
@@ -194,29 +176,13 @@ module Applitools::Selenium
           false
         ).image
 
-
-        # begin
-        #   region_to_check = Applitools::Region.from_location_size(
-        #     part_region.location.offset(region_provider.region.location), part_region.size
-        #   )
-        #   a_screenshot = eyes_screenshot_factory.call(part_image).sub_screenshot(region_to_check,
-        #     Applitools::EyesScreenshot::COORDINATE_TYPES[:context_relative], false)
-        #   debug_screenshot_provider.save_subscreenshot(a_screenshot, region_to_check)
-        # rescue Applitools::OutOfBoundsException => e
-        #   logger.error e.message
-        #   break
-        # end
-
         logger.info 'Stitching part into the image container...'
-
-        # stitched_image.replace! a_screenshot.image, part_region.x, part_region.y
 
         stitched_image.replace! image_to_stitch, current_position.x, current_position.y
         logger.info 'Done!'
 
         last_successful_location = Applitools::Location.for current_position.x, current_position.y
-        # require 'pry'
-        # binding.pry
+
         next unless image_to_stitch.area > 0
         last_successful_part_size = Applitools::RectangleSize.new(
           image_to_stitch.width,

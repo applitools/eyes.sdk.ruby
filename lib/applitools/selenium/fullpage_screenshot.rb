@@ -1,10 +1,7 @@
 require_relative 'eyes_screenshot'
 module Applitools::Selenium
-  # @!visibility private
-  class EyesWebDriverScreenshot < Applitools::Selenium::EyesScreenshot
-    attr_accessor :top_left_location
-
-    def sub_screenshot(region, coordinate_type, throw_if_clipped = false, force_nil_if_clipped = false)
+  class FullpageScreenshot < Applitools::Selenium::EyesScreenshot
+    def sub_screenshot(region, _coordinate_type, throw_if_clipped = false, force_nil_if_clipped = false)
       logger.info "get_subscreenshot(#{region}, #{throw_if_clipped})"
       Applitools::ArgumentGuard.not_nil region, 'region'
 
@@ -13,21 +10,21 @@ module Applitools::Selenium
       if as_is_subscreenshot_region.empty? || (throw_if_clipped && as_is_subscreenshot_region.size != region.size)
         return nil if force_nil_if_clipped
         raise Applitools::OutOfBoundsException.new "Region #{region} is out" \
-          " of screenshot bounds."
+          ' of screenshot bounds'
       end
 
-      cropped_image = Applitools::Screenshot.from_image(
+      sub_screenshot_image = Applitools::Screenshot.from_image(
         image.crop(
-          as_is_subscreenshot_region.x,
-          as_is_subscreenshot_region.y,
+          as_is_subscreenshot_region.left,
+          as_is_subscreenshot_region.top,
           as_is_subscreenshot_region.width,
           as_is_subscreenshot_region.height
         )
       )
 
-      self.class.new(cropped_image, driver: driver).tap do |s|
-        s.top_left_location = top_left_location.dup.offset(region.location)
-      end
+      result = self.class.new sub_screenshot_image, driver: driver
+      logger.info 'Done!'
+      result
     end
   end
 end
