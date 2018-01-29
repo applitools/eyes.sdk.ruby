@@ -123,10 +123,10 @@ module Applitools::Selenium
       original_stitched_state = position_provider.state
 
       stitched_image_region = Applitools::Region.new(
-          0,
-          0,
-          stitched_image.width,
-          stitched_image.height
+        0,
+        0,
+        stitched_image.width,
+        stitched_image.height
       )
 
       logger.info 'Getting the rest of the image parts...'
@@ -151,11 +151,13 @@ module Applitools::Selenium
 
         a_screenshot = eyes_screenshot_factory.call(part_image)
 
-        a_screenshot = a_screenshot.sub_screenshot(
-          region_provider.region,
-          Applitools::EyesScreenshot::COORDINATE_TYPES[:context_relative],
-          false
-        ) if region_provider.region.size.square > 0
+        if region_provider.region.size.square > 0
+          a_screenshot = a_screenshot.sub_screenshot(
+            region_provider.region,
+            Applitools::EyesScreenshot::COORDINATE_TYPES[:context_relative],
+            false
+          )
+        end
 
         replacement_region = Applitools::Region.new(
           current_position.x,

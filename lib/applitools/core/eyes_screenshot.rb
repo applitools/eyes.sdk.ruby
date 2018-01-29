@@ -16,7 +16,6 @@ module Applitools
     def initialize(screenshot)
       Applitools::ArgumentGuard.is_a? screenshot, 'screenshot', Applitools::Screenshot
       self.image = screenshot
-      self.top_left_location = Applitools::Location::TOP_LEFT
     end
 
     abstract_method :sub_screenshot, false

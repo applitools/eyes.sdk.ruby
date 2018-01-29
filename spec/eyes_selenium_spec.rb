@@ -169,4 +169,3 @@ RSpec.describe 'Applitools::Selenium::Eyes' do
     end
   end
 end
-

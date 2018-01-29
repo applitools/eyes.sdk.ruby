@@ -22,9 +22,13 @@ module Applitools::Selenium
         )
       )
 
-      result = self.class.new sub_screenshot_image, driver: driver
+      result = self.class.new(sub_screenshot_image, region_provider: region_provider)
       logger.info 'Done!'
       result
+    end
+
+    def top_left_location
+      @top_left_location ||= Applitools::Location::TOP_LEFT
     end
   end
 end

@@ -26,20 +26,20 @@ module Applitools::Selenium
     # @option options [WebElement] :frameElement The element with the frame.
     def frame(*args)
       case value = args[0]
-        when Hash
-          options = value
-          raise Applitools::EyesIllegalArgument.new 'You must pass :index or :name_or_id or :frame_element option' unless
-              options[:index] || options[:name_or_id] || options[:frame_element]
-          if (needed_keys = (options.keys & [:index, :name_or_id, :frame_element])).length == 1
-            send "frame_by_#{needed_keys.first}", options[needed_keys.first]
-          else
-            raise Applitools::EyesIllegalArgument.new 'You\'ve passed some extra keys!' /
-                                                          'Only :index, :name_or_id or :frame_elenent are allowed.'
-          end
-        when Applitools::Selenium::Element
-          frame_by_frame_element(value)
+      when Hash
+        options = value
+        raise Applitools::EyesIllegalArgument.new 'You must pass :index or :name_or_id or :frame_element option' unless
+            options[:index] || options[:name_or_id] || options[:frame_element]
+        if (needed_keys = (options.keys & [:index, :name_or_id, :frame_element])).length == 1
+          send "frame_by_#{needed_keys.first}", options[needed_keys.first]
         else
-          raise Applitools::EyesError "Unknown frame selector to switch!"
+          raise Applitools::EyesIllegalArgument.new 'You\'ve passed some extra keys!' /
+            'Only :index, :name_or_id or :frame_elenent are allowed.'
+        end
+      when Applitools::Selenium::Element
+        frame_by_frame_element(value)
+      else
+        raise Applitools::EyesError 'Unknown frame selector to switch!'
       end
     end
 

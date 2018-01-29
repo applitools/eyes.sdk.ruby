@@ -39,15 +39,15 @@ module Applitools::Selenium
       end
 
       def obtain_screenshot_type(is_element, inside_a_frame, stitch_content, force_fullpage)
-        if stitch_content or force_fullpage
+        if stitch_content || force_fullpage
           unless inside_a_frame
-            return FULLPAGE_SCREENSHOT if force_fullpage and !stitch_content
-            return FULLPAGE_SCREENSHOT if stitch_content and !is_element
+            return FULLPAGE_SCREENSHOT if force_fullpage && !stitch_content
+            return FULLPAGE_SCREENSHOT if stitch_content && !is_element
           end
           return ENTIRE_ELEMENT_SCREENSHOT if inside_a_frame
           return ENTIRE_ELEMENT_SCREENSHOT if stitch_content
         else
-          return VIEWPORT_SCREENSHOT unless stitch_content or force_fullpage
+          return VIEWPORT_SCREENSHOT unless stitch_content || force_fullpage
         end
         VIEWPORT_SCREENSHOT
       end
@@ -261,11 +261,11 @@ module Applitools::Selenium
 
       self.eyes_screenshot_factory = lambda do |image|
         Applitools::Selenium::ViewportScreenshot.new(
-            image, driver: driver, force_offset: position_provider.force_offset
+          image,
+          region_provider: region_to_check
         )
       end
 
-      # rubocop:disable BlockLength
       check_in_frame target_frames: target.frames do
         begin
           match_data = Applitools::MatchWindowData.new
@@ -286,15 +286,20 @@ module Applitools::Selenium
           is_element = eyes_element.is_a? Applitools::Selenium::Element
           inside_a_frame = !driver.frame_chain.empty?
 
-          self.screenshot_type = self.class.obtain_screenshot_type(is_element, inside_a_frame, target.options[:stitch_content], force_full_page_screenshot)
+          self.screenshot_type = self.class.obtain_screenshot_type(
+            is_element,
+            inside_a_frame,
+            target.options[:stitch_content],
+            force_full_page_screenshot
+          )
 
           case screenshot_type
-            when ENTIRE_ELEMENT_SCREENSHOT
-              if eyes_element.is_a? Applitools::Selenium::Element
-                original_overflow = eyes_element.overflow
-                eyes_element.overflow = 'hidden'
-                self.position_provider = Applitools::Selenium::ElementPositionProvider.new driver, eyes_element
-              end
+          when ENTIRE_ELEMENT_SCREENSHOT
+            if eyes_element.is_a? Applitools::Selenium::Element
+              original_overflow = eyes_element.overflow
+              eyes_element.overflow = 'hidden'
+              self.position_provider = Applitools::Selenium::ElementPositionProvider.new driver, eyes_element
+            end
           end
 
           check_window_base(
@@ -477,7 +482,10 @@ module Applitools::Selenium
       :region_visibility_strategy, :eyes_screenshot_factory, :force_driver_resolution_as_viewport_size
 
     def image_provider
-      Applitools::Selenium::TakesScreenshotImageProvider.new driver, debug_screenshot_provider: debug_screenshot_provider
+      Applitools::Selenium::TakesScreenshotImageProvider.new(
+        driver,
+        debug_screenshot_provider: debug_screenshot_provider
+      )
     end
 
     def capture_screenshot
@@ -495,15 +503,15 @@ module Applitools::Selenium
 
       begin
         algo = Applitools::Selenium::FullPageCaptureAlgorithm.new(
-            debug_screenshot_provider: debug_screenshot_provider
+          debug_screenshot_provider: debug_screenshot_provider
         )
         case screenshot_type
-          when ENTIRE_ELEMENT_SCREENSHOT
-            self.screenshot = entire_element_screenshot(algo)
-          when FULLPAGE_SCREENSHOT
-            self.screenshot = full_page_screenshot(algo)
-          when VIEWPORT_SCREENSHOT
-            self.screenshot = viewport_screenshot
+        when ENTIRE_ELEMENT_SCREENSHOT
+          self.screenshot = entire_element_screenshot(algo)
+        when FULLPAGE_SCREENSHOT
+          self.screenshot = full_page_screenshot(algo)
+        when VIEWPORT_SCREENSHOT
+          self.screenshot = viewport_screenshot
         end
       ensure
         begin
@@ -520,15 +528,17 @@ module Applitools::Selenium
       driver.switch_to.default_content
       region_provider = Applitools::Selenium::RegionProvider.new(driver, Applitools::Region::EMPTY)
 
-      full_page_image = algo.get_stitched_region image_provider: image_provider,
-                                                 region_to_check: region_provider,
-                                                 origin_provider: Applitools::Selenium::ScrollPositionProvider.new(driver),
-                                                 position_provider: position_provider,
-                                                 scale_provider: scale_provider,
-                                                 cut_provider: cut_provider,
-                                                 wait_before_screenshots: wait_before_screenshots,
-                                                 eyes_screenshot_factory: eyes_screenshot_factory,
-                                                 stitching_overlap: stitching_overlap
+      full_page_image = algo.get_stitched_region(
+        image_provider: image_provider,
+        region_to_check: region_provider,
+        origin_provider: Applitools::Selenium::ScrollPositionProvider.new(driver),
+        position_provider: position_provider,
+        scale_provider: scale_provider,
+        cut_provider: cut_provider,
+        wait_before_screenshots: wait_before_screenshots,
+        eyes_screenshot_factory: eyes_screenshot_factory,
+        stitching_overlap: stitching_overlap
+      )
 
       unless driver.frame_chain.empty?
         logger.info 'Switching back to original frame...'
@@ -536,7 +546,10 @@ module Applitools::Selenium
         logger.info 'Done switching!'
       end
       logger.info 'Creating EyesWebDriver screenshot instance..'
-      result = Applitools::Selenium::FullpageScreenshot.new(full_page_image, driver: driver)
+      result = Applitools::Selenium::FullpageScreenshot.new(
+        full_page_image,
+        region_provider: region_to_check
+      )
       logger.info 'Done creating EyesWebDriver screenshot instance!'
       result
     end
@@ -544,22 +557,23 @@ module Applitools::Selenium
     def entire_element_screenshot(algo)
       logger.info 'Entire element screenshot requested'
       entire_frame_or_element = algo.get_stitched_region(
-          image_provider: image_provider,
-          region_to_check: region_to_check,
-          origin_provider: position_provider,
-          position_provider: position_provider,
-          scale_provider: scale_provider,
-          cut_provider: cut_provider,
-          wait_before_screenshots: wait_before_screenshots,
-          eyes_screenshot_factory: eyes_screenshot_factory,
-          stitching_overlap: stitching_overlap,
-          top_left_position: full_page_capture_algorithm_left_top_offset
+        image_provider: image_provider,
+        region_to_check: region_to_check,
+        origin_provider: position_provider,
+        position_provider: position_provider,
+        scale_provider: scale_provider,
+        cut_provider: cut_provider,
+        wait_before_screenshots: wait_before_screenshots,
+        eyes_screenshot_factory: eyes_screenshot_factory,
+        stitching_overlap: stitching_overlap,
+        top_left_position: full_page_capture_algorithm_left_top_offset
       )
 
       logger.info 'Building screenshot object (EyesStitchedElementScreenshot)...'
-      result = Applitools::Selenium::EntireElementScreenshot.new(entire_frame_or_element, driver: driver).tap do |s|
-        s.top_left_location = region_to_check.entire_element_screenshot_offset
-      end
+      result = Applitools::Selenium::EntireElementScreenshot.new(
+        entire_frame_or_element,
+        region_provider: region_to_check
+      )
       logger.info 'Done!'
       result
     end
@@ -570,9 +584,7 @@ module Applitools::Selenium
       image = image_provider.take_screenshot
       scale_provider.scale_image(image) if scale_provider
       cut_provider.cut(image) if cut_provider
-      eyes_screenshot_factory.call(image).tap do |s|
-        s.top_left_location = region_to_check.viewport_screenshot_offset
-      end
+      eyes_screenshot_factory.call(image)
     end
 
     def vp_size=(value, skip_check_if_open = false)

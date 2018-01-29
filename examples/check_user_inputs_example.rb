@@ -25,9 +25,9 @@ RSpec.describe 'Check frame and element example', :type => :feature, :js => true
               viewport_size: { width: 800, height: 600 }
 
     visit 'https://astappev.github.io/test-html-pages/'
-    page.execute_script("window.scrollTo(0, 25);")
+    page.execute_script('window.scrollTo(0, 25);')
     target = Applitools::Selenium::Target.window.fully.ignore(
-        Applitools::Region.new(55, 60, 90, 90), Applitools::PaddingBounds.new(10, 12, 14, 16)
+      Applitools::Region.new(55, 60, 90, 90), Applitools::PaddingBounds.new(10, 12, 14, 16)
     ).ignore(:id, 'overflowing-div-image')
     eyes.check('Whole page', target)
     page.find(:id, 'overflowing-div').click
@@ -36,7 +36,7 @@ RSpec.describe 'Check frame and element example', :type => :feature, :js => true
     page.find(:css, 'input[ng-model="user.email"').set('test2')
 
     target = Applitools::Selenium::Target.window.ignore(
-        Applitools::Region.new(55, 60, 90, 90), Applitools::PaddingBounds.new(10, 12, 14, 16)
+      Applitools::Region.new(55, 60, 90, 90), Applitools::PaddingBounds.new(10, 12, 14, 16)
     ).ignore(:id, 'overflowing-div-image')
     eyes.check('Whole page', target)
     page.find(:id, 'overflowing-div').click
@@ -52,7 +52,7 @@ RSpec.describe 'Check frame and element example', :type => :feature, :js => true
     eyes.check 'Overflowed region', target
     page.find(:id, 'overflowing-div').click
     target = Applitools::Selenium::Target.window.frame('frame1').fully.floating(
-        :id, 'inner-frame-div', 10, 10, 10, 10, Applitools::PaddingBounds.new(10, 12, 14, 16)
+      :id, 'inner-frame-div', 10, 10, 10, 10, Applitools::PaddingBounds.new(10, 12, 14, 16)
     )
     eyes.check('', target)
 
@@ -66,7 +66,8 @@ RSpec.describe 'Check frame and element example', :type => :feature, :js => true
       page.find(:id, 'inner-frame-div').click
     end
 
-    target = Applitools::Selenium::Target.window.region(:id, 'overflowing-div-image').fully.floating(Applitools::Region.new(0,0,30,30), 10,10,10,10)
+    target = Applitools::Selenium::Target.window.region(:id, 'overflowing-div-image').fully
+                                         .floating(Applitools::Region.new(0, 0, 30, 30), 10, 10, 10, 10)
     eyes.check('minions', target)
     eyes.close true
   end
