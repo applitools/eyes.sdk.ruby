@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe Applitools::Images::Eyes do
+RSpec.describe Applitools::Images::Eyes, mock_connection: true do
   let(:image) { ChunkyPNG::Image.new(5, 5) }
   let(:target) { Applitools::Images::Target.any(image) }
   before(:each) do
