@@ -1,9 +1,11 @@
 require 'eyes_selenium'
 require 'eyes_images'
+require 'eyes_calabash'
+
 Dir['./spec/support/**/*.rb'].sort.each { |f| require f }
 
 RSpec.configure do |config|
-  config.before do
+  config.before mock_connection: true do
     allow_any_instance_of(Applitools::Connectivity::ServerConnector).to receive(:start_session) do
       Applitools::Session.new('dummy_id', 'dummy_url', true)
     end

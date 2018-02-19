@@ -48,6 +48,12 @@ module Applitools
       self
     end
 
+    def scale_it!(scale_factor)
+      self.width *= scale_factor
+      self.height *= scale_factor
+      self
+    end
+
     def square
       width * height
     end

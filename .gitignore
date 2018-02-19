@@ -32,3 +32,4 @@ ext/eyes_core/*.bundle
 .ruby-version
 !/*/.ruby-version
 debug_screenshots
+node_modules

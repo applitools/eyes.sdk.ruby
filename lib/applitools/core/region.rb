@@ -2,7 +2,7 @@ require_relative 'padding_bounds'
 module Applitools
   class Region
     extend Forwardable
-    attr_accessor :left, :top, :width, :height
+    attr_accessor :left, :top, :width, :height, :padding
 
     def_delegators :@padding, :padding_left, :padding_top, :padding_right, :padding_bottom
 
@@ -41,7 +41,7 @@ module Applitools
     end
 
     def location
-      Location.new left, top
+      Applitools::Location.new left, top
     end
 
     def location=(other_location)
@@ -90,6 +90,14 @@ module Applitools
       Applitools::Location.for(mid_x.round, mid_y.round)
     end
 
+    def scale_it!(scale_factor)
+      @left = (@left * scale_factor).to_i
+      @top = (@top * scale_factor).to_i
+      @width = (@width * scale_factor).to_i
+      @height = (@height * scale_factor).to_i
+      self
+    end
+
     def sub_regions(subregion_size, is_fixed_size = false)
       return self.class.sub_regions_with_fixed_size self, subregion_size if is_fixed_size
       self.class.sub_regions_with_varying_size self, subregion_size
@@ -110,6 +118,13 @@ module Applitools
 
     def size_equals?(region)
       width == region.width && height == region.height
+    end
+
+    def ==(other)
+      return false unless other.is_a? self.class
+      size_location_match = left == other.left && top == other.top && width == other.width && height == other.height
+      padding_match = padding_left == other.padding_left && padding_top == other.padding_top && padding_right == other.padding_right && padding_bottom == other.padding_bottom
+      size_location_match && padding_match
     end
 
     # Sets padding for a current region. If called without any argument, all paddings will be set to 0

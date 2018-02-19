@@ -23,9 +23,29 @@ RSpec.shared_examples 'has private method' do |methods|
 end
 
 RSpec.shared_examples 'has abstract method' do |methods|
-  methods.each do |m|
+  trivial = proc do |m|
     it ":#{m}" do
       expect { subject.send(m) }.to raise_error(Applitools::AbstractMethodCalled)
+    end
+  end
+
+  case methods
+  when Array
+    methods.each do |m|
+      trivial.call(m)
+      # it ":#{m}" do
+      #   expect { subject.send(m) }.to raise_error(Applitools::AbstractMethodCalled)
+      # end
+    end
+  when Hash
+    methods.keys.each do |m|
+      if methods[m].is_a? Array
+        it ":#{m}" do
+          expect { subject.send(m, *methods[m]) }.to raise_error(Applitools::AbstractMethodCalled)
+        end
+      else
+        trivial.call(m)
+      end
     end
   end
 end

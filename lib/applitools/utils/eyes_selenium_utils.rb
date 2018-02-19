@@ -217,6 +217,7 @@ module Applitools::Utils
 
     # @param [Applitools::Selenium::Driver] executor
     def entire_page_size(executor)
+      return Applitools::MOCK_ENTIRE_SIZE if defined?(Applitools::MOCK_ENTIRE_SIZE)
       metrics = page_metrics(executor)
       max_document_element_height = [metrics[:client_height], metrics[:scroll_height]].max
       max_body_height = [metrics[:body_client_height], metrics[:body_scroll_height]].max
@@ -228,6 +229,7 @@ module Applitools::Utils
     end
 
     def current_frame_content_entire_size(executor)
+      return Applitools::MOCK_ENTIRE_SIZE if defined?(Applitools::MOCK_ENTIRE_SIZE)
       dimensions = executor.execute_script(JS_GET_CONTENT_ENTIRE_SIZE)
       Applitools::RectangleSize.new(dimensions.first.to_i, dimensions.last.to_i)
     rescue

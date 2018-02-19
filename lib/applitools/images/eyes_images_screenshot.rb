@@ -35,18 +35,6 @@ module Applitools::Images
       end
     end
 
-    def convert_region_location(region, from, to)
-      Applitools::ArgumentGuard.not_nil region, 'region'
-      return Core::Region.new(0, 0, 0, 0) if region.empty?
-
-      Applitools::ArgumentGuard.not_nil from, 'from'
-      Applitools::ArgumentGuard.not_nil to, 'to'
-
-      updated_location = convert_location region.location, from, to
-
-      Applitools::Region.new updated_location.x, updated_location.y, region.width, region.height
-    end
-
     def intersected_region(region, from, to = CONTEXT_RELATIVE)
       Applitools::ArgumentGuard.not_nil region, 'region'
       Applitools::ArgumentGuard.not_nil from, 'coordinates Type (from)'

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Applitools::EyesBase do
+describe Applitools::EyesBase, mock_connection: true do
   it_should_behave_like 'responds to method', [
     :agent_id,
     :agent_id=,
@@ -28,6 +28,7 @@ describe Applitools::EyesBase do
     :failure_reports,
     :failure_reports=,
     :open?,
+    :running_session?,
     :log_handler,
     :log_handler=,
     :scale_ratio,
@@ -547,6 +548,17 @@ describe Applitools::EyesBase do
       allow(subject).to receive(:capture_screenshot)
       allow(subject).to receive(:title)
       subject.check_window_base(region_provider, 0, match_data)
+    end
+  end
+
+  context ':running_session?' do
+    it 'returns false if no session' do
+      subject.instance_variable_set(:@running_session, nil)
+      expect(subject.running_session?).to be false
+    end
+    it 'returns true if running session' do
+      subject.instance_variable_set(:@running_session, 1)
+      expect(subject.running_session?).to be true
     end
   end
 

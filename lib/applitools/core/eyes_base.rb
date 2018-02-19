@@ -155,6 +155,14 @@ module Applitools
       @open
     end
 
+    def running_session?
+      running_session.nil? ? false : true
+    end
+
+    def new_session?
+      running_session && running_session.new_session?
+    end
+
     def app_name
       !current_app_name.nil? && !current_app_name.empty? ? current_app_name : @app_name
     end
@@ -217,7 +225,8 @@ module Applitools
       logger.info "openBase(app_name: #{options[:app_name]}, test_name: #{options[:test_name]}," \
           " viewport_size: #{options[:viewport_size]})"
 
-      raise Applitools::EyesError.new 'API key is missing! Please set it using api_key=' if api_key.nil?
+      raise Applitools::EyesError.new 'API key is missing! Please set it using api_key=' if
+        api_key.nil? || (api_key && api_key.empty?)
 
       self.viewport_size = options[:viewport_size]
       self.session_type = options[:session_type]
@@ -607,6 +616,8 @@ module Applitools
       unless region.empty?
         screenshot = screenshot.sub_screenshot region, region_provider.coordinate_type, false
       end
+
+      screenshot = yield(screenshot) if block_given?
 
       logger.info 'Compressing screenshot...'
       compress_result = compress_screenshot64 screenshot, last_screenshot
