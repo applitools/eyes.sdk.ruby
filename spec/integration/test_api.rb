@@ -1,4 +1,7 @@
 $batch_info ||= Applitools::BatchInfo.new 'Ruby tests'
+
+require_relative 'eyes_test_result'
+
 RSpec.shared_context 'eyes integration test' do
   let(:eyes) { @eyes }
   let(:selenium_server_url) { @selenium_server_url }
@@ -40,7 +43,7 @@ RSpec.shared_context 'eyes integration test' do
 
   after do
     begin
-      eyes.close
+      eyes.close if eyes.open?
     ensure
       eyes.abort_if_not_closed
       driver.quit
@@ -134,7 +137,7 @@ RSpec.shared_examples 'test fluent API' do
 
   it 'TestCheckWindowWithIgnoreBySelector_Fluent' do
     target = Applitools::Selenium::Target.window.ignore(:id, 'overflowing-div')
-    eyes.check('Fluent - Window with ignore region by selector')
+    eyes.check('Fluent - Window with ignore region by selector', target)
   end
 
   it 'TestCheckWindowWithFloatingBySelector_Fluent' do
@@ -143,12 +146,10 @@ RSpec.shared_examples 'test fluent API' do
   end
 
   it 'TestCheckWindowWithFloatingByRegion_Fluent' do
-#     ICheckSettings settings = Target.window()
-#                                   .floating(new Region(10, 10, 20, 20), 3, 3, 20, 30);
-#     eyes.check("Fluent - Window with floating region by region", settings);
-# -------
-#     setExpectedFloatingsRegions(new FloatingMatchSettings(10, 10, 20, 20, 3, 3, 20, 30));
-#     target = Applitools::Selenium::Target.window.floating()
+    target = Applitools::Selenium::Target.window.floating(::Applitools::FloatingRegion.new(10, 10, 20, 20, 3, 3, 20, 30))
+    eyes.check('Fluent - Window with floating region by region', target)
+    res = Applitools::EyesTestResult.new(eyes.close(true), eyes)
+    expect(res.actual_floating).to floating_array_match([::Applitools::FloatingRegion.new(10, 10, 20, 20, 3, 3, 20, 30)])
   end
 
   it 'TestCheckElementFully_Fluent' do
@@ -166,7 +167,7 @@ RSpec.shared_examples 'test fluent API' do
   end
 
   it 'TestCheckElement_Fluent' do
-    element = driver.find(:id, 'overflowing-div-image')
+    element = driver.find_element(:id, 'overflowing-div-image')
     eyes.check('Fluent - Region by element', Applitools::Selenium::Target.region(element))
   end
 end
