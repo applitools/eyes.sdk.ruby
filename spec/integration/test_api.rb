@@ -24,7 +24,7 @@ RSpec.shared_context 'eyes integration test' do
     @eyes = Applitools::Selenium::Eyes.new
     @eyes.api_key = ENV['APPLITOOLS_API_KEY']
     @eyes.log_handler = Logger.new(STDOUT).tap do |l|
-      l.level = Logger::ERROR
+      l.level = Logger::DEBUG
     end
     @eyes.stitch_mode = :css
     @selenium_server_url = ENV['SELENIUM_SERVER_URL']
@@ -169,5 +169,27 @@ RSpec.shared_examples 'test fluent API' do
   it 'TestCheckElement_Fluent' do
     element = driver.find_element(:id, 'overflowing-div-image')
     eyes.check('Fluent - Region by element', Applitools::Selenium::Target.region(element))
+  end
+end
+
+RSpec.shared_examples 'test special cases' do
+  include_context 'eyes integration test'
+
+  it 'TestCheckRegionInAVeryBigFrame' do
+    eyes.check('map', Applitools::Selenium::Target.frame("frame1").region(:tag_name, 'img'));
+  end
+
+  it 'TestCheckRegionInAVeryBigFrameAfterManualSwitchToFrame' do
+    # driver.switchTo().frame("frame1");
+    #
+    # WebElement element = driver.findElement(By.cssSelector("img"));
+    # ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", element);
+    #
+    # eyes.check("", Target.region(By.cssSelector("img")));
+
+    driver.switch_to.frame(name_or_id: 'frame1')
+    element = driver.find_element(:css, 'img')
+    driver.execute_script('arguments[0].scrollIntoView(true);', element)
+    eyes.check('', Applitools::Selenium::Target.region(:css, 'img'))
   end
 end
