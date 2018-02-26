@@ -138,6 +138,10 @@ module Applitools
       self
     end
 
+    def current_padding
+      @padding
+    end
+
     def with_padding
       Applitools::Region.from_location_size(
         Applitools::Location.new(left - padding_left, top - padding_top),
