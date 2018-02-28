@@ -149,7 +149,7 @@ RSpec.shared_examples 'test fluent API' do
     target = Applitools::Selenium::Target.window.floating(::Applitools::FloatingRegion.new(10, 10, 20, 20, 3, 3, 20, 30))
     eyes.check('Fluent - Window with floating region by region', target)
     res = Applitools::EyesTestResult.new(eyes.close(true), eyes)
-    expect(res.actual_floating).to floating_array_match([::Applitools::FloatingRegion.new(10, 10, 20, 20, 3, 3, 20, 30)])
+    expect(res.actual_floating).to floating_array_match([::Applitools::FloatingRegion.new(10, 10, 20, 20, 4, 4, 21, 31)])
   end
 
   it 'TestCheckElementFully_Fluent' do
