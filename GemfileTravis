@@ -1,0 +1,6 @@
+source :rubygems
+
+gem 'eyes_selenium', source: 'file://./pkg'
+gem 'eyes_images', source: 'file://./pkg'
+gem 'eyes_calabash', source: 'file://./pkg'
+gem 'eyes_core', source: 'file://./pkg'

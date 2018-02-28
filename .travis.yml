@@ -5,15 +5,19 @@ rvm:
   - 2.1.6
   - 2.3.1
   - rbx-2
+gemfile:
+  - GemfileTravis
 matrix:
   allow_failures:
     - rvm: rbx-2
 # Use the faster container based infrastructure.
 sudo: false
 before_install:
-  - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
+#  - "export DISPLAY=:99.0"
+#  - "sh -e /etc/init.d/xvfb start"
   - "gem install bundler"
-  - "cd ext/eyes_core; ruby ./extconf.rb; make; make install; cd ../.."
+  - "BUILD_ONLY=true rake clean biuld"
+  - "cd pkg; gem generate_index; cd ../.."
+#  - "cd ext/eyes_core; ruby ./extconf.rb; make; make install; cd ../.."
 script:
   - bundle exec rake

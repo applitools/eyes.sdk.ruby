@@ -27,8 +27,8 @@ ext/applitools/*.time
 ext/eyes_core/*.bundle
 
 # Local RVM files
-.ruby-gemset
-!/*/.ruby-gemset
-.ruby-version
-!/*/.ruby-version
+#.ruby-gemset
+#!/*/.ruby-gemset
+#.ruby-version
+#!/*/.ruby-version
 node_modules
