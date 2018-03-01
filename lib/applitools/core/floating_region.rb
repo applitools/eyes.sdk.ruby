@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'region'
 module Applitools
   class FloatingRegion < Region

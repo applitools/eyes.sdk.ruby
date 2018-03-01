@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 if defined? Capybara::Selenium::Driver
   module Applitools::Selenium::Capybara
     # @!visibility private

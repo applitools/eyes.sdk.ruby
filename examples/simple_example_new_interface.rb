@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../lib/eyes_selenium'
 require 'logger'
 require 'openssl'

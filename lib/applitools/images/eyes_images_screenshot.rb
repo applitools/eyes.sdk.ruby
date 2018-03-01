@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Applitools::Images
   # @!visibility private
   class EyesImagesScreenshot < ::Applitools::EyesScreenshot

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Applitools::Selenium
   class EyesFullPageScreenshot < Applitools::EyesScreenshot
     def initialize(*args)

@@ -1,19 +1,33 @@
-language: ruby
-rvm:
-  - 1.9.3
-  - 2.0.0
-  - 2.1.6
-  - 2.3.1
-  - rbx-2
-matrix:
-  allow_failures:
-    - rvm: rbx-2
+dist: trusty
+addons:
+  chrome: stable
+  firefox: stable
+#language: ruby
+#rvm:
+#  - 1.9.3
+#  - 2.0.0
+#  - 2.1.6
+#  - 2.3.1
+#  - 2.4.1
+#  - rbx-2
+#gemfile:
+#  - GemfileTravis
+#matrix:
+#  allow_failures:
+#    - rvm: rbx-2
 # Use the faster container based infrastructure.
 sudo: false
 before_install:
+  - jdk_switcher use oraclejdk8
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
-  - "gem install bundler"
-  - "cd ext/eyes_core; ruby ./extconf.rb; make; make install; cd ../.."
+#  - "gem install builder"
+#  - "BUILD_ONLY=true rake clean build"
+#  - "cd pkg; mkdir gems; mv ./*.gem ./gems; gem generate_index; cd .."
+#  - "cd ext/eyes_core; ruby ./extconf.rb; make; make install; cd ../.."
 script:
-  - bundle exec rake
+#  - bundle exec rake
+  - whereis google-chrome-stable
+  - google-chrome-stable --version
+  - whereis firefox
+  - firefox --version

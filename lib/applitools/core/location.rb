@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'applitools/core/region'
 module Applitools
   class Location

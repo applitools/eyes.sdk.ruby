@@ -1,3 +1,5 @@
+# frozen_string_literal: false
+
 require 'faraday'
 require 'oj'
 Oj.default_options = { :mode => :compat }

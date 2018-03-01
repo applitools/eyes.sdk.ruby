@@ -1,3 +1,5 @@
+# frozen_string_literal: false
+
 require 'applitools/core/eyes_base'
 
 # Eyes Images SDK

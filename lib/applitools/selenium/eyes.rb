@@ -1,3 +1,5 @@
+# frozen_string_literal: false
+
 module Applitools::Selenium
   # The main API gateway for the SDK
   class Eyes < Applitools::EyesBase

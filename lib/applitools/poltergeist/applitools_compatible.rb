@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # This module is used for compatibility with Applitools API.
 # Should be extended by Poltergeist driver instance.
 module Applitools::Poltergeist

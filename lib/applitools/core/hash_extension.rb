@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Applitools::HashExtension
   if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('2.0.0')
     def struct_define_to_h_method

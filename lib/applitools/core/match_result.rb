@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Applitools
   class MatchResult
     attr_reader :response_hash

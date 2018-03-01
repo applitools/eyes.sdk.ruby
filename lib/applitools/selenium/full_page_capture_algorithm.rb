@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Applitools::Selenium
   # @!visibility private
   class FullPageCaptureAlgorithm

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Applitools
   module Helpers
     def abstract_attr_accessor(*names)

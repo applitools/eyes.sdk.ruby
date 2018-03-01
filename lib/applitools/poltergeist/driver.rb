@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Applitools::Poltergeist::Driver is a small class implemented
 # for compatibility with Applitools API.
 # It gives required for Applitools methods to Poltergeist driver.

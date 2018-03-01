@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'oily_png'
 # require 'chunky_png'
 require_relative 'chunky_png/resampling'

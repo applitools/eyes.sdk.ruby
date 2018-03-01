@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Applitools
   class SessionStartInfo
     attr_accessor :app_id_or_name, :scenario_id_or_name

@@ -1,3 +1,5 @@
+# frozen_string_literal: false
+
 module Applitools::Utils
   module ImageDeltaCompressor
     extend self
