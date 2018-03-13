@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec::Matchers.define :match_region do |expected|
   match do |actual|
     unless expected.is_a? Applitools::Region

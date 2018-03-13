@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Applitools
   module Calabash
     class CalabashScreenshotProvider

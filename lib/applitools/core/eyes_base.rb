@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'applitools/core/helpers'
 require 'applitools/core/eyes_screenshot'
 require_relative 'match_level_setter'

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.shared_examples 'proxy method' do |receiver, methods|
   methods.each do |m|
     it "responds to #{m}" do

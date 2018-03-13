@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Applitools
   class Enumerator < ::Enumerator
     if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('2.0.0')

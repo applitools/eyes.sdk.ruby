@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Applitools
   class AppOutputWithScreenshot
     attr_reader :app_output, :screenshot

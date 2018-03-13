@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # @!visibility private
 class Module
   def alias_attribute(new_name, old_name)
