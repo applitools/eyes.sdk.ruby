@@ -130,8 +130,12 @@ module Applitools::Selenium
 
       logger.info 'Getting the rest of the image parts...'
 
-      image_parts.each_with_index do |part_region, i|
+      image_parts.each_with_index do |part_regions, i|
         next unless i > 0
+
+        part_region = part_regions.first
+        intersection = part_regions.last
+
         logger.info "Taking screenshot for #{part_region}"
 
         position_provider.position = part_region.location
@@ -147,9 +151,11 @@ module Applitools::Selenium
         debug_screenshot_provider.save(part_image, 'cutted')
 
         logger.info 'Done!'
+
         begin
           region_to_check = Applitools::Region.from_location_size(
-            part_region.location.offset(region_provider.region.location), part_region.size
+            part_region.location.offset(region_provider.region.location).offset(intersection.location),
+            part_region.size - intersection.size
           )
           a_screenshot = eyes_screenshot_factory.call(part_image).sub_screenshot(region_to_check,
             Applitools::EyesScreenshot::COORDINATE_TYPES[:context_relative], false)
@@ -161,10 +167,17 @@ module Applitools::Selenium
 
         logger.info 'Stitching part into the image container...'
 
-        stitched_image.replace! a_screenshot.image, part_region.x, part_region.y
+        stitched_image.replace!(
+          a_screenshot.image,
+          part_region.x + intersection.location.x,
+          part_region.y + intersection.location.y
+        )
         logger.info 'Done!'
 
-        last_successful_location = Applitools::Location.for part_region.x, part_region.y
+        last_successful_location = Applitools::Location.for(
+          part_region.x + intersection.location.x,
+          part_region.y + intersection.location.y
+        )
         next unless a_screenshot
         last_successful_part_size = Applitools::RectangleSize.new(
           a_screenshot.image.width,
