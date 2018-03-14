@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'match_level_setter'
 module Applitools::FluentInterface
   include Applitools::MatchLevelSetter

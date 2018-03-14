@@ -1,3 +1,5 @@
+# frozen_string_literal: false
+
 module Applitools::Selenium
   # The main API gateway for the SDK
   class Eyes < Applitools::EyesBase
@@ -279,9 +281,14 @@ module Applitools::Selenium
                 target.coordinate_type
               end
 
-            region_provider = Applitools::RegionProvider.new(
+            stitch_region_provider = Applitools::RegionProvider.new(
               region_for_element(eyes_element), use_coordinates
             )
+
+            region_provider = Applitools::RegionProvider.new(
+              Applitools::Region.from_location_size(eyes_element.location, eyes_element.size), use_coordinates
+            )
+
           else
             # check_window
             logger.info "check_window(match_timeout: #{timeout}, tag: #{match_data.tag})"
@@ -301,7 +308,10 @@ module Applitools::Selenium
               eyes_element.overflow = 'hidden'
             end
 
-            region_provider = Applitools::RegionProvider.new(region_provider.region, target.coordinate_type)
+            region_provider = Applitools::RegionProvider.new(
+              (stitch_region_provider || region_provider).region,
+              target.coordinate_type
+            )
 
             self.region_to_check = region_provider
 
@@ -342,6 +352,7 @@ module Applitools::Selenium
       logger.info 'Switching to target frame according to frames path...'
       driver.switch_to.frames(frames_path: frames)
       logger.info 'Done!'
+      ensure_frame_visible
 
       yield if block_given?
 
@@ -368,8 +379,8 @@ module Applitools::Selenium
       border_bottom_width = element.border_bottom_width
 
       Applitools::Region.new(
-        p.x + border_left_width,
-        p.y + border_top_width,
+        p.x.round + border_left_width,
+        p.y.round + border_top_width,
         d.width - border_left_width - border_right_width,
         d.height - border_top_width - border_bottom_width
       )
@@ -1015,6 +1026,18 @@ module Applitools::Selenium
       return "useragent: #{user_agent}" if user_agent && !user_agent.empty?
 
       nil
+    end
+
+    def ensure_frame_visible
+      original_fc = driver.frame_chain
+      return original_fc if original_fc.empty?
+      fc = Applitools::Selenium::FrameChain.new other: original_fc
+      until fc.empty?
+        driver.switch_to.parent_frame
+        position_provider.position = fc.pop.location
+      end
+      driver.switch_to.frames(frame_chain: original_fc)
+      original_fc
     end
 
     class << self

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Then(/^ignore status bar$/) do
   raise Applitools::EyesError, '@target is not set' unless @target
   step %(query element "view id:'statusBarBackground'")

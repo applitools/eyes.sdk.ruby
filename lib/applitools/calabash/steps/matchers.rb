@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Then(/^create target$/) do
   @target = nil
   @target = Applitools::Calabash::Target.new

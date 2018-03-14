@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'eyes_calabash_screenshot'
 module Applitools
   module Calabash

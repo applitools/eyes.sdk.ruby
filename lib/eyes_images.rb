@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'eyes_core'
 
 module Applitools

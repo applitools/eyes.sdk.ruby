@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 require 'eyes_selenium'
 
-RSpec.describe Applitools::Selenium::Eyes do
+RSpec.describe Applitools::Selenium::Eyes, mock_connection: true do
   let(:element) { Selenium::WebDriver::Element.new('', nil) }
   let(:target_locator) do
     double.tap do |t|

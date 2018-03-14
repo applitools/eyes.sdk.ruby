@@ -1,3 +1,5 @@
+# frozen_string_literal: false
+
 module Applitools::Selenium
   class Element < SimpleDelegator
     JS_GET_COMPUTED_STYLE_FORMATTED_STR = <<-JS.freeze

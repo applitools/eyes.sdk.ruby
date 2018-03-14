@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Applitools
   # Provides 'cut' method which is used to cut screen shots
   class FixedCutProvider

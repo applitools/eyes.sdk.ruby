@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
-describe Applitools::EyesBase do
+describe Applitools::EyesBase, mock_connection: true do
   it_should_behave_like 'responds to method', [
     :agent_id,
     :agent_id=,

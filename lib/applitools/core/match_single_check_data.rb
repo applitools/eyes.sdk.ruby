@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'match_window_data'
 module Applitools
   class MatchSingleCheckData < MatchWindowData

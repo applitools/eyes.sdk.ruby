@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Applitools
   class MatchWindowData
     class << self
@@ -231,6 +233,16 @@ module Applitools
           Applitools::EyesScreenshot::COORDINATE_TYPES[:screenshot_as_is]
         )
         updated_region.to_hash
+        Applitools::FloatingRegion.new(
+          updated_region.left,
+          updated_region.top,
+          r.width,
+          r.height,
+          r.max_left_offset,
+          r.max_top_offset,
+          r.max_right_offset,
+          r.max_bottom_offset
+        ).padding(r.current_padding)
       end
       @need_convert_floating_regions_coordinates = false
     end

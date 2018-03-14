@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Given(/^eyes application name is "([^"]*)"$/) do |name|
   Applitools::Calabash::EyesSettings.instance.app_name = name
 end

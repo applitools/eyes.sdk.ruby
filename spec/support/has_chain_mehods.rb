@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.shared_examples 'has chain methods' do |methods|
   methods.keys.each do |method|
     it "responds to #{method}" do
