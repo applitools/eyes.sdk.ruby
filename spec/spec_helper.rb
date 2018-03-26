@@ -20,4 +20,8 @@ RSpec.configure do |config|
       true
     end
   end
+
+  config.before clear_environment: true do
+    Applitools::Helpers.instance_variable_set :@environment_variables, {}
+  end
 end

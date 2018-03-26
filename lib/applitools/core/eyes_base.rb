@@ -34,9 +34,9 @@ module Applitools
     #   Default value is false.
     #   @return [boolean] verbose_results flag
 
-    attr_accessor :app_name, :baseline_name, :branch_name, :parent_branch_name, :batch, :agent_id, :full_agent_id,
+    attr_accessor :app_name, :baseline_name, :batch, :agent_id, :full_agent_id,
       :match_timeout, :save_new_tests, :save_failed_tests, :failure_reports, :default_match_settings, :cut_provider,
-      :scale_ratio, :host_os, :host_app, :base_line_name, :position_provider, :viewport_size, :verbose_results,
+      :scale_ratio, :host_os, :host_app, :position_provider, :viewport_size, :verbose_results,
       :inferred_environment, :remove_session_if_matching, :server_scale, :server_remainder, :match_level, :exact,
       :compare_with_parent_branch
 
@@ -45,6 +45,10 @@ module Applitools
     abstract_method :title, true
     abstract_method :set_viewport_size, true
     abstract_method :get_viewport_size, true
+
+    environment_attribute :branch_name, 'APPLITOOLS_BRANCH'
+    environment_attribute :parent_branch_name, 'APPLITOOLS_PARENT_BRANCH'
+    environment_attribute :baseline_env_name, 'APPLITOOLS_BASELINE_BRANCH'
 
     def initialize(server_url = nil)
       self.server_connector = Applitools::Connectivity::ServerConnector.new(server_url)
@@ -333,7 +337,7 @@ module Applitools
 
       session_start_info = SessionStartInfo.new agent_id: base_agent_id, app_id_or_name: app_name,
          scenario_id_or_name: test_name, batch_info: batch,
-         env_name: baseline_name, environment: app_environment,
+         env_name: baseline_env_name, environment: app_environment,
          default_match_settings: default_match_settings,
          branch_name: branch_name, parent_branch_name: parent_branch_name, properties: properties
 
@@ -594,7 +598,7 @@ module Applitools
       logger.info "Application environment is #{app_env}"
 
       self.session_start_info = SessionStartInfo.new agent_id: base_agent_id, app_id_or_name: app_name,
-                                                scenario_id_or_name: test_name, batch_info: @batch,
+                                                scenario_id_or_name: test_name, batch_info: batch,
                                                 env_name: baseline_name, environment: app_env,
                                                 default_match_settings: default_match_settings,
                                                 branch_name: branch_name, parent_branch_name: parent_branch_name,
