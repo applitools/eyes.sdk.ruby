@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 if respond_to?(:Before)
   Before('@eyes') do |scenario|
     get_scenario_tags(scenario)

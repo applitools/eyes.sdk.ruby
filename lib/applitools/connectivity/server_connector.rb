@@ -1,3 +1,5 @@
+# frozen_string_literal: false
+
 require 'faraday'
 require 'oj'
 Oj.default_options = { :mode => :compat }
@@ -6,6 +8,7 @@ require 'uri'
 
 module Applitools::Connectivity
   class ServerConnector
+    extend Applitools::Helpers
     DEFAULT_SERVER_URL = 'https://eyessdk.applitools.com'.freeze
 
     SSL_CERT = File.join(File.dirname(File.expand_path(__FILE__)), '../../../certs/cacert.pem').to_s.freeze
@@ -21,9 +24,10 @@ module Applitools::Connectivity
       gone: 410
     }.freeze
 
-    attr_accessor :server_url, :api_key
+    attr_accessor :server_url
     attr_reader :endpoint_url
     attr_reader :proxy
+    environment_attribute :api_key, 'APPLITOOLS_API_KEY'
 
     def initialize(url = nil)
       self.server_url = url

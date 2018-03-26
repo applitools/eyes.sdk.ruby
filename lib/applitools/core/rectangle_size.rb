@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'hash_extension'
 module Applitools
   RectangleSize = Struct.new(:width, :height) do

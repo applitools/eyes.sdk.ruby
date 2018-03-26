@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rspec/expectations'
 
 RSpec::Matchers.define :match_baseline do |expected, tag|

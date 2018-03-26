@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 RSpec.shared_examples 'implements long queries flow' do |method|
@@ -113,7 +115,8 @@ RSpec.shared_examples 'implements long queries flow' do |method|
   end
 end
 
-describe Applitools::Connectivity::ServerConnector do
+describe Applitools::Connectivity::ServerConnector, clear_environment: true do
+  it_behaves_like 'has environment attribute', :api_key, 'APPLITOOLS_API_KEY'
   let(:a_result) { Faraday::Response.new }
   let(:a_200_result) { a_result.dup.finish(status: 200, response_headers: {}, body: 'Status: 200(For tests)') }
   let(:a_gone_result) { a_result.dup.finish(status: 410, response_headers: {}, body: '') }

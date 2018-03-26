@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'applitools/core/trigger'
 module Applitools
   class TextTrigger < Trigger

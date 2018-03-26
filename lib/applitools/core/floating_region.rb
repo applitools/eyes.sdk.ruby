@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'region'
 module Applitools
   class FloatingRegion < Region
@@ -79,6 +81,14 @@ module Applitools
       self.max_right_offset *= scale_factor
       self.max_bottom_offset *= scale_factor
       self
+    end
+
+    def ==(other)
+      super(other) &&
+        max_left_offset == other.max_left_offset &&
+        max_top_offset == other.max_top_offset &&
+        max_right_offset == other.max_right_offset &&
+        max_bottom_offset == other.max_bottom_offset
     end
 
     def to_hash

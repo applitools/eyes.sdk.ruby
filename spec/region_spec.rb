@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe Applitools::Region do
   subject { described_class.new(9, 10, 11, 12) }
   context 'padding' do

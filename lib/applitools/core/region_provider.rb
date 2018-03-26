@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Applitools
   class RegionProvider
     # Do we need it under Selenium module?

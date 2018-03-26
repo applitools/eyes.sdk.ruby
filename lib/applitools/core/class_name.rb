@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Applitools
   class ClassName < String
     def ===(other)
