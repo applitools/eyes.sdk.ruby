@@ -278,7 +278,6 @@ module Applitools::Selenium
         when :frame
           logger.info 'Frame.'
           frame_location_size = Applitools::Selenium::BorderAwareElementContentLocationProvider.new target_frame
-
           return parent.frame_chain!.push(
             Applitools::Selenium::Frame.new(
               reference: target_frame, frame_id: '',

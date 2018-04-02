@@ -44,7 +44,7 @@ module Applitools
       @y = y
     end
 
-    TOP_LEFT = Location.new(0, 0)
+    TOP_LEFT = Location.new(0, 0).freeze
 
     def to_s
       "#{x} x #{y}"
@@ -55,10 +55,26 @@ module Applitools
       @x == other.x && @y == other.y
     end
 
+    def !=(other)
+      !(self == other)
+    end
+
     alias eql? ==
 
     def hash
       @x.hash & @y.hash
+    end
+
+    def negative_part
+      new_x = @x < 0 ? @x : 0
+      new_y = @y < 0 ? @y : 0
+      self.class.new(new_x.round, new_y.round)
+    end
+
+    def positive_part
+      new_x = @x < 0 ? 0 : @x
+      new_y = @y < 0 ? 0 : @y
+      self.class.new(new_x.round, new_y.round)
     end
 
     def to_hash(options = {})

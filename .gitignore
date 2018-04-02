@@ -31,4 +31,5 @@ ext/eyes_core/*.bundle
 !/*/.ruby-gemset
 .ruby-version
 !/*/.ruby-version
+debug_screenshots
 node_modules
