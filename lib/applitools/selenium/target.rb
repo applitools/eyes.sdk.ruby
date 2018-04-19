@@ -18,7 +18,10 @@ module Applitools
         end
       end
 
-      attr_accessor :element, :frames, :region_to_check, :coordinate_type, :options, :ignored_regions, :floating_regions
+      attr_accessor :element, :frames, :region_to_check, :coordinate_type, :options, :ignored_regions,
+        :floating_regions, :frame_or_element
+
+      private :frame_or_element, :frame_or_element=
 
       # Initialize a Applitools::Selenium::Target instance.
       def initialize
@@ -116,11 +119,13 @@ module Applitools
 
       def fully
         options[:stitch_content] = true
+        handle_frames
         self
       end
 
       def frame(element)
-        frames << element
+        frames << frame_or_element if frame_or_element
+        self.frame_or_element = element
         reset_for_fullscreen
         self
       end
@@ -137,9 +142,14 @@ module Applitools
       # @!parse def region(element, how, what); end;
 
       def region(*args)
+        handle_frames
         self.region_to_check = case args.first
                                when Applitools::Selenium::Element, Applitools::Region, ::Selenium::WebDriver::Element
                                  proc { args.first }
+                               when String
+                                 proc do |driver|
+                                   driver.find_element(name_or_id: args.first)
+                                 end
                                else
                                  proc do |driver|
                                    driver.find_element(*args)
@@ -150,6 +160,13 @@ module Applitools
         reset_ignore
         reset_floating
         self
+      end
+
+      def finalize
+        return self unless frame_or_element
+        region = frame_or_element
+        self.frame_or_element = nil
+        dup.region(region)
       end
 
       private
@@ -170,6 +187,12 @@ module Applitools
 
       def reset_floating
         self.floating_regions = []
+      end
+
+      def handle_frames
+        return unless frame_or_element
+        frames << frame_or_element
+        self.frame_or_element = nil
       end
     end
   end

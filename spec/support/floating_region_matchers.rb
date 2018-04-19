@@ -21,3 +21,12 @@ RSpec::Matchers.define :floating_array_match do |expected|
     true
   end
 end
+
+RSpec::Matchers.define :ignore_array_match do |expected|
+  match do |actual|
+    actual.each do |r|
+      expect(r).to include_floating(expected)
+    end
+    true
+  end
+end

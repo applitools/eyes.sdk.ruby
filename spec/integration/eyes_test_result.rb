@@ -36,6 +36,17 @@ module Applitools
       end
     end
 
+    def actual_ignore(index = 0)
+      result['actualAppOutput'][index]['imageMatchSettings']['ignore'].map do |ignore_region|
+        Region.new(
+          ignore_region['left'],
+          ignore_region['top'],
+          ignore_region['width'],
+          ignore_region['height']
+        )
+      end
+    end
+
     private
 
     attr_accessor :result, :index

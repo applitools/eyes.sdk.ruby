@@ -71,7 +71,15 @@ module Applitools::Selenium
     end
 
     def chrome?
-      @driver.browser == :chrome
+      running_browser_name == :chrome
+    end
+
+    def firefox?
+      running_browser_name == :firefox
+    end
+
+    def running_browser_name
+      @driver.__getobj__.browser
     end
 
     def user_agent

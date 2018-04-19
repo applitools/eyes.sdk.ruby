@@ -195,7 +195,7 @@ RSpec.describe Applitools::MatchWindowData do
         end
       end
       let(:the_screenshot) do
-        instance_double(Applitools::Selenium::EyesWebDriverScreenshot).tap do |o|
+        instance_double(Applitools::Selenium::EyesScreenshot).tap do |o|
           allow(o).to receive(:convert_region_location).and_return(Applitools::Region.new(110, 115, 20, 30))
         end
       end

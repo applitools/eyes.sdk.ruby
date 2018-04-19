@@ -74,7 +74,7 @@ module Applitools::Images
       options_for_open = Applitools::Utils.extract_options!(args)
       open(options_for_open)
       result = yield(*args)
-      close
+      close(true, true)
       result
     end
 

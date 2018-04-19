@@ -79,6 +79,36 @@ module Applitools::Utils
       window.scrollTo(%{left}, %{top});
     JS
 
+    # IMPORTANT: Notice there's a major difference between scrollWidth
+    # and scrollHeight. While scrollWidth is the maximum between an
+    # element's width and its content width, scrollHeight might be
+    # smaller (!) than the clientHeight, which is why we take the
+    # maximum between them.
+
+    # @!visibility private
+    JS_COMPUTE_CONTENT_ENTIRE_SIZE = <<-JS.freeze
+      var scrollWidth = document.documentElement.scrollWidth;
+      var bodyScrollWidth = document.body.scrollWidth;
+      var totalWidth = Math.max(scrollWidth, bodyScrollWidth);
+      var clientHeight = document.documentElement.clientHeight;
+      var bodyClientHeight = document.body.clientHeight;
+      var scrollHeight = document.documentElement.scrollHeight;
+      var bodyScrollHeight = document.body.scrollHeight;
+      var maxDocElementHeight = Math.max(clientHeight, scrollHeight);
+      var maxBodyHeight = Math.max(bodyClientHeight, bodyScrollHeight);
+      var totalHeight = Math.max(maxDocElementHeight, maxBodyHeight);
+    JS
+
+    # @!visibility private
+    JS_RETURN_CONTENT_ENTIRE_SIZE = <<-JS.freeze
+      #{JS_COMPUTE_CONTENT_ENTIRE_SIZE}; return [totalWidth, totalHeight];
+    JS
+
+    # @!visibility private
+    JS_SCROLL_TO_BOTTOM_RIGHT = <<-JS.freeze
+      #{JS_COMPUTE_CONTENT_ENTIRE_SIZE}; window.scrollTo(totalWidth, totalHeight);
+    JS
+
     # @!visibility private
     JS_GET_CURRENT_TRANSFORM = <<-JS.freeze
       return document.body.style.transform;
@@ -102,12 +132,20 @@ module Applitools::Utils
       }());
     JS
 
+    # JS_GET_TRANSFORM_VALUE = <<-JS.freeze
+    #   document.documentElement.style['%{key}']
+    # JS
+    #
+    # JS_SET_TRANSFORM_VALUE = <<-JS.freeze
+    #   document.documentElement.style['%{key}'] = '%{value}'
+    # JS
+
     JS_GET_TRANSFORM_VALUE = <<-JS.freeze
-      document.documentElement.style['%{key}']
+      %{element}.style['%{key}']
     JS
 
     JS_SET_TRANSFORM_VALUE = <<-JS.freeze
-      document.documentElement.style['%{key}'] = '%{value}'
+      %{element}.style['%{key}'] = '%{value}'
     JS
 
     JS_TRANSFORM_KEYS = ['transform', '-webkit-transform'].freeze
@@ -209,8 +247,10 @@ module Applitools::Utils
     end
 
     def current_transforms(executor)
-      script =
-        "return { #{JS_TRANSFORM_KEYS.map { |tk| "'#{tk}': #{JS_GET_TRANSFORM_VALUE % { key: tk }}" }.join(', ')} };"
+      transform_script = JS_TRANSFORM_KEYS.map do |tk|
+        "'#{tk}': #{JS_GET_TRANSFORM_VALUE % { element: 'document.documentElement', key: tk }}"
+      end.join(', ')
+      script = "return { #{transform_script} };"
       executor.execute_script(script)
     end
 
@@ -221,12 +261,35 @@ module Applitools::Utils
     end
 
     def set_transforms(executor, value)
-      script = value.keys.map { |k| JS_SET_TRANSFORM_VALUE % { key: k, value: value[k] } }.join('; ')
+      script = value.keys.map do |k|
+        JS_SET_TRANSFORM_VALUE % { element: 'document.documentElement', key: k, value: value[k] }
+      end.join('; ')
       executor.execute_script(script)
     end
 
+    def set_element_transforms(executor, element, transform)
+      value = {}
+      JS_TRANSFORM_KEYS.map { |tk| value[tk] = transform }
+      script = value.keys.map do |k|
+        JS_SET_TRANSFORM_VALUE % { element: 'arguments[0]', key: k, value: value[k] }
+      end.join('; ')
+      executor.execute_script(script, element)
+    end
+
+    def current_element_transforms(executor, element)
+      transform_script = JS_TRANSFORM_KEYS.map do |tk|
+        "'#{tk}': #{JS_GET_TRANSFORM_VALUE % { element: 'arguments[0]', key: tk }}"
+      end.join(', ')
+      script = "return { #{transform_script} };"
+      executor.execute_script(script, element)
+    end
+
     def translate_to(executor, location)
-      set_current_transforms(executor, "translate(-#{location.x}px, -#{location.y}px)")
+      set_current_transforms(executor, "translate(#{-location.x}px, #{-location.y}px)")
+    end
+
+    def element_translate_to(executor, element, location)
+      set_element_transforms(executor, element, "translate(#{location.x}px, #{location.y}px)")
     end
 
     # @param [Applitools::Selenium::Driver] executor
@@ -336,10 +399,22 @@ module Applitools::Utils
     end
 
     def set_browser_size_by_viewport_size(executor, actual_viewport_size, required_size)
-      browser_size = Applitools::RectangleSize.from_any_argument(executor.manage.window.size)
+      browser_size = executor.manage.window.size
+      if browser_size.width.nil? || browser_size.height.nil?
+        raise(
+          Applitools::EyesError,
+          'driver.manage.window.size returned nil values. ' \
+          'Please ensure that you use the latest version of browser and its driver!'
+        )
+      end
+      browser_size = Applitools::RectangleSize.from_any_argument(browser_size)
       Applitools::EyesLogger.info "Current browser size: #{browser_size}"
       required_browser_size = browser_size + required_size - actual_viewport_size
       set_browser_size(executor, required_browser_size)
+    end
+
+    def scroll_to_bottom_right(executor)
+      executor.execute_script(JS_SCROLL_TO_BOTTOM_RIGHT)
     end
 
     private

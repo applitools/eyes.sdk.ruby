@@ -34,3 +34,4 @@ GemfileTravis.lock
 #.ruby-version
 #!/*/.ruby-version
 node_modules
+debug_screenshots

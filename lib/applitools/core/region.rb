@@ -67,8 +67,7 @@ module Applitools
     def intersect(other)
       unless intersecting?(other)
         make_empty
-
-        return
+        return self
       end
 
       i_left = left >= other.left ? left : other.left

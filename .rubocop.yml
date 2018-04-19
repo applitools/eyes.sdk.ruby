@@ -26,6 +26,10 @@ Metrics/BlockNesting:
 
 Metrics/BlockLength:
   Max: 50
+  Exclude:
+      - "**/*_spec.rb"
+      - "spec/integration/test_api.rb"
+      - "examples/*.rb"
 
 Style/SignalException:
   EnforcedStyle: only_raise

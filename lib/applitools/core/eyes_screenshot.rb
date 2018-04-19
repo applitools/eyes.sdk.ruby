@@ -6,7 +6,8 @@ module Applitools
     extend Applitools::Helpers
 
     def_delegators 'Applitools::EyesLogger', :logger, :log_handler, :log_handler=
-    attr_accessor :image
+    attr_accessor :image, :top_left_location
+    def_delegators '@image', :width, :height
 
     COORDINATE_TYPES = {
       context_as_is: 'CONTEXT_AS_IS',
@@ -40,6 +41,12 @@ module Applitools
 
       updated_location = convert_location(region.location, from, to)
       Region.new updated_location.x, updated_location.y, region.width, region.height
+    end
+
+    private
+
+    def image_region
+      Applitools::Region.new(0, 0, image.width, image.height)
     end
   end
 end

@@ -17,7 +17,7 @@ module Applitools::Selenium
 
     def same_frame_chain?(other)
       return false unless size == other.size
-      all? { |my_elem| my_elem.id == other.next.id }
+      ids == other.ids
     end
 
     def push(frame)
@@ -73,5 +73,11 @@ module Applitools::Selenium
     end
 
     class NoFramesException < RuntimeError; end
+
+    protected
+
+    def ids
+      map { |i| i.reference.ref }
+    end
   end
 end

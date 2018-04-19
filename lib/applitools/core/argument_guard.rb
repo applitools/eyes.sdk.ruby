@@ -31,7 +31,7 @@ module Applitools
     def is_a?(param, param_name, klass)
       return true if param.is_a? klass
       raise Applitools::EyesIllegalArgument.new "Expected #{param_name} to be" \
-        " instance of #{klass} (but got #{param.class.name})"
+        " instance of #{klass}, but got #{param.class.name} instead"
     end
 
     def raise_argument_error(error)

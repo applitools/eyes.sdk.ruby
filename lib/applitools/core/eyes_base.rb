@@ -400,7 +400,7 @@ module Applitools
     # @param [Boolean] throw_exception If set to +true+ eyes will trow [Applitools::TestFailedError] exception,
     # otherwise the test will pass. Default is true
 
-    def close(throw_exception = true)
+    def close(throw_exception = true, be_silent = false)
       if disabled?
         logger.info "#{__method__} Ignored"
         return false
@@ -415,8 +415,8 @@ module Applitools
       clear_user_inputs
 
       unless running_session
-        logger.info 'Server session was not started'
-        logger.info '--- Empty test ended'
+        be_silent || logger.info('Server session was not started')
+        be_silent || logger.info('--- Empty test ended')
         return Applitools::TestResults.new
       end
 

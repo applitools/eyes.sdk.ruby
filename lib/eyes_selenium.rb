@@ -11,6 +11,7 @@ module Applitools
 
   module Selenium
     extend Applitools::RequireUtils
+    class UnsupportedCoordinateType < EyesError; end
     def self.load_dir
       File.dirname(File.expand_path(__FILE__))
     end

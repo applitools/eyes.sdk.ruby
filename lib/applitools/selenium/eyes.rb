@@ -15,6 +15,12 @@ module Applitools::Selenium
 
     DEFAULT_STITCHING_OVERLAP = 50 # Pixels
 
+    ENTIRE_ELEMENT_SCREENSHOT = 0
+
+    FULLPAGE_SCREENSHOT = 1
+
+    VIEWPORT_SCREENSHOT = 2
+
     extend Forwardable
     # @!visibility public
 
@@ -32,6 +38,20 @@ module Applitools::Selenium
           end
           raise Applitools::EyesError.new "Unknown driver #{driver}!"
         end
+      end
+
+      def obtain_screenshot_type(is_element, inside_a_frame, stitch_content, force_fullpage)
+        if stitch_content || force_fullpage
+          unless inside_a_frame
+            return FULLPAGE_SCREENSHOT if force_fullpage && !stitch_content
+            return FULLPAGE_SCREENSHOT if stitch_content && !is_element
+          end
+          return ENTIRE_ELEMENT_SCREENSHOT if inside_a_frame
+          return ENTIRE_ELEMENT_SCREENSHOT if stitch_content
+        else
+          return VIEWPORT_SCREENSHOT unless stitch_content || force_fullpage
+        end
+        VIEWPORT_SCREENSHOT
       end
 
       # Set the viewport size.
@@ -79,7 +99,8 @@ module Applitools::Selenium
 
     attr_accessor :base_agent_id, :screenshot, :force_full_page_screenshot, :hide_scrollbars,
       :wait_before_screenshots, :debug_screenshot, :stitch_mode, :disable_horizontal_scrolling,
-      :disable_vertical_scrolling, :explicit_entire_size, :debug_screenshot_provider, :stitching_overlap
+      :disable_vertical_scrolling, :explicit_entire_size, :debug_screenshot_provider, :stitching_overlap,
+      :full_page_capture_algorithm_left_top_offset, :screenshot_type
     attr_reader :driver
 
     def_delegators 'Applitools::EyesLogger', :logger, :log_handler, :log_handler=
@@ -109,6 +130,7 @@ module Applitools::Selenium
       self.explicit_entire_size = nil
       self.force_driver_resolution_as_viewport_size = false
       self.stitching_overlap = DEFAULT_STITCHING_OVERLAP
+      self.full_page_capture_algorithm_left_top_offset = Applitools::Location::TOP_LEFT
     end
 
     # Starts a test
@@ -145,7 +167,7 @@ module Applitools::Selenium
       )
 
       self.eyes_screenshot_factory = lambda do |image|
-        Applitools::Selenium::EyesWebDriverScreenshot.new(
+        Applitools::Selenium::ViewportScreenshot.new(
           image, driver: @driver, force_offset: position_provider.force_offset
         )
       end
@@ -233,92 +255,58 @@ module Applitools::Selenium
       logger.info "check(#{name}) is called"
       self.tag_for_debug = name
       Applitools::ArgumentGuard.is_a? target, 'target', Applitools::Selenium::Target
+      target_to_check = target.finalize
       original_overflow = nil
       original_position_provider = position_provider
       original_force_full_page_screenshot = force_full_page_screenshot
+
       eyes_element = nil
-      timeout = target.options[:timeout] || USE_DEFAULT_MATCH_TIMEOUT
+      timeout = target_to_check.options[:timeout] || USE_DEFAULT_MATCH_TIMEOUT
+
       self.eyes_screenshot_factory = lambda do |image|
-        Applitools::Selenium::EyesWebDriverScreenshot.new(
-          image, driver: driver,
-          force_offset: position_provider.force_offset,
-          position_provider: self.class.position_provider(
-            :SCROLL, driver, disable_horizontal_scrolling, disable_vertical_scrolling, explicit_entire_size
-          )
+        Applitools::Selenium::ViewportScreenshot.new(
+          image,
+          region_provider: region_to_check
         )
       end
 
-      # rubocop:disable BlockLength
-      check_in_frame target_frames: target.frames do
+      check_in_frame target_frames: target_to_check.frames do
         begin
           match_data = Applitools::MatchWindowData.new
           match_data.tag = name
           update_default_settings(match_data)
-          match_data.read_target(target, driver)
-          eyes_element = target.region_to_check.call(driver)
+          match_data.read_target(target_to_check, driver)
+          eyes_element = target_to_check.region_to_check.call(driver)
 
           unless force_full_page_screenshot
             region_visibility_strategy.move_to_region original_position_provider,
               Applitools::Location.new(eyes_element.location.x.to_i, eyes_element.location.y.to_i)
           end
 
-          check_window = false
-          if !target.frames.empty? && eyes_element.is_a?(Applitools::Region)
-            # check_current_frame
-            logger.info "check_region_in_frame(#{eyes_element})"
-            region_provider = region_provider_for_frame
+          region_provider = Applitools::Selenium::RegionProvider.new(driver, region_for_element(eyes_element))
 
-          elsif eyes_element.is_a? Applitools::Selenium::Element
-            # check_element
-            logger.info 'check_region(' \
-              "#{Applitools::Region.from_location_size(eyes_element.location, eyes_element.size)})"
+          self.region_to_check = region_provider
 
-            use_coordinates =
-              if position_provider.is_a?(Applitools::Selenium::CssTranslatePositionProvider) &&
-                  driver.frame_chain.empty?
-                Applitools::EyesScreenshot::COORDINATE_TYPES[:context_as_is]
-              else
-                target.coordinate_type
-              end
+          is_element = eyes_element.is_a? Applitools::Selenium::Element
+          inside_a_frame = !driver.frame_chain.empty?
 
-            stitch_region_provider = Applitools::RegionProvider.new(
-              region_for_element(eyes_element), use_coordinates
-            )
+          self.screenshot_type = self.class.obtain_screenshot_type(
+            is_element,
+            inside_a_frame,
+            target_to_check.options[:stitch_content],
+            force_full_page_screenshot
+          )
 
-            region_provider = Applitools::RegionProvider.new(
-              Applitools::Region.from_location_size(eyes_element.location, eyes_element.size), use_coordinates
-            )
-
-          else
-            # check_window
-            logger.info "check_window(match_timeout: #{timeout}, tag: #{match_data.tag})"
-            region_provider = Applitools::RegionProvider.new(
-              region_for_element(eyes_element),
-              target.coordinate_type
-            )
-            check_window = true
-          end
-
-          if target.options[:stitch_content]
-            check_window ? self.force_full_page_screenshot = true : self.check_frame_or_element = true
+          case screenshot_type
+          when ENTIRE_ELEMENT_SCREENSHOT
             if eyes_element.is_a? Applitools::Selenium::Element
-              self.position_provider = Applitools::Selenium::ElementPositionProvider.new driver, eyes_element
-
               original_overflow = eyes_element.overflow
               eyes_element.overflow = 'hidden'
+              self.position_provider = Applitools::Selenium::CssTranslateElementPositionProvider.new(
+                driver,
+                eyes_element
+              )
             end
-
-            region_provider = Applitools::RegionProvider.new(
-              (stitch_region_provider || region_provider).region,
-              target.coordinate_type
-            )
-
-            self.region_to_check = region_provider
-
-            region_provider = Applitools::RegionProvider.new(
-              Applitools::Region::EMPTY,
-              nil
-            )
           end
 
           check_window_base(
@@ -330,7 +318,8 @@ module Applitools::Selenium
           self.force_full_page_screenshot = original_force_full_page_screenshot
           self.position_provider = original_position_provider
           self.region_to_check = nil
-          region_visibility_strategy.return_to_original_position position_provider
+          self.full_page_capture_algorithm_left_top_offset = Applitools::Location::TOP_LEFT
+          region_visibility_strategy.return_to_original_position original_position_provider
         end
         # rubocop:enable BlockLength
       end
@@ -349,12 +338,17 @@ module Applitools::Selenium
       return yield if block_given? && frames.empty?
 
       original_frame_chain = driver.frame_chain
+
       logger.info 'Switching to target frame according to frames path...'
       driver.switch_to.frames(frames_path: frames)
+      frame_chain_to_reset = driver.frame_chain
       logger.info 'Done!'
+
       ensure_frame_visible
 
       yield if block_given?
+
+      reset_frames_scroll_position(frame_chain_to_reset)
 
       logger.info 'Switching back into top level frame...'
       driver.switch_to.default_content
@@ -383,37 +377,14 @@ module Applitools::Selenium
         p.y.round + border_top_width,
         d.width - border_left_width - border_right_width,
         d.height - border_top_width - border_bottom_width
-      )
-    end
-
-    # Returns the region of a given iframe.
-    #
-    # @return [Applitools::Region] The region of the iframe.
-    def region_provider_for_frame
-      Object.new.tap do |provider|
-        current_frame_size = lambda do
-          frame_region = Applitools::Region.from_location_size(
-            Applitools::Location.new(0, 0), driver.frame_chain!.current_frame.size
-          )
-          begin
-            frame_region.intersect Applitools::Region.from_location_size(
-              Applitools::Location.new(0, 0),
-              Applitools::Utils::EyesSeleniumUtils.entire_page_size(driver)
-            )
-            frame_region
-          ensure
-            frame_region
-          end
-        end
-
-        provider.instance_eval do
-          define_singleton_method :region do
-            current_frame_size.call
-          end
-          define_singleton_method :coordinate_type do
-            Applitools::EyesScreenshot::COORDINATE_TYPES[:context_relative]
-          end
-        end
+      ).tap do |r|
+        border_padding = Applitools::PaddingBounds.new(
+          border_left_width,
+          border_top_width,
+          border_right_width,
+          border_bottom_width
+        )
+        r.padding(border_padding)
       end
     end
 
@@ -529,9 +500,14 @@ module Applitools::Selenium
       :device_pixel_ratio, :position_provider, :scale_provider, :tag_for_debug,
       :region_visibility_strategy, :eyes_screenshot_factory, :force_driver_resolution_as_viewport_size
 
-    def capture_screenshot
-      image_provider = Applitools::Selenium::TakesScreenshotImageProvider.new driver,
+    def image_provider
+      Applitools::Selenium::TakesScreenshotImageProvider.new(
+        driver,
         debug_screenshot_provider: debug_screenshot_provider
+      )
+    end
+
+    def capture_screenshot
       logger.info 'Getting screenshot (capture_screenshot() has been invoked)'
 
       update_scaling_params
@@ -545,72 +521,16 @@ module Applitools::Selenium
       end
 
       begin
-        if check_frame_or_element
-          logger.info 'Check frame/element requested'
-          algo = Applitools::Selenium::FullPageCaptureAlgorithm.new(
-            debug_screenshot_provider: debug_screenshot_provider
-          )
-
-          entire_frame_or_element = algo.get_stitched_region(
-            image_provider: image_provider,
-            region_to_check: region_to_check,
-            origin_provider: position_provider,
-            position_provider: position_provider,
-            scale_provider: scale_provider,
-            cut_provider: cut_provider,
-            wait_before_screenshots: wait_before_screenshots,
-            eyes_screenshot_factory: eyes_screenshot_factory,
-            stitching_overlap: stitching_overlap
-          )
-
-          logger.info 'Building screenshot object...'
-          self.screenshot = Applitools::Selenium::EyesWebDriverScreenshot.new entire_frame_or_element,
-            driver: driver,
-            entire_frame_size: Applitools::RectangleSize.new(entire_frame_or_element.width,
-              entire_frame_or_element.height)
-        elsif force_full_page_screenshot
-          logger.info 'Full page screenshot requested'
-          original_frame = driver.frame_chain
-          driver.switch_to.default_content
-          algo = Applitools::Selenium::FullPageCaptureAlgorithm.new(
-            debug_screenshot_provider: debug_screenshot_provider
-          )
-          region_provider = Object.new
-          region_provider.instance_eval do
-            def region
-              Applitools::Region::EMPTY
-            end
-
-            def coordinate_type
-              nil
-            end
-          end
-          full_page_image = algo.get_stitched_region image_provider: image_provider,
-                                  region_to_check: region_provider,
-                                  origin_provider: Applitools::Selenium::ScrollPositionProvider.new(driver),
-                                  position_provider: position_provider,
-                                  scale_provider: scale_provider,
-                                  cut_provider: cut_provider,
-                                  wait_before_screenshots: wait_before_screenshots,
-                                  eyes_screenshot_factory: eyes_screenshot_factory,
-                                  stitching_overlap: stitching_overlap
-
-          unless driver.frame_chain.empty?
-            logger.info 'Switching back to original frame...'
-            driver.switch_to.frame original_frame
-            logger.info 'Done switching!'
-          end
-          logger.info 'Creating EyesWebDriver screenshot instance..'
-          ewd_screenshot = Applitools::Selenium::EyesFullPageScreenshot.new(full_page_image)
-          logger.info 'Done creating EyesWebDriver screenshot instance!'
-          ewd_screenshot
-        else
-          logger.info 'Screenshot requested...'
-          sleep wait_before_screenshots
-          image = image_provider.take_screenshot
-          scale_provider.scale_image(image) if scale_provider
-          cut_provider.cut(image) if cut_provider
-          self.screenshot = eyes_screenshot_factory.call(image)
+        algo = Applitools::Selenium::FullPageCaptureAlgorithm.new(
+          debug_screenshot_provider: debug_screenshot_provider
+        )
+        case screenshot_type
+        when ENTIRE_ELEMENT_SCREENSHOT
+          self.screenshot = entire_element_screenshot(algo)
+        when FULLPAGE_SCREENSHOT
+          self.screenshot = full_page_screenshot(algo)
+        when VIEWPORT_SCREENSHOT
+          self.screenshot = viewport_screenshot
         end
       ensure
         begin
@@ -619,6 +539,72 @@ module Applitools::Selenium
           logger.warn "Failed to revert overflow! Error: #{e.message}"
         end
       end
+    end
+
+    def full_page_screenshot(algo)
+      logger.info 'Full page screenshot requested'
+      original_frame = driver.frame_chain
+      driver.switch_to.default_content
+      region_provider = Applitools::Selenium::RegionProvider.new(driver, Applitools::Region::EMPTY)
+
+      full_page_image = algo.get_stitched_region(
+        image_provider: image_provider,
+        region_to_check: region_provider,
+        origin_provider: Applitools::Selenium::ScrollPositionProvider.new(driver),
+        position_provider: position_provider,
+        scale_provider: scale_provider,
+        cut_provider: cut_provider,
+        wait_before_screenshots: wait_before_screenshots,
+        eyes_screenshot_factory: eyes_screenshot_factory,
+        stitching_overlap: stitching_overlap
+      )
+
+      # binding.pry
+      unless original_frame.empty?
+        logger.info 'Switching back to original frame...'
+        driver.switch_to.frames frame_chain: original_frame
+        logger.info 'Done switching!'
+      end
+      logger.info 'Creating EyesWebDriver screenshot instance..'
+      result = Applitools::Selenium::FullpageScreenshot.new(
+        full_page_image,
+        region_provider: region_to_check
+      )
+      logger.info 'Done creating EyesWebDriver screenshot instance!'
+      result
+    end
+
+    def entire_element_screenshot(algo)
+      logger.info 'Entire element screenshot requested'
+      entire_frame_or_element = algo.get_stitched_region(
+        image_provider: image_provider,
+        region_to_check: region_to_check,
+        origin_provider: position_provider,
+        position_provider: position_provider,
+        scale_provider: scale_provider,
+        cut_provider: cut_provider,
+        wait_before_screenshots: wait_before_screenshots,
+        eyes_screenshot_factory: eyes_screenshot_factory,
+        stitching_overlap: stitching_overlap,
+        top_left_position: full_page_capture_algorithm_left_top_offset
+      )
+
+      logger.info 'Building screenshot object (EyesStitchedElementScreenshot)...'
+      result = Applitools::Selenium::EntireElementScreenshot.new(
+        entire_frame_or_element,
+        region_provider: region_to_check
+      )
+      logger.info 'Done!'
+      result
+    end
+
+    def viewport_screenshot
+      logger.info 'Viewport screenshot requested'
+      sleep wait_before_screenshots
+      image = image_provider.take_screenshot
+      scale_provider.scale_image(image) if scale_provider
+      cut_provider.cut(image) if cut_provider
+      eyes_screenshot_factory.call(image)
     end
 
     def vp_size=(value, skip_check_if_open = false)
@@ -760,62 +746,6 @@ module Applitools::Selenium
 
     protected
 
-    def check_current_frame(match_timeout, tag)
-      logger.info "check_current_frame(#{match_timeout}, #{tag})"
-      self.check_frame_or_element = true
-
-      region_provider = Object.new.tap do |provider|
-        provider.instance_eval do
-          define_singleton_method :region do
-            Applitools::Region::EMPTY
-          end
-          define_singleton_method :coordinate_type do
-            nil
-          end
-        end
-      end
-
-      self.region_to_check = Object.new.tap do |provider|
-        current_frame_size = lambda do
-          frame_region = Applitools::Region.from_location_size(
-            Applitools::Location.new(0, 0), driver.frame_chain!.current_frame.size
-          )
-          begin
-            frame_region.intersect Applitools::Region.from_location_size(
-              Applitools::Location.new(0, 0),
-              Applitools::Utils::EyesSeleniumUtils.entire_page_size(driver)
-            )
-            frame_region
-          ensure
-            frame_region
-          end
-        end
-
-        provider.instance_eval do
-          define_singleton_method :region do
-            current_frame_size.call
-          end
-          define_singleton_method :coordinate_type do
-            Applitools::EyesScreenshot::COORDINATE_TYPES[:context_relative]
-          end
-        end
-      end
-
-      self.eyes_screenshot_factory = lambda do |image|
-        Applitools::Selenium::EyesWebDriverScreenshot.new(
-          image, driver: driver, force_offset: position_provider.force_offset
-        )
-      end
-
-      match_data = Applitools::MatchWindowData.new.tap do |d|
-        d.tag = tag
-        d.ignore_mismatch = false
-        d.match_level = default_match_settings[:match_level]
-      end
-
-      check_window_base region_provider, match_timeout, match_data
-    end
-
     def app_environment
       app_env = super
       if app_env.os.nil?
@@ -850,175 +780,6 @@ module Applitools::Selenium
       app_env
     end
 
-    # check a region, specified by element_or_selector parameter
-    #
-    # @param [Array] element_or_selector Array, which contains Applitools::Selenium::Element or [:finder, :value]
-    #    pair should be used in find_element
-    # @param [Hash] options
-    # @option options [String] :tag
-    # @option options [Float] :tmatch_timeout
-    def check_region_(element_or_selector, options = {})
-      selector = element_or_selector if Applitools::Selenium::Driver::FINDERS.keys.include? element_or_selector.first
-      element = element_or_selector.first if element_or_selector.first.instance_of? Applitools::Selenium::Element
-      element = driver.find_element(*selector) unless element
-      raise Applitools::EyesIllegalArgument.new 'You should pass :selector or :element!' unless element
-
-      if !options[:tag].nil? && !options[:tag].empty?
-        tag = options[:tag]
-        self.tag_for_debug = tag
-      end
-
-      match_timeout = options[:match_timeout] || USE_DEFAULT_MATCH_TIMEOUT
-
-      logger.info "check_region(element, #{match_timeout}, #{tag}): Ignored" && return if disabled?
-      Applitools::ArgumentGuard.not_nil 'options[:element]', element
-      logger.info "check_region(element: element, #{match_timeout}, #{tag})"
-
-      location_as_point = element.location
-      region_visibility_strategy.move_to_region position_provider,
-        Applitools::Location.new(location_as_point.x.to_i, location_as_point.y.to_i)
-
-      region_provider = Object.new.tap do |prov|
-        prov.instance_eval do
-          define_singleton_method :region do
-            p = element.location
-            d = element.size
-            Applitools::Region.from_location_size p, d
-          end
-
-          define_singleton_method :coordinate_type do
-            Applitools::EyesScreenshot::COORDINATE_TYPES[:context_relative]
-          end
-        end
-      end
-
-      self.eyes_screenshot_factory = lambda do |image|
-        Applitools::Selenium::EyesWebDriverScreenshot.new(image, driver: driver)
-      end
-
-      match_data = Applitools::MatchWindowData.new.tap do |d|
-        d.tag = tag
-        d.ignore_mismatch = false
-        d.match_level = default_match_settings[:match_level]
-      end
-
-      result = check_window_base(
-        region_provider, match_timeout, match_data
-      )
-
-      logger.info 'Done! trying to scroll back to original position...'
-      region_visibility_strategy.return_to_original_position position_provider
-      logger.info 'Done!'
-      result
-    end
-
-    # Checks an element, specified by +element_or_selector+ parameter
-    #
-    # @param [Array] element_or_selector Array, which contains Applitools::Selenium::Element or [:finder, :value]
-    #    pair should be used in find_element
-    # @param [Hash] options
-    # @option options [String] :tag
-    # @option options [Float] :match_timeout
-
-    def check_element(element_or_selector, options = {})
-      selector = element_or_selector if Applitools::Selenium::Driver::FINDERS.keys.include? element_or_selector.first
-      if !options[:tag].nil? && !options[:tag].empty?
-        tag = options[:tag]
-        self.tag_for_debug = tag
-      end
-      match_timeout = options[:match_timeout] || USE_DEFAULT_MATCH_TIMEOUT
-
-      if disabled?
-        logger.info "check_element(#{options.inject([]) { |res, (k, v)| res << "#{k}: #{v}" }.join(', ')}):" /
-          ' Ignored'
-        return
-      end
-
-      eyes_element = element_or_selector.first if element_or_selector.first.instance_of? Applitools::Selenium::Element
-      eyes_element = driver.find_element(*selector) unless eyes_element
-      raise Applitools::EyesIllegalArgument.new 'You should pass :selector or :element!' unless eyes_element
-      eyes_element = Applitools::Selenium::Element.new(driver, eyes_element) unless
-         eyes_element.is_a? Applitools::Selenium::Element
-
-      location_as_point = eyes_element.location
-      region_visibility_strategy.move_to_region position_provider,
-        Applitools::Location.new(location_as_point.x.to_i, location_as_point.y.to_i)
-
-      original_overflow = nil
-      original_position_provider = position_provider
-
-      begin
-        self.check_frame_or_element = true
-        self.position_provider = Applitools::Selenium::ElementPositionProvider.new driver, eyes_element
-        original_overflow = eyes_element.overflow
-        eyes_element.overflow = 'hidden'
-
-        p = eyes_element.location
-        d = eyes_element.size
-
-        border_left_width = eyes_element.border_left_width
-        border_top_width = eyes_element.border_top_width
-        border_right_width = eyes_element.border_right_width
-        border_bottom_width = eyes_element.border_bottom_width
-
-        element_region = Applitools::Region.new(
-          p.x + border_left_width,
-          p.y + border_top_width,
-          d.width - border_left_width - border_right_width,
-          d.height - border_top_width - border_bottom_width
-        )
-
-        logger.info "Element region: #{element_region}"
-
-        self.region_to_check = Object.new.tap do |prov|
-          prov.instance_eval do
-            define_singleton_method :region do
-              element_region
-            end
-
-            define_singleton_method :coordinate_type do
-              Applitools::EyesScreenshot::COORDINATE_TYPES[:context_relative]
-            end
-          end
-        end
-
-        base_check_region_provider = Object.new.tap do |prov|
-          prov.instance_eval do
-            define_singleton_method :region do
-              Applitools::Region::EMPTY
-            end
-
-            define_singleton_method :coordinate_type do
-              nil
-            end
-          end
-        end
-
-        self.eyes_screenshot_factory = lambda do |image|
-          Applitools::Selenium::EyesWebDriverScreenshot.new(
-            image, driver: driver, force_offset: position_provider.state
-          )
-        end
-
-        match_data = Applitools::MatchWindowData.new.tap do |data|
-          data.tag = tag
-          data.ignore_mismatch = false
-          data.match_level = default_match_settings[:match_level]
-        end
-
-        check_window_base(
-          base_check_region_provider, match_timeout, match_data
-        )
-      ensure
-        eyes_element.overflow = original_overflow unless original_overflow.nil?
-        self.check_frame_or_element = false
-        self.position_provider = original_position_provider
-        self.region_to_check = nil
-
-        region_visibility_strategy.return_to_original_position position_provider
-      end
-    end
-
     def inferred_environment
       return @inferred_environment unless @inferred_environment.nil?
 
@@ -1035,6 +796,17 @@ module Applitools::Selenium
       until fc.empty?
         driver.switch_to.parent_frame
         position_provider.position = fc.pop.location
+      end
+      driver.switch_to.frames(frame_chain: original_fc)
+      original_fc
+    end
+
+    def reset_frames_scroll_position(original_fc)
+      return original_fc if original_fc.empty?
+      fc = Applitools::Selenium::FrameChain.new other: original_fc
+      until fc.empty?
+        driver.switch_to.parent_frame
+        position_provider.position = fc.pop.parent_scroll_position
       end
       driver.switch_to.frames(frame_chain: original_fc)
       original_fc

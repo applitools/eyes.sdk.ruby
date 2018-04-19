@@ -14,9 +14,9 @@ module Applitools
       return unless debug
       case image
       when ::ChunkyPNG::Image, Applitools::Screenshot
-        image.save(file_name_to_save(suffix))
+        image.save(file_name_to_save(suffix)) if image.area > 0
       when Applitools::EyesScreenshot
-        image.image.save(file_name_to_save(suffix))
+        image.image.save(file_name_to_save(suffix)) if image.image.area > 0
       when String
         ::ChunkyPNG::Image.from_string(image).save(file_name_to_save(suffix))
       else
