@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Applitools::Selenium
   # @!visibility private
   class ScrollPositionProvider
@@ -49,7 +51,7 @@ module Applitools::Selenium
     # Returns the entire size of the viewport.
     #
     # @return [Applitools::RectangleSize] The viewport size.
-    def entire_size
+    def entire_size(image_width, image_height)
       viewport_size = Applitools::Utils::EyesSeleniumUtils.extract_viewport_size(executor)
       result = Applitools::Utils::EyesSeleniumUtils.entire_page_size(executor)
       logger.info "Entire size: #{result}"
@@ -60,7 +62,16 @@ module Applitools::Selenium
       result.width = [viewport_size.width, result.width].min if disable_horizontal
       result.height = [viewport_size.height, result.height].min if disable_vertical
       logger.info "Actual size to scroll: #{result}"
-      result
+      return result unless executor.frame_chain.empty?
+      original_scroll_position = current_position
+      scroll_to_bottom_right
+      bottom_right_position = current_position
+      restore_state(original_scroll_position)
+      Applitools::RectangleSize.new(bottom_right_position.x + image_width, bottom_right_position.y + image_height)
+    end
+
+    def scroll_to_bottom_right
+      Applitools::Utils::EyesSeleniumUtils.scroll_to_bottom_right(executor)
     end
 
     def force_offset

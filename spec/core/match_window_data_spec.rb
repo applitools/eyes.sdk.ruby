@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 RSpec.describe Applitools::MatchWindowData do
@@ -178,10 +180,51 @@ RSpec.describe Applitools::MatchWindowData do
         )
         subject.read_target(target, nil)
       end
-      it 'sets @need_convert_ignored_regions_coordinates to true' do
+      it 'sets @need_convert_floating_regions_coordinates to true' do
         expect(subject.instance_variable_get(:@need_convert_floating_regions_coordinates)).to be false
         subject.read_target(target, nil)
         expect(subject.instance_variable_get(:@need_convert_floating_regions_coordinates)).to be true
+      end
+    end
+
+    context 'convert floating regions locations' do
+      let(:f_region) { Applitools::FloatingRegion.new 10, 15, 20, 30, 40, 50, 60, 70 }
+      let(:the_app_output) do
+        instance_double(Applitools::AppOutputWithScreenshot).tap do |o|
+          allow(o).to receive(:screenshot).and_return(the_screenshot)
+        end
+      end
+      let(:the_screenshot) do
+        instance_double(Applitools::Selenium::EyesScreenshot).tap do |o|
+          allow(o).to receive(:convert_region_location).and_return(Applitools::Region.new(110, 115, 20, 30))
+        end
+      end
+
+      before do
+        allow(target).to receive(:floating_regions).and_return [proc { f_region }, f_region]
+        allow(subject).to receive(:app_output).and_return(the_app_output)
+      end
+
+      it 'results class is Applitools::FloatingRegion' do
+        subject.read_target(target, nil)
+        expect(subject).to receive(:floating_regions=) do |value|
+          value.each do |r|
+            expect(r).to be_a(Applitools::FloatingRegion)
+          end
+        end
+        subject.convert_floating_regions_coordinates
+      end
+      it 'results values validity' do
+        subject.read_target(target, nil)
+        expect(subject).to receive(:floating_regions=) do |value|
+          value.each do |r|
+            expect(r.max_left_offset).to be 40
+            expect(r.max_top_offset).to be 50
+            expect(r.max_right_offset).to be 60
+            expect(r.max_bottom_offset).to be 70
+          end
+        end
+        subject.convert_floating_regions_coordinates
       end
     end
   end

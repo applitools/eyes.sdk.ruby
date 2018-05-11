@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.shared_examples 'run in docker container' do |dockerfile|
   include Rspec::Shell::Expectations
 

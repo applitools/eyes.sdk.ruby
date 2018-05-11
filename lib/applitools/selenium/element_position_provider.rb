@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Applitools::Selenium
   # @!visibility private
   class ElementPositionProvider
@@ -30,7 +32,7 @@ module Applitools::Selenium
     # Gets the enitire size of the element.
     #
     # @return [Applitools::RectangleSize] The size of the element.
-    def entire_size
+    def entire_size(_image_width, _image_height)
       logger.info 'entire_size()'
       result = Applitools::RectangleSize.new(element.scroll_width, element.scroll_height)
       logger.info "Entire size: #{result}"

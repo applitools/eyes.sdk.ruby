@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Applitools::MatchLevelSetter
   def match_level_with_exact(value, exact_options = {})
     raise Applitools::EyesError unless Applitools::MATCH_LEVEL.keys.include? value

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'capybara'
 
 Applitools::Selenium.require_dir 'selenium/capybara'

@@ -1,3 +1,5 @@
+# frozen_string_literal: false
+
 require 'socket'
 require 'selenium-webdriver'
 
@@ -137,11 +139,17 @@ module Applitools::Selenium
 
     def find_element(*args)
       how, what = extract_args(args)
-
+      return find_element_by_name_or_id(what) if how == :name_or_id
       # Make sure that "how" is a valid locator.
       raise ArgumentError, "cannot find element by: #{how.inspect}" unless FINDERS[how.to_sym]
 
       Applitools::Selenium::Element.new(self, driver.find_element(how, what))
+    end
+
+    def find_element_by_name_or_id(name_or_id)
+      found_by_name = find_elements name: name_or_id
+      return found_by_name.first unless found_by_name.empty?
+      find_element id: name_or_id
     end
 
     # Finds elements in a window.
@@ -278,7 +286,6 @@ module Applitools::Selenium
         when :frame
           logger.info 'Frame.'
           frame_location_size = Applitools::Selenium::BorderAwareElementContentLocationProvider.new target_frame
-
           return parent.frame_chain!.push(
             Applitools::Selenium::Frame.new(
               reference: target_frame, frame_id: '',

@@ -1,3 +1,5 @@
+# frozen_string_literal: false
+
 if defined? Sauce::Selenium2
   if defined? Capybara
     Sauce::Capybara::Driver.class_eval do

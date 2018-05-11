@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Applitools::Selenium
   # @!visibility private
   class FullPageCaptureAlgorithm
@@ -8,6 +10,7 @@ module Applitools::Selenium
 
     MAX_SCROLL_BAR_SIZE = 50
     MIN_SCREENSHOT_PART_HEIGHT = 10
+    MIN_SCREENSHOT_PART_WIDTH = 10
 
     def initialize(options = {})
       @debug_screenshot_provider = options[:debug_screenshot_provider] ||
@@ -37,34 +40,28 @@ module Applitools::Selenium
       wait_before_screenshot = options[:wait_before_screenshots]
       eyes_screenshot_factory = options[:eyes_screenshot_factory]
       stitching_overlap = options[:stitching_overlap] || MAX_SCROLL_BAR_SIZE
+      top_left_position = options[:top_left_position] || Applitools::Location::TOP_LEFT
 
-      logger.info "Region to check: #{region_provider.region}"
+      logger.info "Region to check: #{region_provider.region(false)}"
       logger.info "Coordinates type: #{region_provider.coordinate_type}"
 
       original_position = origin_provider.state
       current_position = nil
       set_position_retries = 3
       while current_position.nil? ||
-          (current_position.x.nonzero? || current_position.y.nonzero?) && set_position_retries > 0
-        origin_provider.position = Applitools::Location.new(0, 0)
+          (current_position == top_left_position) && set_position_retries > 0
+        origin_provider.position = top_left_position
         sleep wait_before_screenshot
         current_position = origin_provider.current_position
         set_position_retries -= 1
       end
 
-      unless current_position.x.zero? && current_position.y.zero?
+      unless current_position == top_left_position
         origin_provider.restore_state original_position
         raise Applitools::EyesError.new 'Couldn\'t set position to the top/left corner!'
       end
 
-      begin
-        entire_size = position_provider.entire_size
-        logger.info "Entire size of region context: #{entire_size}"
-      rescue Applitools::EyesDriverOperationException => e
-        logger.error "Failed to extract entire size of region context: #{e.message}"
-        logger.error "Using image size instead: #{image.width}x#{image.height}"
-        entire_size = Applitools::RectangleSize.new image.width, image.height
-      end
+      logger.info "Current position: #{current_position}"
 
       logger.info 'Getting top/left image...'
       image = image_provider.take_screenshot
@@ -76,44 +73,45 @@ module Applitools::Selenium
       logger.info 'Done! Creating screenshot object...'
       screenshot = eyes_screenshot_factory.call(image)
 
-      if region_provider.coordinate_type
-        left_top_image = screenshot.sub_screenshot(region_provider.region, region_provider.coordinate_type)
-        debug_screenshot_provider.save_subscreenshot(left_top_image, region_provider.region)
-      else
-        left_top_image = screenshot.sub_screenshot(
-          Applitools::Region.from_location_size(Applitools::Location.new(0, 0), entire_size),
-          Applitools::EyesScreenshot::COORDINATE_TYPES[:context_relative]
-        )
-        debug_screenshot_provider.save_subscreenshot(
-          left_top_image,
-          Applitools::Region.from_location_size(Applitools::Location.new(0, 0), entire_size)
-        )
+      begin
+        entire_size = position_provider.entire_size(image.width, image.height)
+      rescue Applitools::EyesDriverOperationException => e
+        logger.error "Failed to extract entire size of region context: #{e.message}"
+        logger.error "Using image size instead: #{image.width}x#{image.height}"
+        entire_size = Applitools::RectangleSize.new image.width, image.height
       end
+
+      if region_provider.region(false).size.square > 0
+        left_top_image = screenshot.sub_screenshot(region_provider.region(false), region_provider.coordinate_type).image
+      else
+        left_top_image = screenshot.image
+      end
+      debug_screenshot_provider.save_subscreenshot(left_top_image, region_provider.region(false))
 
       image = left_top_image.image
 
-      # Notice that this might still happen even if we used
-      # "getImagePart", since "entirePageSize" might be that of a frame.
-
-      if image.width >= entire_size.width && image.height >= entire_size.height
-        origin_provider.restore_state original_position
-        return image
-      end
-
-      part_image_size = Applitools::RectangleSize.new image.width,
+      part_image_size = Applitools::RectangleSize.new(
+        [image.width - stitching_overlap, MIN_SCREENSHOT_PART_WIDTH].max,
         [image.height - stitching_overlap, MIN_SCREENSHOT_PART_HEIGHT].max
+      )
 
       logger.info "Total size: #{entire_size}, image_part_size: #{part_image_size}"
 
       # Getting the list of sub-regions composing the whole region (we'll
       # take screenshot for each one).
       entire_page = Applitools::Region.from_location_size Applitools::Location::TOP_LEFT, entire_size
+
+      # Notice that this might still happen even if we used
+      # "getImagePart", since "entirePageSize" might be that of a frame.
+      if image.width >= entire_size.width && image.height >= entire_size.height
+        origin_provider.restore_state original_position
+        return left_top_image
+      end
+
       image_parts = entire_page.sub_regions(part_image_size)
 
       logger.info "Creating stitchedImage container. Size: #{entire_size}"
 
-      # Notice stitched_image uses the same type of image as the screenshots.
-      # stitched_image = Applitools::Screenshot.from_region entire_size
       stitched_image = ::ChunkyPNG::Image.new(entire_size.width, entire_size.height)
       logger.info 'Done! Adding initial screenshot..'
       logger.info "Initial part:(0,0) [#{image.width} x #{image.height}]"
@@ -126,13 +124,29 @@ module Applitools::Selenium
 
       original_stitched_state = position_provider.state
 
+      stitched_image_region = Applitools::Region.new(
+        0,
+        0,
+        stitched_image.width,
+        stitched_image.height
+      )
+
       logger.info 'Getting the rest of the image parts...'
 
-      image_parts.each_with_index do |part_region, i|
+      # rubocop:disable Metrics/BlockLength
+      image_parts.each_with_index do |part_regions, i|
         next unless i > 0
+
+        part_region = part_regions.first
+        intersection = part_regions.last
+
         logger.info "Taking screenshot for #{part_region}"
 
-        position_provider.position = part_region.location
+        position_provider.position = part_region
+                                     .location
+                                     .offset(top_left_position)
+                                     .offset_negative(intersection.location)
+
         sleep wait_before_screenshot
         current_position = position_provider.current_position
         logger.info "Set position to #{current_position}"
@@ -145,30 +159,51 @@ module Applitools::Selenium
         debug_screenshot_provider.save(part_image, 'cutted')
 
         logger.info 'Done!'
-        begin
-          region_to_check = Applitools::Region.from_location_size(
-            part_region.location.offset(region_provider.region.location), part_region.size
+
+        a_screenshot = eyes_screenshot_factory.call(part_image)
+
+        if region_provider.region(false).size.square > 0
+          a_screenshot = a_screenshot.sub_screenshot(
+            region_provider.region(false),
+            Applitools::EyesScreenshot::COORDINATE_TYPES[:context_relative],
+            false
           )
-          a_screenshot = eyes_screenshot_factory.call(part_image).sub_screenshot(region_to_check,
-            Applitools::EyesScreenshot::COORDINATE_TYPES[:context_relative], false)
-          debug_screenshot_provider.save_subscreenshot(a_screenshot, region_to_check)
-        rescue Applitools::OutOfBoundsException => e
-          logger.error e.message
-          break
         end
+
+        position_to_replace = current_position.offset(intersection.location)
+
+        replacement_region = Applitools::Region.new(
+          position_to_replace.x,
+          position_to_replace.y,
+          a_screenshot.width - intersection.size.width,
+          a_screenshot.height - intersection.size.height
+        )
+
+        replacement_size = stitched_image_region.dup.intersect(replacement_region).size
+        replacement_region_in_screenshot = Applitools::Region.from_location_size(
+          Applitools::Location.from_any_attribute(intersection.location),
+          replacement_size
+        )
+
+        image_to_stitch = a_screenshot.sub_screenshot(
+          replacement_region_in_screenshot,
+          Applitools::EyesScreenshot::COORDINATE_TYPES[:context_relative],
+          false
+        ).image
 
         logger.info 'Stitching part into the image container...'
 
-        stitched_image.replace! a_screenshot.image, part_region.x, part_region.y
+        stitched_image.replace! image_to_stitch, position_to_replace.x, position_to_replace.y
         logger.info 'Done!'
 
-        last_successful_location = Applitools::Location.for part_region.x, part_region.y
-        next unless a_screenshot
+        last_successful_location = Applitools::Location.for position_to_replace.x, position_to_replace.y
+        next unless image_to_stitch.area > 0
         last_successful_part_size = Applitools::RectangleSize.new(
-          a_screenshot.image.width,
-          a_screenshot.image.height
+          image_to_stitch.width,
+          image_to_stitch.height
         )
       end
+      # rubocop:enable Metrics/BlockLength
 
       logger.info 'Stitching done!'
 

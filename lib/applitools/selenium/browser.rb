@@ -1,3 +1,5 @@
+# frozen_string_literal: false
+
 module Applitools::Selenium
   # @!visibility private
   class Browser
@@ -69,7 +71,15 @@ module Applitools::Selenium
     end
 
     def chrome?
-      @driver.browser == :chrome
+      running_browser_name == :chrome
+    end
+
+    def firefox?
+      running_browser_name == :firefox
+    end
+
+    def running_browser_name
+      @driver.__getobj__.browser
     end
 
     def user_agent
@@ -149,62 +159,62 @@ module Applitools::Selenium
       set_transform("translate(-#{point.left}px, -#{point.top}px)")
     end
 
-    # Takes a full page screenshot.
+    # # Takes a full page screenshot.
+    # #
+    # # @return [ChunkyPNG::Canvas] image The result of the screenshot.
+    # def fullpage_screenshot
+    #   # Scroll to the top/left corner of the screen.
+    #   original_scroll_position = current_scroll_position
+    #   scroll_to(Applitools::Base::Point::TOP_LEFT)
+    #   if current_scroll_position != Applitools::Base::Point::TOP_LEFT
+    #     raise 'Could not scroll to the top/left corner of the screen!'
+    #   end
     #
-    # @return [ChunkyPNG::Canvas] image The result of the screenshot.
-    def fullpage_screenshot
-      # Scroll to the top/left corner of the screen.
-      original_scroll_position = current_scroll_position
-      scroll_to(Applitools::Base::Point::TOP_LEFT)
-      if current_scroll_position != Applitools::Base::Point::TOP_LEFT
-        raise 'Could not scroll to the top/left corner of the screen!'
-      end
-
-      # Translate to top/left of the page (notice this is different from JavaScript scrolling).
-      if @eyes.use_css_transition
-        original_transform = current_transform
-        translate_to(Applitools::Base::Point::TOP_LEFT)
-      end
-
-      # Take screenshot of the (0,0) tile.
-      screenshot = @driver.visible_screenshot
-
-      # Normalize screenshot width/height.
-      size_factor = 1
-      page_size = entire_page_size
-      factor = image_normalization_factor(screenshot)
-      if factor == 0.5
-        size_factor = 2
-        page_size.width *= size_factor
-        page_size.height *= size_factor
-        page_size.width = [page_size.width, screenshot.width].max
-      end
-
-      # NOTE: this is required! Since when calculating the screenshot parts for full size, we use a screenshot size
-      # which is a bit smaller (see comment below).
-      if screenshot.width < page_size.width || screenshot.height < page_size.height
-        # We use a smaller size than the actual screenshot size in order to eliminate duplication of bottom scroll bars,
-        # as well as footer-like elements with fixed position.
-        max_scrollbar_size = @eyes.use_css_transition ? 0 : MAX_SCROLLBAR_SIZE
-        height = [screenshot.height - (max_scrollbar_size * size_factor), MIN_SCREENSHOT_PART_HEIGHT * size_factor].max
-        screenshot_part_size = Applitools::Base::Dimension.new(screenshot.width, height)
-
-        sub_regions = Applitools::Base::Region.new(0, 0, page_size.width,
-          page_size.height).subregions(screenshot_part_size)
-        parts = sub_regions.map do |screenshot_part|
-          # Skip (0,0), as we already got the screenshot.
-          if screenshot_part.left.zero? && screenshot_part.top.zero?
-            next Applitools::Base::ImagePosition.new(screenshot, Applitools::Base::Point::TOP_LEFT)
-          end
-
-          process_screenshot_part(screenshot_part, size_factor)
-        end
-        screenshot = Applitools::Utils::ImageUtils.stitch_images(page_size, parts)
-      end
-      set_transform(original_transform) if @eyes.use_css_transition
-      scroll_to(original_scroll_position)
-      screenshot
-    end
+    #   # Translate to top/left of the page (notice this is different from JavaScript scrolling).
+    #   if @eyes.use_css_transition
+    #     original_transform = current_transform
+    #     translate_to(Applitools::Base::Point::TOP_LEFT)
+    #   end
+    #
+    #   # Take screenshot of the (0,0) tile.
+    #   screenshot = @driver.visible_screenshot
+    #
+    #   # Normalize screenshot width/height.
+    #   size_factor = 1
+    #   page_size = entire_page_size
+    #   factor = image_normalization_factor(screenshot)
+    #   if factor == 0.5
+    #     size_factor = 2
+    #     page_size.width *= size_factor
+    #     page_size.height *= size_factor
+    #     page_size.width = [page_size.width, screenshot.width].max
+    #   end
+    #
+    #   # NOTE: this is required! Since when calculating the screenshot parts for full size, we use a screenshot size
+    #   # which is a bit smaller (see comment below).
+    #   if screenshot.width < page_size.width || screenshot.height < page_size.height
+    #     # We use a smaller size than the actual screenshot size in order to eliminate duplication of bottom scroll bars,
+    #     # as well as footer-like elements with fixed position.
+    #     max_scrollbar_size = @eyes.use_css_transition ? 0 : MAX_SCROLLBAR_SIZE
+    #     height = [screenshot.height - (max_scrollbar_size * size_factor), MIN_SCREENSHOT_PART_HEIGHT * size_factor].max
+    #     screenshot_part_size = Applitools::Base::Dimension.new(screenshot.width, height)
+    #
+    #     sub_regions = Applitools::Base::Region.new(0, 0, page_size.width,
+    #       page_size.height).subregions(screenshot_part_size)
+    #     parts = sub_regions.map do |screenshot_part|
+    #       # Skip (0,0), as we already got the screenshot.
+    #       if screenshot_part.left.zero? && screenshot_part.top.zero?
+    #         next Applitools::Base::ImagePosition.new(screenshot, Applitools::Base::Point::TOP_LEFT)
+    #       end
+    #
+    #       process_screenshot_part(screenshot_part, size_factor)
+    #     end
+    #     screenshot = Applitools::Utils::ImageUtils.stitch_images(page_size, parts)
+    #   end
+    #   set_transform(original_transform) if @eyes.use_css_transition
+    #   scroll_to(original_scroll_position)
+    #   screenshot
+    # end
 
     private
 

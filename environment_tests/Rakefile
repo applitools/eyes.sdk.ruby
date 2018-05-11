@@ -1,4 +1,6 @@
 #!/usr/bin/env rake
+# frozen_string_literal: true
+
 require 'rake/clean'
 require 'rspec/core/rake_task'
 require_relative 'spec/docker_files_list'

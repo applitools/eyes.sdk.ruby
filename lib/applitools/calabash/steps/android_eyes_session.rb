@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Then(/^set OS$/) do
   sdk_version = begin
                   perform_action('android_sdk_version')

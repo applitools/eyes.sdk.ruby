@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Applitools
   class PaddingBounds
     attr_accessor :padding_left, :padding_top, :padding_right, :padding_bottom

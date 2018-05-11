@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Applitools::Calabash.require_dir 'calabash/full_page_capture_algorithm'
 
 module Applitools

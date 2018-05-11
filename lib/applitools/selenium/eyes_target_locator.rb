@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Applitools::Selenium
   class EyesTargetLocator < SimpleDelegator
     extend Forwardable
@@ -43,16 +45,6 @@ module Applitools::Selenium
       else
         raise Applitools::EyesError, 'Unknown frame selector to switch!'
       end
-      # require 'pry'
-      # binding.pry
-      # raise Applitools::EyesIllegalArgument.new 'You must pass :index or :name_or_id or :frame_element option' unless
-      #     options[:index] || options[:name_or_id] || options[:frame_element]
-      # if (needed_keys = (options.keys & [:index, :name_or_id, :frame_element])).length == 1
-      #   send "frame_by_#{needed_keys.first}", options[needed_keys.first]
-      # else
-      #   raise Applitools::EyesIllegalArgument.new 'You\'ve passed some extra keys!' /
-      #     'Only :index, :name_or_id or :frame_elenent are allowed.'
-      # end
     end
 
     # Switches to parent frame.
@@ -172,20 +164,14 @@ module Applitools::Selenium
 
     def frame_by_name_or_id(name_or_id)
       logger.info "EyesTargetLocator.frame(#{name_or_id})"
-      # Finding the target element so we can report it.
-      # We use find elements(plural) to avoid exception when the element
-      # is not found.
-      logger.info 'Getting frames by name...'
-      frames = driver.find_elements :name, name_or_id
-      if frames.empty?
-        logger.info 'No frames found! Trying by id...'
-        frames = driver.find_elements :id, name_or_id
-        raise Applitools::EyesNoSuchFrame.new "No frame with name or id #{name_or_id} exists!" if frames.empty?
-      end
+
+      logger.info 'Getting frame by name or id...'
+      target_frame = driver.find_element(name_or_id: name_or_id)
+
       logger.info 'Done! Making preparations...'
-      on_will_switch.will_switch_to_frame(:frame, frames.first)
+      on_will_switch.will_switch_to_frame(:frame, target_frame)
       logger.info 'Done! Switching to frame...'
-      __getobj__.frame frames.first
+      __getobj__.frame target_frame
 
       logger.info 'Done!'
       driver

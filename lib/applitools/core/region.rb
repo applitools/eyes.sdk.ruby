@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 require_relative 'padding_bounds'
 module Applitools
   class Region
     extend Forwardable
-    attr_accessor :left, :top, :width, :height
+    attr_accessor :left, :top, :width, :height, :padding
 
     def_delegators :@padding, :padding_left, :padding_top, :padding_right, :padding_bottom
 
@@ -65,8 +67,7 @@ module Applitools
     def intersect(other)
       unless intersecting?(other)
         make_empty
-
-        return
+        return self
       end
 
       i_left = left >= other.left ? left : other.left
@@ -121,6 +122,16 @@ module Applitools
       width == region.width && height == region.height
     end
 
+    def ==(other)
+      return false unless other.is_a? self.class
+      size_location_match = left == other.left && top == other.top && width == other.width && height == other.height
+      padding_match = padding_left == other.padding_left &&
+        padding_top == other.padding_top &&
+        padding_right == other.padding_right &&
+        padding_bottom == other.padding_bottom
+      size_location_match && padding_match
+    end
+
     # Sets padding for a current region. If called without any argument, all paddings will be set to 0
     # @param padding[Applitools::PaddingBounds] represents paddings to be set for a region
     # @return [Applitools::Region]
@@ -131,6 +142,10 @@ module Applitools
       self
     end
 
+    def current_padding
+      @padding
+    end
+
     def with_padding
       Applitools::Region.from_location_size(
         Applitools::Location.new(left - padding_left, top - padding_top),
@@ -139,6 +154,7 @@ module Applitools
     end
 
     class << self
+      DEFAULT_SUBREGIONS_INTERSECTION = 4
       def sub_regions_with_fixed_size(container_region, sub_region)
         Applitools::ArgumentGuard.not_nil container_region, 'container_region'
         Applitools::ArgumentGuard.not_nil sub_region, 'sub_region'
@@ -155,7 +171,7 @@ module Applitools
 
         if sub_region_width == container_region.width && sub_region_height == container_region.height
           return Enumerator(1) do |y|
-            y << sub_region
+            y << [sub_region, EMPTY]
           end
         end
 
@@ -168,7 +184,7 @@ module Applitools
             current_left = container_region.left
             while current_left <= right
               current_left = (rught - sub_region_width) + 1 if current_left + sub_region_width > right
-              y << new(current_left, current_top, sub_region_width, sub_region_height)
+              y << [new(current_left, current_top, sub_region_width, sub_region_height), EMPTY]
               current_left += sub_region_width
             end
             current_top += sub_region_height
@@ -176,7 +192,7 @@ module Applitools
         end
       end
 
-      def sub_regions_with_varying_size(container_region, sub_region)
+      def sub_regions_with_varying_size(container_region, sub_region, intersection = DEFAULT_SUBREGIONS_INTERSECTION)
         Applitools::ArgumentGuard.not_nil container_region, 'container_region'
         Applitools::ArgumentGuard.not_nil sub_region, 'sub_region'
 
@@ -186,12 +202,14 @@ module Applitools
         current_top = container_region.top
         bottom = container_region.top + container_region.height
         right = container_region.left + container_region.width
+        top_intersect = 0
 
         Enumerator.new do |y|
           while current_top < bottom
             current_bottom = current_top + sub_region.height
             current_bottom = bottom if current_bottom > bottom
             current_left = container_region.left
+            left_intersect = 0
             while current_left < right
               current_right = current_left + sub_region.width
               current_right = right if current_right > right
@@ -199,11 +217,16 @@ module Applitools
               current_height = current_bottom - current_top
               current_width = current_right - current_left
 
-              y << new(current_left, current_top, current_width, current_height)
+              y << [
+                new(current_left, current_top, current_width, current_height),
+                new(left_intersect, top_intersect, left_intersect, top_intersect)
+              ]
 
-              current_left += sub_region.width
+              current_left += sub_region.width - intersection * 2
+              left_intersect = intersection if left_intersect.zero?
             end
-            current_top += sub_region.height
+            current_top += sub_region.height - intersection * 2
+            top_intersect = intersection if top_intersect.zero?
           end
         end
       end

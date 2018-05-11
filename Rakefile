@@ -1,4 +1,6 @@
 #!/usr/bin/env rake
+# frozen_string_literal: true
+
 require 'rake/clean'
 CLOBBER.include 'pkg'
 
@@ -8,17 +10,43 @@ Bundler::GemHelper.install_tasks name: 'eyes_images'
 Bundler::GemHelper.install_tasks name: 'eyes_selenium'
 Bundler::GemHelper.install_tasks name: 'eyes_calabash'
 
-require 'rspec/core/rake_task'
-require 'rubocop/rake_task'
+unless ENV['BUILD_ONLY']
+  require 'rspec/core/rake_task'
+  require 'rubocop/rake_task'
 
-RSpec::Core::RakeTask.new('spec')
+  browsers = %w(chrome firefox)
+  browsers.delete(ENV['TEST_IN_BROWSER'])
+  options = ["api:#{ENV['TEST_API']}"] + browsers.map { |b| "~browser:#{b}" }
+  RSpec::Core::RakeTask.new(:spec) do |t|
+    t.rspec_opts = '--tag ~integration'
+  end
 
-RuboCop::RakeTask.new
+  desc 'Checks if necessary environment variables are set'
+  task :check_integration_test_required_variables do
+    raise StandardError, 'Please set TEST_IN_BROWSER environment variable' unless
+        ENV['TEST_IN_BROWSER'] && !ENV['TEST_IN_BROWSER'].empty?
+    raise StandardError, 'Please set TEST_API environment variable' unless ENV['TEST_API'] && !ENV['TEST_API'].empty?
+  end
 
-if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('2.0.0')
-  task perform_tests: [:spec]
-else
-  task perform_tests: [:spec, :rubocop]
+  RSpec::Core::RakeTask.new(spec_integration: [:check_integration_test_required_variables]) do |t|
+    t.rspec_opts = options.map { |o| '--tag ' + o }.join(' ')
+  end
+
+  RSpec::Core::RakeTask.new(:spec_integration_all) do |t|
+    t.rspec_opts = '--tag integration'
+  end
+
+  RuboCop::RakeTask.new
+
+  if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('2.0.0')
+    task perform_tests: [:spec]
+  else
+    task perform_tests: [:rubocop, :spec]
+  end
+
+  if ENV['END_TO_END_TESTS'] && ENV['END_TO_END_TESTS'] == 'true'
+    task :default => :spec_integration
+  else
+    task :default => :perform_tests
+  end
 end
-
-task :default => :perform_tests

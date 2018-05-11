@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Applitools::Selenium
   # @!visibility private
   class Frame
@@ -8,7 +10,7 @@ module Applitools::Selenium
         send("#{param}=", options[param])
       end
 
-      raise 'options[:location] must be instance of Applitools::Base::Point' unless
+      raise 'options[:location] must be instance of Applitools::Base::Location' unless
           location.is_a? Applitools::Location
 
       raise 'options[:parent_scroll_position] must be instance of Applitools::Location' unless
@@ -19,6 +21,14 @@ module Applitools::Selenium
 
       return if reference.is_a? Applitools::Selenium::Element
       raise 'options[:reference] must be instance of Applitools::Selenium::Element'
+    end
+
+    def dup
+      super.tap do |r|
+        r.location = location.dup
+        r.size = size.dup
+        r.parent_scroll_position = parent_scroll_position.dup
+      end
     end
   end
 end

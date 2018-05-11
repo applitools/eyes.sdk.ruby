@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # @!visibility private
 module Applitools::MethodTracer
   def self.included(base)

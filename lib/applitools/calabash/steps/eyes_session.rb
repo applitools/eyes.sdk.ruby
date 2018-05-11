@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Then(/^create eyes$/) do
   eyes_settings = Applitools::Calabash::EyesSettings.instance
   eyes_settings.eyes ||= Applitools::Calabash::Eyes.new.tap do |eyes|

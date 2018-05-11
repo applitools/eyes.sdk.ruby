@@ -26,9 +26,12 @@ ext/eyes_core/*.so
 ext/applitools/*.time
 ext/eyes_core/*.bundle
 
+GemfileTravis.lock
+
 # Local RVM files
-.ruby-gemset
-!/*/.ruby-gemset
-.ruby-version
-!/*/.ruby-version
+#.ruby-gemset
+#!/*/.ruby-gemset
+#.ruby-version
+#!/*/.ruby-version
 node_modules
+debug_screenshots

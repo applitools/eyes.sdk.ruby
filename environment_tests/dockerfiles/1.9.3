@@ -69,7 +69,7 @@ ENV PATH $BUNDLE_BIN:$PATH
 RUN mkdir -p "$GEM_HOME" "$BUNDLE_BIN" \
 	&& chmod 777 "$GEM_HOME" "$BUNDLE_BIN"
 
-RUN mkdir /workdir, /source_dir
+RUN mkdir /workdir /source_dir
 ADD https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2 /source_dir
 RUN cd /source_dir && tar jxf ./phantomjs-2.1.1-linux-x86_64.tar.bz2
 RUN cp /source_dir/phantomjs-2.1.1-linux-x86_64/bin/phantomjs /usr/local/bin/phantomjs

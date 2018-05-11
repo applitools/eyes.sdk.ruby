@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'watir-webdriver'
 require_relative '../lib/eyes_selenium'
 require 'logger'

@@ -26,6 +26,10 @@ Metrics/BlockNesting:
 
 Metrics/BlockLength:
   Max: 50
+  Exclude:
+      - "**/*_spec.rb"
+      - "spec/integration/test_api.rb"
+      - "examples/*.rb"
 
 Style/SignalException:
   EnforcedStyle: only_raise
@@ -67,4 +71,8 @@ Metrics/ModuleLength:
   Description: 'Avoid modules longer than 100 lines of code.'
   Enabled: false
 
+Style/NumericPredicate:
+  Enabled: false
 
+Style/SafeNavigation:
+  Enabled: false

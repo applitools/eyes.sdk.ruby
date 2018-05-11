@@ -1,7 +1,8 @@
+# frozen_string_literal: true
+
 require 'rspec'
 require_relative '../lib/eyes_selenium'
 
-# rubocop:disable BlockLength
 RSpec.describe 'Simple examples for eyes_selenium' do
   let(:eyes) do
     Applitools::Selenium::Eyes.new.tap do |eyes|
@@ -317,4 +318,3 @@ RSpec.describe 'Simple examples for eyes_selenium' do
     context 'fluent interface'
   end
 end
-# rubocop:enable BlockLength

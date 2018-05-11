@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 require 'eyes_selenium'
 
-RSpec.describe Applitools::Selenium::Eyes do
+RSpec.describe Applitools::Selenium::Eyes, mock_connection: true do
   let(:element) { Selenium::WebDriver::Element.new('', nil) }
   let(:target_locator) do
     double.tap do |t|
@@ -16,6 +18,7 @@ RSpec.describe Applitools::Selenium::Eyes do
         .with(Applitools::Utils::EyesSeleniumUtils::JS_GET_CURRENT_SCROLL_POSITION)
         .and_return(left: 0, top: 0)
       allow(d).to receive(:user_agent).and_return(nil)
+      allow(d).to receive(:frame_chain).and_return([])
     end
   end
   let(:driver) { Applitools::Selenium::Driver.new(subject, driver: original_driver) }
@@ -111,6 +114,60 @@ RSpec.describe Applitools::Selenium::Eyes do
       rescue Applitools::EyesError
         subject
       end
+    end
+  end
+end
+
+RSpec.describe 'Applitools::Selenium::Eyes' do
+  context :obtain_screenshot_type do
+    let(:klass) { Applitools::Selenium::Eyes }
+    it '!element, !frame, !stitch, !force' do
+      expect(klass.obtain_screenshot_type(false, false, false, false)).to eql(klass::VIEWPORT_SCREENSHOT)
+    end
+    it '!element, !frame, !stitch, force' do
+      expect(klass.obtain_screenshot_type(false, false, false, true)).to eql(klass::FULLPAGE_SCREENSHOT)
+    end
+    it '!element, !frame, stitch, force' do
+      expect(klass.obtain_screenshot_type(false, false, true, true)).to eql(klass::FULLPAGE_SCREENSHOT)
+    end
+    it '!element, !frame, stitch, !force' do
+      expect(klass.obtain_screenshot_type(false, false, true, false)).to eql(klass::FULLPAGE_SCREENSHOT)
+    end
+    it '!element, frame, !stitch, !force' do
+      expect(klass.obtain_screenshot_type(false, true, false, false)).to eql(klass::VIEWPORT_SCREENSHOT)
+    end
+    it '!element, frame, !stitch, force' do
+      expect(klass.obtain_screenshot_type(false, true, false, true)).to eql(klass::ENTIRE_ELEMENT_SCREENSHOT)
+    end
+    it '!element, frame, stitch, force' do
+      expect(klass.obtain_screenshot_type(false, true, true, true)).to eql(klass::ENTIRE_ELEMENT_SCREENSHOT)
+    end
+    it '!element, frame, stitch, !force' do
+      expect(klass.obtain_screenshot_type(false, true, true, false)).to eql(klass::ENTIRE_ELEMENT_SCREENSHOT)
+    end
+    it 'element, frame, !stitch, !force' do
+      expect(klass.obtain_screenshot_type(true, true, false, false)).to eql(klass::VIEWPORT_SCREENSHOT)
+    end
+    it 'element, frame, !stitch, force' do
+      expect(klass.obtain_screenshot_type(true, true, false, true)).to eql(klass::ENTIRE_ELEMENT_SCREENSHOT)
+    end
+    it 'element, frame, stitch, force' do
+      expect(klass.obtain_screenshot_type(true, true, true, true)).to eql(klass::ENTIRE_ELEMENT_SCREENSHOT)
+    end
+    it 'element, frame, stitch, !force' do
+      expect(klass.obtain_screenshot_type(true, true, true, false)).to eql(klass::ENTIRE_ELEMENT_SCREENSHOT)
+    end
+    it 'element, !frame, !stitch, !force' do
+      expect(klass.obtain_screenshot_type(true, false, false, false)).to eql(klass::VIEWPORT_SCREENSHOT)
+    end
+    it 'element, !frame, !stitch, force' do
+      expect(klass.obtain_screenshot_type(true, false, false, true)).to eql(klass::FULLPAGE_SCREENSHOT)
+    end
+    it 'element, !frame, stitch, force' do
+      expect(klass.obtain_screenshot_type(true, false, true, true)).to eql(klass::ENTIRE_ELEMENT_SCREENSHOT)
+    end
+    it 'element, !frame, stitch, !force' do
+      expect(klass.obtain_screenshot_type(true, false, true, false)).to eql(klass::ENTIRE_ELEMENT_SCREENSHOT)
     end
   end
 end
