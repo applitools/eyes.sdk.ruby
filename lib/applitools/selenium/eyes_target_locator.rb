@@ -99,7 +99,7 @@ module Applitools::Selenium
     def window(name_or_handle)
       logger.info 'EyesTargetLocator.window()'
       logger.info 'Making preparaions...'
-      on_will_switch.will_switch_to_window name_or_handle
+      # on_will_switch.will_switch_to_window name_or_handle
       logger.info 'Done! Switching to window..'
       __getobj__.window name_or_handle
       logger.info 'Done!'
