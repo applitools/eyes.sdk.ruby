@@ -37,6 +37,8 @@ EYES_GEM_SPECS = {
     gem 'selenium-webdriver', '<= 2.53.4'
     gem 'rake', '< 12.3'
     gem 'rack-test', '< 0.7'
+    gem 'cucumber-core', '=3.0.0'
+    gem 'websocket', '=1.2.4'
   end,
   RUBY_2_0_0 => proc do |spec|
     gem 'rack', '~> 1.6.0'
