@@ -11,6 +11,7 @@ module_files = `git ls-files lib/applitools/images`.split($RS) + `git ls-files l
 Gem::Specification.new do |spec|
   spec.name          = 'eyes_core'
   spec.version       = Applitools::VERSION
+  spec.version = "#{spec.version}-alpha-#{ENV['TRAVIS_BUILD_NUMBER']}" if ENV['TRAVIS']
   spec.authors       = ['Applitools Team']
   spec.email         = ['team@applitools.com']
   spec.description   = 'Applitools Ruby SDK'

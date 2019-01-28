@@ -8,6 +8,7 @@ require 'applitools/version'
 Gem::Specification.new do |spec|
   spec.name          = 'eyes_calabash'
   spec.version       = Applitools::VERSION
+  spec.version = "#{spec.version}-alpha-#{ENV['TRAVIS_BUILD_NUMBER']}" if ENV['TRAVIS']
   spec.authors       = ['Applitools Team']
   spec.email         = ['team@applitools.com']
   spec.description   = 'Applitools Ruby Calabash SDK'
