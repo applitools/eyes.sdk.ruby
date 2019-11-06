@@ -11,7 +11,6 @@ RSpec.describe 'Chrome 78 bug' do
   let(:original_driver) { Selenium::WebDriver.for :chrome }
   let(:driver) { eyes.open(app_name: 'Ruby SDK', test_name: 'Chrome78', viewport_size: { width: 800, height: 600 }, driver: original_driver) }
   before { driver.get('https://applitools.github.io/demo/TestPages/FramesTestPage/') }
-  # before { driver.get('https://applitools.com') }
 
   it 'full window' do
     target = Applitools::Selenium::Target.window.fully

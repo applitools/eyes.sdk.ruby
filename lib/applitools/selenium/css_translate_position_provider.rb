@@ -38,7 +38,6 @@ module Applitools::Selenium
     #
     # @param [Applitools::Location] value The location.
     def restore_state(value)
-      # scroll_to(Applitools::Location.new(10, 10))
       Applitools::Utils::EyesSeleniumUtils.set_current_transforms(executor, "translate(10px, 0px)")
 
       transforms = value.values.compact.map(&:to_s).select { |el| !el.empty? }
@@ -53,7 +52,6 @@ module Applitools::Selenium
     end
 
     def position=(value)
-      p value
       Applitools::ArgumentGuard.not_nil(value, 'value')
       logger.info "Setting position to: #{value}"
       Applitools::Utils::EyesSeleniumUtils.translate_to(executor, value)
