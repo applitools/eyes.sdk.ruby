@@ -289,6 +289,7 @@ module Applitools::Utils
     end
 
     def translate_to(executor, location)
+      set_current_transforms(executor, "translate(10px, #{-location.y}px)")
       set_current_transforms(executor, "translate(#{-location.x}px, #{-location.y}px)")
     end
 

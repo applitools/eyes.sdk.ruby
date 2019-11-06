@@ -116,6 +116,8 @@ module Applitools::Selenium
       logger.info 'Done! Adding initial screenshot..'
       logger.info "Initial part:(0,0) [#{image.width} x #{image.height}]"
 
+      image.crop!(0,0,stitched_image.width < image.width ? stitched_image.width : image.width, stitched_image.height < image.height ? stitched_image.height : image.height)
+
       stitched_image.replace! image, 0, 0
       logger.info 'Done!'
 
