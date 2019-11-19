@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require_relative 'test_api'
-require_relative 'chrome_settings'
+require_relative 'old_tests/b'
+require_relative 'old_tests/chrome_settings'
 
 RSpec.describe 'TestClassicApi_Chrome', :integration => true, :browser => :chrome, :api => :none do
   let(:test_suit_name) { 'Eyes Selenium SDK - Special Cases' }

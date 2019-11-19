@@ -4,7 +4,7 @@
 
 $batch_info ||= Applitools::BatchInfo.new "Ruby tests (#{RUBY_VERSION})"
 
-require_relative 'eyes_test_result'
+require_relative 'old_tests/result'
 
 PLATFORMS = if ENV['TEST_PLATFORM'] && ENV['TEST_PLATFORM'].casecmp('linux').zero?
               ['Linux'].freeze

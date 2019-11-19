@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 require_relative 'test_api'
-require_relative 'chrome_settings'
+require_relative 'old_tests/tings'
 
 RSpec.describe 'TestClassicApi_Chrome', :integration => true, :browser => :chrome, :api => :classic do
   let(:test_suit_name) { 'Eyes Selenium SDK - Classic API' }

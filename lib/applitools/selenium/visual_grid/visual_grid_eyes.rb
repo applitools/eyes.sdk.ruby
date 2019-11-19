@@ -71,7 +71,6 @@ module Applitools
           test_list.push Applitools::Selenium::RunningTest.new(eyes_connector, bi, driver)
         end
         self.opened = true
-
         driver
       end
 
@@ -303,10 +302,16 @@ module Applitools
       # @param [String] tag An optional tag to be assosiated with the snapshot.
       # @param [Fixnum] match_timeout The amount of time to retry matching (seconds)
       def check_window(tag = nil, match_timeout = USE_DEFAULT_MATCH_TIMEOUT)
+        p "QQQQQQQQ"
         target = Applitools::Selenium::Target.window.tap do |t|
+          p "AAAAAAA"
+          p match_timeout
           t.timeout(match_timeout)
+          p "AAAAAAA"
           t.fully if force_full_page_screenshot
+          p "AAAAAAA"
         end
+        p "QQQQQQQQ"
         check(tag, target)
       end
 

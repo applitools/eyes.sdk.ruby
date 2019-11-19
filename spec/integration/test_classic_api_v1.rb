@@ -3,6 +3,10 @@ require 'spec_helper'
 RSpec.shared_examples 'Classic API' do
   let(:url_for_test) { 'https://applitools.github.io/demo/TestPages/FramesTestPage/' }
 
+  # it('TestCheckWindowFully') { eyes.check_window('Full Window', true) }
+  #
+  # it('TestCheckWindowViewport') { eyes.check_window('Viewport Window', false) }
+
   it('TestCheckWindow') { eyes.check_window('Window') }
 
   it('TestCheckRegion') { eyes.check_region(:id, 'overflowing-div', tag: 'Region', stitch_content: true) }
@@ -38,22 +42,22 @@ RSpec.shared_examples 'Classic API' do
   end
 end
 
-RSpec.describe 'Eyes Selenium SDK - Classic API', selenium: true do
-  describe do
-    include_examples 'Classic API'
-  end
-
-  context 'Stitch mode Scroll', scroll: true do
-    include_examples 'Classic API'
-  end
-
-  # describe 'Force Full Page Screenshot', fps: true do
-  #   include_examples 'Classic API'
-  # end
-  #
-  # describe 'Force Full Page Screenshot, Stitch mode Scroll', fps: true, scroll: true do
-  #   include_examples 'Classic API'
-  # end
-end
+# RSpec.describe 'Eyes Selenium SDK - Classic API', selenium: true do
+#   describe do
+#     include_examples 'Classic API'
+#   end
+#
+#   context 'Stitch mode Scroll', scroll: true do
+#     include_examples 'Classic API'
+#   end
+#
+#   # describe 'Force Full Page Screenshot', fps: true do
+#   #   include_examples 'Classic API'
+#   # end
+#   #
+#   # describe 'Force Full Page Screenshot, Stitch mode Scroll', fps: true, scroll: true do
+#   #   include_examples 'Classic API'
+#   # end
+# end
 
 

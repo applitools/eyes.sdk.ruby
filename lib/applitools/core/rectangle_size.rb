@@ -58,6 +58,7 @@ module Applitools
     end
 
     def square
+      return 0 if width.nil? || height.nil?
       width * height
     end
 
@@ -71,6 +72,10 @@ module Applitools
 
     def to_hash
       to_h
+    end
+
+    def empty?
+      square.zero?
     end
   end
   # rubocop:enable Metrics/BlockLength

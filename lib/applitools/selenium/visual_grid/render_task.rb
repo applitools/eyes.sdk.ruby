@@ -210,7 +210,7 @@ module Applitools
             dom: dom,
             resources: request_resources,
             render_info: r_info,
-            browser: {xname: running_test.browser_info.browser_type, platform: running_test.browser_info.platform},
+            browser: {name: running_test.browser_info.browser_type, platform: running_test.browser_info.platform},
             script_hooks: script_hooks,
             selectors_to_find_regions_for: region_selectors,
             send_dom: running_test.eyes.config.send_dom.nil? ? false.to_s : running_test.eyes.config.send_dom.to_s
