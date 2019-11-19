@@ -9,7 +9,7 @@ require_relative 'test_duplicates_v1'
 require 'pry'
 
 RSpec.describe 'Selenium Browser Tests' do
-  after(:all) do
+  after(:context) do
     puts @vg_runner.get_all_test_results
     puts @classic_runner.get_all_test_results
   end
