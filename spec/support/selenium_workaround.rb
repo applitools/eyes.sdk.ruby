@@ -4,9 +4,9 @@ RSpec.shared_context "selenium workaround" do
 
     Applitools::EyesLogger.log_handler = Logger.new(STDOUT)
     @runner = if self.class.metadata[:visual_grid]
-                Applitools::Selenium::VisualGridRunner.new(10)
+                @vg_runner ||= Applitools::Selenium::VisualGridRunner.new(10)
               else
-                Applitools::ClassicRunner.new
+                @classic_runner ||= Applitools::ClassicRunner.new
               end
     @eyes = Applitools::Selenium::Eyes.new(runner: @runner)
   end
@@ -22,9 +22,9 @@ RSpec.shared_context "selenium workaround" do
     driver.get(url_for_test)
   end
 
-  after(:all) do
-    puts @runner.get_all_test_results
-  end
+  # after(:all) do
+  #   puts @runner.get_all_test_results
+  # end
 
   around(:example) do |example|
     begin
