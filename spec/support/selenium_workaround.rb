@@ -18,7 +18,7 @@ RSpec.shared_context "selenium workaround" do
     eyes.stitch_mode = Applitools::Selenium::StitchModes::CSS
     eyes.force_full_page_screenshot = true if example.metadata[:fps]
     eyes.stitch_mode = Applitools::Selenium::StitchModes::SCROLL if example.metadata[:scroll]
-    eyes.proxy = Applitools::Connectivity::Proxy.new('http://localhost:8000')
+    # eyes.proxy = Applitools::Connectivity::Proxy.new('http://localhost:8000')
     driver.get(url_for_test)
   end
 

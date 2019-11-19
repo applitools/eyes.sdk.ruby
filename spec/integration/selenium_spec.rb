@@ -9,51 +9,88 @@ require_relative 'test_duplicates_v1'
 require 'pry'
 
 RSpec.describe 'Selenium Browser Tests' do
-  context 'Classic API', selenium: true do
+  context 'Eyes Selenium SDK - Classic API', selenium: true do
     include_examples 'Classic API'
   end
 
-  context 'Classic API scroll', selenium: true, scroll: true do
+  context 'Eyes Selenium SDK - Classic API', selenium: true, scroll: true do
     include_examples 'Classic API'
   end
 
-  context 'Classic API VG', visual_grid: true do
+  context 'Eyes Selenium SDK - Classic API', visual_grid: true do
     include_examples 'Classic API'
   end
 
-  context 'Fluent API', selenium: true do
+  context 'Eyes Selenium SDK - Fluent API', selenium: true do
     include_examples 'Fluent API'
+  end
+
+  context 'Eyes Selenium SDK - Fluent API', selenium: true, scroll: true do
+    include_examples 'Fluent API'
+  end
+
+  context 'Eyes Selenium SDK - Fluent API', visual_grid: true do
+    include_examples 'Fluent API'
+  end
+
+  context 'Eyes Selenium SDK - Fluent API', selenium: true do
     include_examples 'Fluent API Frames'
   end
 
-  context 'Fluent API', selenium: true, scroll: true do
-    include_examples 'Fluent API'
+  context 'Eyes Selenium SDK - Fluent API', selenium: true, scroll: true do
     include_examples 'Fluent API Frames'
   end
 
-  context 'Fluent API', visual_grid: true do
-    include_examples 'Fluent API'
+  context 'Eyes Selenium SDK - Fluent API', visual_grid: true do
     include_examples 'Fluent API Frames'
   end
 
-  context 'The rest desctop browser tests', selenium: true do
-    include_examples 'Eyes Selenium SDK - Page With Header'
-    include_examples 'Eyes Selenium SDK - Simple Test Cases'
-    include_examples 'Eyes Selenium SDK - Special Cases'
+  context 'Eyes Selenium SDK - Duplicates', selenium: true do
     include_examples 'Eyes Selenium SDK - Duplicates'
   end
 
-  context 'The rest desctop browser tests', selenium: true, scroll: true do
-    include_examples 'Eyes Selenium SDK - Page With Header'
-    include_examples 'Eyes Selenium SDK - Simple Test Cases'
-    include_examples 'Eyes Selenium SDK - Special Cases'
+  context 'Eyes Selenium SDK - Duplicates', selenium: true, scroll: true do
     include_examples 'Eyes Selenium SDK - Duplicates'
   end
 
-  context 'The rest desctop browser tests', visual_grid: true do
-    include_examples 'Eyes Selenium SDK - Page With Header'
-    include_examples 'Eyes Selenium SDK - Simple Test Cases'
-    include_examples 'Eyes Selenium SDK - Special Cases'
+  context 'Eyes Selenium SDK - Duplicates', visual_grid: true do
     include_examples 'Eyes Selenium SDK - Duplicates'
   end
+
+  context 'Eyes Selenium SDK - Page With Header', selenium: true do
+    include_examples 'Eyes Selenium SDK - Page With Header'
+  end
+
+  context 'Eyes Selenium SDK - Page With Header', selenium: true, scroll: true do
+    include_examples 'Eyes Selenium SDK - Page With Header'
+  end
+
+  context 'Eyes Selenium SDK - Page With Header', visual_grid: true do
+    include_examples 'Eyes Selenium SDK - Page With Header'
+  end
+
+  context 'Eyes Selenium SDK - Simple Test Cases', selenium: true do
+    include_examples 'Eyes Selenium SDK - Simple Test Cases'
+  end
+
+  context 'Eyes Selenium SDK - Simple Test Cases', selenium: true, scroll: true do
+    include_examples 'Eyes Selenium SDK - Simple Test Cases'
+  end
+
+  context 'Eyes Selenium SDK - Simple Test Cases', visual_grid: true do
+    include_examples 'Eyes Selenium SDK - Simple Test Cases'
+  end
+
+  context 'Eyes Selenium SDK - Special Cases', selenium: true do
+    include_examples 'Eyes Selenium SDK - Special Cases'
+  end
+
+  context 'Eyes Selenium SDK - Special Cases', selenium: true, scroll: true do
+    include_examples 'Eyes Selenium SDK - Special Cases'
+  end
+
+  context 'Eyes Selenium SDK - Special Cases', visual_grid: true do
+    include_examples 'Eyes Selenium SDK - Special Cases'
+  end
+
 end
