@@ -4,9 +4,9 @@ RSpec.shared_context "selenium workaround" do
 
     Applitools::EyesLogger.log_handler = Logger.new(STDOUT)
     @runner = if self.class.metadata[:visual_grid]
-                @vg_runner ||= Applitools::Selenium::VisualGridRunner.new(10)
+                $vg_runner ||= Applitools::Selenium::VisualGridRunner.new(10)
               else
-                @classic_runner ||= Applitools::ClassicRunner.new
+                $classic_runner ||= Applitools::ClassicRunner.new
               end
     @eyes = Applitools::Selenium::Eyes.new(runner: @runner)
   end

@@ -10,8 +10,8 @@ require 'pry'
 
 RSpec.describe 'Selenium Browser Tests' do
   after(:context) do
-    puts @vg_runner.get_all_test_results
-    puts @classic_runner.get_all_test_results
+    puts $vg_runner.get_all_test_results if $vg_runner
+    puts $classic_runner.get_all_test_results if $classic_runner
   end
 
   context 'Eyes Selenium SDK - Classic API', selenium: true do
