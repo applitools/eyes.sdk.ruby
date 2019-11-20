@@ -7,7 +7,7 @@ module Applitools
     end
 
     def add_batch(batch_id, &block)
-      puts batch_id
+      # puts batch_id
       batches_server_connectors_map[batch_id] ||= block if block_given?
     end
 

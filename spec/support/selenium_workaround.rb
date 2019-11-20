@@ -84,6 +84,7 @@ RSpec.shared_context "selenium workaround" do
         app_name: app_name, test_name: test_name, viewport_size: viewport_size, driver: web_driver
     )
   end
+
   let(:web_driver) do
     case ENV['BROWSER']
     when 'chrome'

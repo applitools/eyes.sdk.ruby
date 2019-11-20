@@ -247,6 +247,7 @@ module Applitools
       end
 
       def abort_if_not_closed
+        self.opened = false
         test_list.each(&:abort_if_not_closed)
       end
 

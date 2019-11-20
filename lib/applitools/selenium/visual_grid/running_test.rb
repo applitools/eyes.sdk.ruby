@@ -147,6 +147,13 @@ module Applitools
         init
       end
 
+      def abort_if_not_closed
+        p "BBBBBBB"
+        eyes.abort_if_not_closed
+        becomes_completed
+        p "BBBBBBB"
+      end
+
       def init
         open_task = Applitools::Selenium::VGTask.new("open #{browser_info}") { eyes.open(driver, browser_info) }
 
