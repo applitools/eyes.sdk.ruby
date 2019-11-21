@@ -3,6 +3,7 @@
 module Applitools::Selenium
   # The main API gateway for the SDK
   class SeleniumEyes < Applitools::EyesBase
+    include Applitools::Selenium::Concerns::SeleniumEyes
     # @!visibility private
     UNKNOWN_DEVICE_PIXEL_RATIO = 0
 
@@ -10,8 +11,6 @@ module Applitools::Selenium
     DEFAULT_DEVICE_PIXEL_RATIO = 1
 
     DEFAULT_WAIT_BEFORE_SCREENSHOTS = 0.1 # Seconds
-
-    USE_DEFAULT_MATCH_TIMEOUT = -1
 
     DEFAULT_STITCHING_OVERLAP = 50 # Pixels
 
@@ -207,44 +206,6 @@ module Applitools::Selenium
 
     private :perform_driver_specific_settings
 
-    # Sets the stitch mode.
-    #
-    # @param [Hash] value The desired type of stitching (:SCROLL is default).
-    # @option value [Symbol] :css use Css to perform stitching.
-    # @option value [Symbol] :scroll Scroll to perform stitching.
-    # @return [Symbol] The type of stitching.
-    # def stitch_mode=(value)
-    #   @stitch_mode = if value.to_s.upcase == Applitools::STITCH_MODE[:css].to_s
-    #                    Applitools::STITCH_MODE[:css]
-    #                  else
-    #                    Applitools::STITCH_MODE[:scroll]
-    #                  end
-    #   unless driver.nil?
-    #     self.position_provider = self.class.position_provider(
-    #         stitch_mode, driver, disable_horizontal_scrolling, disable_vertical_scrolling, explicit_entire_size
-    #     )
-    #   end
-    #   if stitch_mode == Applitools::STITCH_MODE[:css]
-    #     @css_transition_original_hide_scrollbars = hide_scrollbars
-    #     self.hide_scrollbars = true
-    #   else
-    #     self.hide_scrollbars = @css_transition_original_hide_scrollbars || false
-    #   end
-    #   value
-    # end
-
-    # Takes a snapshot of the application under test and matches it with the expected output.
-    #
-    # @param [String] tag An optional tag to be assosiated with the snapshot.
-    # @param [Fixnum] match_timeout The amount of time to retry matching (seconds)
-    def check_window(tag = nil, match_timeout = USE_DEFAULT_MATCH_TIMEOUT)
-      target = Applitools::Selenium::Target.window.tap do |t|
-        t.timeout(match_timeout)
-        t.fully if force_full_page_screenshot
-      end
-      check(tag, target)
-    end
-
     # @!visibility private
     def title
       return driver.title unless dont_get_title
@@ -352,38 +313,6 @@ module Applitools::Selenium
       self.prevent_dom_processing = false
     end
 
-    # Validates the contents of an iframe and matches it with the expected output.
-    #
-    # @param [Hash] options The specific parameters of the desired screenshot.
-    # @option options [Array] :target_frames The frames to check.
-    def check_in_frame(options)
-      frames = options.delete :target_frames
-
-      Applitools::ArgumentGuard.is_a? options, 'options', Hash
-      Applitools::ArgumentGuard.is_a? frames, 'target_frames: []', Array
-
-      return yield if block_given? && frames.empty?
-
-      original_frame_chain = driver.frame_chain
-
-      logger.info 'Switching to target frame according to frames path...'
-      driver.switch_to.frames(frames_path: frames)
-      frame_chain_to_reset = driver.frame_chain
-      logger.info 'Done!'
-
-      ensure_frame_visible
-
-      yield if block_given?
-
-      reset_frames_scroll_position(frame_chain_to_reset)
-
-      logger.info 'Switching back into top level frame...'
-      driver.switch_to.default_content
-      return unless original_frame_chain
-      logger.info 'Switching back into original frame...'
-      driver.switch_to.frames frame_chain: original_frame_chain
-    end
-
     # Creates a region instance.
     #
     # @param [Applitools::Element] element The element.
@@ -418,94 +347,6 @@ module Applitools::Selenium
     private :check_in_frame
     private :region_for_element
 
-    # Takes a snapshot of the application under test and matches a region of
-    # a specific element with the expected region output.
-    #
-    # @param [Applitools::Selenium::Element] element Represents a region to check.
-    # @param [Symbol] how a finder, such :css or :id. Selects a finder will be used to find an element
-    #   See Selenium::Webdriver::Element#find_element documentation for full list of possible finders.
-    # @param [String] what The value will be passed to a specified finder. If finder is :css it must be a css selector.
-    # @param [Hash] options
-    # @option options [String] :tag An optional tag to be associated with the snapshot.
-    # @option options [Fixnum] :match_timeout The amount of time to retry matching. (Seconds)
-    # @option options [Boolean] :stitch_content If set to true, will try to get full content of the element
-    #   (including hidden content due overflow settings) by scrolling the element,
-    #   taking and stitching partial screenshots.
-    # @example Check region by element
-    #   check_region(element, tag: 'Check a region by element', match_timeout: 3, stitch_content: false)
-    # @example Check region by css selector
-    #   check_region(:css, '.form-row .input#e_mail', tag: 'Check a region by element', match_timeout: 3,
-    #   stitch_content: false)
-    # @!parse def check_region(element, how=nil, what=nil, options = {}); end
-    def check_region(*args)
-      options = { timeout: USE_DEFAULT_MATCH_TIMEOUT, tag: nil }.merge! Applitools::Utils.extract_options!(args)
-      target = Applitools::Selenium::Target.new.region(*args).timeout(options[:match_timeout])
-      target.fully if options[:stitch_content]
-      check(options[:tag], target)
-    end
-
-    # Validates the contents of an iframe and matches it with the expected output.
-    #
-    # @param [Hash] options The specific parameters of the desired screenshot.
-    # @option options [Fixnum] :timeout The amount of time to retry matching. (Seconds)
-    # @option options [String] :tag An optional tag to be associated with the snapshot.
-    # @option options [String] :frame Frame element or frame name or frame id.
-    # @option options [String] :name_or_id The name or id of the target frame (deprecated. use :frame instead).
-    # @option options [String] :frame_element The frame element (deprecated. use :frame instead).
-    # @return [Applitools::MatchResult] The match results.
-
-    def check_frame(options = {})
-      options = { timeout: USE_DEFAULT_MATCH_TIMEOUT, tag: nil }.merge!(options)
-      frame = options[:frame] || options[:frame_element] || options[:name_or_id]
-      target = Applitools::Selenium::Target.frame(frame).timeout(options[:timeout]).fully
-      check(options[:tag], target)
-    end
-
-    # Validates the contents of a region in an iframe and matches it with the expected output.
-    #
-    # @param [Hash] options The specific parameters of the desired screenshot.
-    # @option options [String] :name_or_id The name or id of the target frame (deprecated. use :frame instead).
-    # @option options [String] :frame_element The frame element (deprecated. use :frame instead).
-    # @option options [String] :frame Frame element or frame name or frame id.
-    # @option options [String] :tag An optional tag to be associated with the snapshot.
-    # @option options [Symbol] :by By which identifier to find the region (e.g :css, :id).
-    # @option options [Fixnum] :timeout The amount of time to retry matching. (Seconds)
-    # @option options [Boolean] :stitch_content Whether to stitch the content or not.
-    # @return [Applitools::MatchResult] The match results.
-    def check_region_in_frame(options = {})
-      options = { timeout: USE_DEFAULT_MATCH_TIMEOUT, tag: nil, stitch_content: false }.merge!(options)
-      Applitools::ArgumentGuard.not_nil options[:by], 'options[:by]'
-      Applitools::ArgumentGuard.is_a? options[:by], 'options[:by]', Array
-
-      how_what = options.delete(:by)
-      frame = options[:frame] || options[:frame_element] || options[:name_or_id]
-
-      target = Applitools::Selenium::Target.new.timeout(options[:timeout])
-      target.frame(frame) if frame
-      target.fully if options[:stitch_content]
-      target.region(*how_what)
-
-      check(options[:tag], target)
-    end
-
-    # Use this method to perform seamless testing with selenium through eyes driver.
-    # It yields a block and passes to it an Applitools::Selenium::Driver instance, which wraps standard driver.
-    # Using Selenium methods inside the 'test' block will send the messages to Selenium
-    # after creating the Eyes triggers for them. Options are similar to {open}
-    # @yieldparam driver [Applitools::Selenium::Driver] Gives a driver to a block, which translates calls to a native
-    #   Selemium::Driver instance
-    # @example
-    #   eyes.test(app_name: 'my app', test_name: 'my test') do |driver|
-    #      driver.get "http://www.google.com"
-    #      driver.check_window("initial")
-    #   end
-    def test(options = {}, &_block)
-      open(options)
-      yield(driver)
-      close
-    ensure
-      abort_if_not_closed
-    end
 
     # @!visibility private
     def scroll_to_region

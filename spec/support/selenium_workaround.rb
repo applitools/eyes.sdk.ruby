@@ -41,6 +41,7 @@ RSpec.shared_context "selenium workaround" do
         end
       end
       example.run
+      # eyes.abort_if_not_closed
       @eyes_test_result = eyes.close if eyes.open?
       check_expected_properties
       check_expected_accessibility_regions

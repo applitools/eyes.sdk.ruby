@@ -148,10 +148,8 @@ module Applitools
       end
 
       def abort_if_not_closed
-        p "BBBBBBB"
         eyes.abort_if_not_closed
         becomes_completed
-        p "BBBBBBB"
       end
 
       def init

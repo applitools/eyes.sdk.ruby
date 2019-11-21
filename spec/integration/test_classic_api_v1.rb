@@ -42,22 +42,4 @@ RSpec.shared_examples 'Classic API' do
   end
 end
 
-# RSpec.describe 'Eyes Selenium SDK - Classic API', selenium: true do
-#   describe do
-#     include_examples 'Classic API'
-#   end
-#
-#   context 'Stitch mode Scroll', scroll: true do
-#     include_examples 'Classic API'
-#   end
-#
-#   # describe 'Force Full Page Screenshot', fps: true do
-#   #   include_examples 'Classic API'
-#   # end
-#   #
-#   # describe 'Force Full Page Screenshot, Stitch mode Scroll', fps: true, scroll: true do
-#   #   include_examples 'Classic API'
-#   # end
-# end
-
 

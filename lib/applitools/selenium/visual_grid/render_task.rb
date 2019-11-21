@@ -8,7 +8,17 @@ module Applitools
       MAX_FAILS_COUNT = 5
       MAX_ITERATIONS = 100
 
-      attr_accessor :script, :running_tests, :all_blobs, :resource_urls, :resource_cache, :put_cache, :server_connector,
+      class << self
+        def apply_base_url(discovered_url, base_url)
+          target_url = discovered_url.is_a?(URI) ? discovered_url : URI.parse(discovered_url)
+          return target_url.freeze if target_url.host
+          target_with_base = base_url.is_a?(URI) ? base_url.dup : URI.parse(base_url)
+          target_url = target_with_base.merge target_url
+          target_url.freeze
+        end
+      end
+
+      attr_accessor :script, :running_tests, :resource_cache, :put_cache, :server_connector,
         :rendering_info, :request_resources, :dom_url_mod, :result, :region_selectors, :size_mode,
         :region_to_check, :script_hooks, :visual_grid_manager, :discovered_resources
 
@@ -130,9 +140,15 @@ module Applitools
       end
 
       def prepare_data_for_rg(data)
-        self.all_blobs = data["blobs"]
-        self.resource_urls = data["resourceUrls"].map { |u| URI(u) }
         self.request_resources = Applitools::Selenium::RenderResources.new
+        dom = parse_frame_dom_resources(data)
+
+        prepare_rg_requests(running_tests, dom, request_resources)
+      end
+
+      def parse_frame_dom_resources(data)
+        all_blobs = data["blobs"]
+        resource_urls = data["resourceUrls"].map { |u| URI(u) }
         discovered_resources = []
 
         @discovered_resources_lock = Mutex.new
@@ -141,12 +157,12 @@ module Applitools
 
         handle_css_block = proc do |urls_to_fetch, url|
           urls_to_fetch.each do |discovered_url|
-            target_url = URI.parse(discovered_url)
-            unless target_url.host
-              target_with_base = url.is_a?(URI) ? url.dup : URI.parse(url)
-              target_url = target_with_base.merge target_url
-              target_url.freeze
-            end
+            target_url = self.class.apply_base_url(URI.parse(discovered_url), url)
+            # unless target_url.host
+            #   target_with_base = url.is_a?(URI) ? url.dup : URI.parse(url)
+            #   target_url = target_with_base.merge target_url
+            #   target_url.freeze
+            # end
             next unless /^http/i =~ target_url.scheme
             @discovered_resources_lock.synchronize do
               discovered_resources.push target_url
@@ -163,6 +179,11 @@ module Applitools
             response = resp_proc.call(key.dup)
           end while response.status != 200 && retry_count > 0
           Applitools::Selenium::VGResource.parse_response(key.dup, response, on_css_fetched: handle_css_block)
+        end
+
+        data['frames'].each do |f|
+          f['url'] = self.class.apply_base_url(f['url'], data['url'])
+          request_resources[f['url']] = parse_frame_dom_resources(f).resource
         end
 
         blobs = all_blobs.map { |blob| Applitools::Selenium::VGResource.parse_blob_from_script(blob) }.each do |blob|
@@ -189,6 +210,12 @@ module Applitools
           request_resources[u] = resource_cache[u]
         end
 
+        Applitools::Selenium::RGridDom.new(
+          url: data["url"], dom_nodes: data['cdt'], resources: request_resources
+        )
+      end
+
+      def prepare_rg_requests(running_tests, dom, request_resources)
         requests = Applitools::Selenium::RenderRequests.new
 
         running_tests.each do |running_test|
@@ -199,10 +226,6 @@ module Applitools
             r.region = region_to_check
             r.emulation_info = running_test.browser_info.emulation_info if running_test.browser_info.emulation_info
           end
-
-          dom = Applitools::Selenium::RGridDom.new(
-            url: script_data["url"], dom_nodes: script_data['cdt'], resources: request_resources
-          )
 
           requests << Applitools::Selenium::RenderRequest.new(
             webhook: rendering_info["resultsUrl"],

@@ -2,11 +2,42 @@ module Applitools
   module Selenium
     module Scripts
       PROCESS_PAGE_AND_POLL = <<'END'
-/* @applitools/dom-snapshot@2.2.1 */
+/* @applitools/dom-snapshot@3.1.4 */
 
-function __processPageAndPoll() {
-  var processPageAndPoll = (function () {
+function __processPageAndSerializePoll() {
+  var processPageAndSerializePoll = (function () {
   'use strict';
+
+  const EYES_NAME_SPACE = '__EYES__APPLITOOLS__';
+
+  function pullify(script, win = window) {
+    return function() {
+      const scriptName = script.name;
+      if (!win[EYES_NAME_SPACE]) {
+        win[EYES_NAME_SPACE] = {};
+      }
+      if (!win[EYES_NAME_SPACE][scriptName]) {
+        win[EYES_NAME_SPACE][scriptName] = {
+          status: 'WIP',
+          value: null,
+          error: null,
+        };
+        script
+          .apply(null, arguments)
+          .then(r => ((resultObject.status = 'SUCCESS'), (resultObject.value = r)))
+          .catch(e => ((resultObject.status = 'ERROR'), (resultObject.error = e.message)));
+      }
+
+      const resultObject = win[EYES_NAME_SPACE][scriptName];
+      if (resultObject.status === 'SUCCESS') {
+        win[EYES_NAME_SPACE][scriptName] = null;
+      }
+
+      return JSON.stringify(resultObject);
+    };
+  }
+
+  var pollify = pullify;
 
   // This code was copied and modified from https://github.com/beatgammit/base64-js/blob/bf68aaa277/index.js
   // License: https://github.com/beatgammit/base64-js/blob/bf68aaa277d9de7007cc0c58279c411bb10670ac/LICENSE
@@ -134,6 +165,21 @@ function __processPageAndPoll() {
 
   var absolutizeUrl_1 = absolutizeUrl;
 
+  const NEED_MAP_INPUT_TYPES = new Set([
+    'date',
+    'datetime-local',
+    'email',
+    'month',
+    'number',
+    'password',
+    'search',
+    'tel',
+    'text',
+    'time',
+    'url',
+    'week',
+  ]);
+
   function domNodesToCdt(docNode, baseUrl) {
     const cdt = [{nodeType: Node.DOCUMENT_NODE}];
     const docRoots = [docNode];
@@ -168,6 +214,11 @@ function __processPageAndPoll() {
             elementNode.sheet.cssRules.length
           ) {
             cdt.push(getCssRulesNode(elementNode));
+            manualChildNodeIndexes = [cdt.length - 1];
+          }
+
+          if (elementNode.tagName === 'TEXTAREA' && elementNode.value !== elementNode.textContent) {
+            cdt.push(getTextContentNode(elementNode));
             manualChildNodeIndexes = [cdt.length - 1];
           }
 
@@ -226,6 +277,13 @@ function __processPageAndPoll() {
       };
     }
 
+    function getTextContentNode(elementNode) {
+      return {
+        nodeType: Node.TEXT_NODE,
+        nodeValue: elementNode.value,
+      };
+    }
+
     function getBasicNode(elementNode) {
       const node = {
         nodeType: elementNode.nodeType,
@@ -255,7 +313,7 @@ function __processPageAndPoll() {
 
       if (
         elementNode.tagName === 'INPUT' &&
-        elementNode.type === 'text' &&
+        NEED_MAP_INPUT_TYPES.has(elementNode.type) &&
         (elementNode.attributes.value && elementNode.attributes.value.value) !== elementNode.value
       ) {
         const nodeAttr = node.attributes.find(a => a.name === 'value');
@@ -263,6 +321,13 @@ function __processPageAndPoll() {
           nodeAttr.value = elementNode.value;
         } else {
           node.attributes.push({name: 'value', value: elementNode.value});
+        }
+      }
+
+      if (elementNode.tagName === 'OPTION' && elementNode.parentElement.value === elementNode.value) {
+        const nodeAttr = node.attributes.find(a => a.name === 'selected');
+        if (!nodeAttr) {
+          node.attributes.push({name: 'selected', value: ''});
         }
       }
       return node;
@@ -410,7 +475,7 @@ function __processPageAndPoll() {
                   value,
                   styleSheet,
                 );
-                dependentUrls = extractResourcesFromStyleSheet(corsFreeStyleSheet, documents[0]);
+                dependentUrls = extractResourcesFromStyleSheet(corsFreeStyleSheet);
                 cleanStyleSheet();
               }
             } else if (/image\/svg/.test(type)) {
@@ -495,6 +560,19 @@ function __processPageAndPoll() {
       const domparser = parser || new DOMParser();
       const doc = domparser.parseFromString(svgStr, 'image/svg+xml');
 
+      const srcsetUrls = Array.from(doc.querySelectorAll('img[srcset]'))
+        .map(srcsetEl =>
+          srcsetEl
+            .getAttribute('srcset')
+            .split(', ')
+            .map(str => str.trim().split(/\s+/)[0]),
+        )
+        .reduce((acc, urls) => acc.concat(urls), []);
+
+      const srcUrls = Array.from(doc.querySelectorAll('img[src]')).map(srcEl =>
+        srcEl.getAttribute('src'),
+      );
+
       const fromHref = Array.from(doc.querySelectorAll('image,use,link[rel="stylesheet"]')).map(
         e => e.getAttribute('href') || e.getAttribute('xlink:href'),
       );
@@ -504,7 +582,9 @@ function __processPageAndPoll() {
       const fromStyleTags = extractResourceUrlsFromStyleTags(doc, false);
       const fromStyleAttrs = urlsFromStyleAttrOfDoc(doc);
 
-      return fromHref
+      return srcsetUrls
+        .concat(srcUrls)
+        .concat(fromHref)
         .concat(fromObjects)
         .concat(fromStyleTags)
         .concat(fromStyleAttrs)
@@ -526,53 +606,78 @@ function __processPageAndPoll() {
   /* global window */
 
   function fetchUrl(url, fetch = window.fetch) {
-    return fetch(url, {cache: 'force-cache', credentials: 'same-origin'}).then(resp =>
-      resp.status === 200
-        ? resp.arrayBuffer().then(buff => ({
-            url,
-            type: resp.headers.get('Content-Type'),
-            value: buff,
-          }))
-        : Promise.reject(`bad status code ${resp.status}`),
-    );
+    // Why return a `new Promise` like this? Because people like Atlassian do horrible things.
+    // They monkey patched window.fetch, and made it so it throws a synchronous exception if the route is not well known.
+    // Returning a new Promise guarantees that `fetchUrl` is the async function that it declares to be.
+    return new Promise((resolve, reject) => {
+      return fetch(url, {cache: 'force-cache', credentials: 'same-origin'})
+        .then(resp =>
+          resp.status === 200
+            ? resp.arrayBuffer().then(buff => ({
+                url,
+                type: resp.headers.get('Content-Type'),
+                value: buff,
+              }))
+            : Promise.reject(`bad status code ${resp.status}`),
+        )
+        .then(resolve)
+        .catch(err => reject(err));
+    });
   }
 
   var fetchUrl_1 = fetchUrl;
+
+  function sanitizeAuthUrl(urlStr) {
+    const url = new URL(urlStr);
+    if (url.username && url.password) {
+      return urlStr.replace(`${url.username}:${url.password}@`, '');
+    }
+    return urlStr;
+  }
+
+  var sanitizeAuthUrl_1 = sanitizeAuthUrl;
 
   function makeFindStyleSheetByUrl({styleSheetCache}) {
     return function findStyleSheetByUrl(url, documents) {
       const allStylesheets = flat_1(documents.map(d => Array.from(d.styleSheets)));
       return (
         styleSheetCache[url] ||
-        allStylesheets.find(styleSheet => styleSheet.href && toUnAnchoredUri_1(styleSheet.href) === url)
+        allStylesheets.find(styleSheet => {
+          const styleUrl = styleSheet.href && toUnAnchoredUri_1(styleSheet.href);
+          return styleUrl && sanitizeAuthUrl_1(styleUrl) === url;
+        })
       );
     };
   }
 
   var findStyleSheetByUrl = makeFindStyleSheetByUrl;
 
-  function makeExtractResourcesFromStyleSheet({styleSheetCache}) {
-    return function extractResourcesFromStyleSheet(styleSheet, doc) {
-      const win = doc.defaultView || (doc.ownerDocument && doc.ownerDocument.defaultView) || window;
+  function makeExtractResourcesFromStyleSheet({styleSheetCache, CSSRule = window.CSSRule}) {
+    return function extractResourcesFromStyleSheet(styleSheet) {
       const urls = uniq_1(
         Array.from(styleSheet.cssRules || []).reduce((acc, rule) => {
-          if (rule instanceof win.CSSImportRule) {
-            styleSheetCache[rule.styleSheet.href] = rule.styleSheet;
-            return acc.concat(rule.href);
-          } else if (rule instanceof win.CSSFontFaceRule) {
-            return acc.concat(getUrlFromCssText_1(rule.cssText));
-          } else if (
-            (win.CSSSupportsRule && rule instanceof win.CSSSupportsRule) ||
-            rule instanceof win.CSSMediaRule
-          ) {
-            return acc.concat(extractResourcesFromStyleSheet(rule, doc));
-          } else if (rule instanceof win.CSSStyleRule) {
-            for (let i = 0, ii = rule.style.length; i < ii; i++) {
-              const urls = getUrlFromCssText_1(rule.style.getPropertyValue(rule.style[i]));
-              urls.length && (acc = acc.concat(urls));
-            }
-          }
-          return acc;
+          const getRuleUrls = {
+            [CSSRule.IMPORT_RULE]: () => {
+              if (rule.styleSheet) {
+                styleSheetCache[rule.styleSheet.href] = rule.styleSheet;
+                return rule.href;
+              }
+            },
+            [CSSRule.FONT_FACE_RULE]: () => getUrlFromCssText_1(rule.cssText),
+            [CSSRule.SUPPORTS_RULE]: () => extractResourcesFromStyleSheet(rule),
+            [CSSRule.MEDIA_RULE]: () => extractResourcesFromStyleSheet(rule),
+            [CSSRule.STYLE_RULE]: () => {
+              let rv = [];
+              for (let i = 0, ii = rule.style.length; i < ii; i++) {
+                const urls = getUrlFromCssText_1(rule.style.getPropertyValue(rule.style[i]));
+                rv = rv.concat(urls);
+              }
+              return rv;
+            },
+          }[rule.type];
+
+          const urls = (getRuleUrls && getRuleUrls()) || [];
+          return acc.concat(urls);
         }, []),
       );
       return urls.filter(u => u[0] !== '#');
@@ -603,7 +708,7 @@ function __processPageAndPoll() {
             ? Array.from(doc.styleSheets).find(styleSheet => styleSheet.ownerNode === styleEl)
             : styleEl.sheet;
           return styleSheet
-            ? resourceUrls.concat(extractResourcesFromStyleSheet(styleSheet, doc))
+            ? resourceUrls.concat(extractResourcesFromStyleSheet(styleSheet))
             : resourceUrls;
         }, []),
       );
@@ -776,7 +881,7 @@ function __processPageAndPoll() {
 
   var sessionCache = makeSessionCache;
 
-  function processPage(doc = document, {showLogs, useSessionCache} = {}) {
+  function processPage(doc = document, {showLogs, useSessionCache, dontFetchResources} = {}) {
     const log$$1 = showLogs ? log(Date.now()) : noop;
     log$$1('processPage start');
     const sessionCache$$1 = useSessionCache && sessionCache({log: log$$1});
@@ -826,12 +931,12 @@ function __processPageAndPoll() {
         .map(toUnAnchoredUri_1)
         .filter(filterInlineUrlsIfExisting);
 
-      const resourceUrlsAndBlobsPromise = getResourceUrlsAndBlobs$$1({documents: docRoots, urls}).then(
-        result => {
-          sessionCache$$1 && sessionCache$$1.persist();
-          return result;
-        },
-      );
+      const resourceUrlsAndBlobsPromise = dontFetchResources
+        ? Promise.resolve({resourceUrls: urls, blobsObj: {}})
+        : getResourceUrlsAndBlobs$$1({documents: docRoots, urls}).then(result => {
+            sessionCache$$1 && sessionCache$$1.persist();
+            return result;
+          });
       const canvasBlobs = buildCanvasBlobs_1(canvasElements);
       const frameDocs = extractFrames_1(docRoots);
 
@@ -907,38 +1012,13 @@ function __processPageAndPoll() {
 
   var processPageAndSerialize_1 = processPageAndSerialize;
 
-  const EYES_NAME_SPACE = '__EYES__APPLITOOLS__';
+  var processPageAndSerializePoll = pollify(processPageAndSerialize_1);
 
-  function processPageAndPoll(doc) {
-    if (!window[EYES_NAME_SPACE]) {
-      window[EYES_NAME_SPACE] = {};
-    }
-    if (!window[EYES_NAME_SPACE].processPageAndSerializeResult) {
-      window[EYES_NAME_SPACE].processPageAndSerializeResult = {
-        status: 'WIP',
-        value: null,
-        error: null,
-      };
-      processPageAndSerialize_1(doc)
-        .then(r => ((resultObject.status = 'SUCCESS'), (resultObject.value = r)))
-        .catch(e => ((resultObject.status = 'ERROR'), (resultObject.error = e.message)));
-    }
-
-    const resultObject = window[EYES_NAME_SPACE].processPageAndSerializeResult;
-    if (resultObject.status === 'SUCCESS') {
-      window[EYES_NAME_SPACE].processPageAndSerializeResult = null;
-    }
-
-    return JSON.stringify(resultObject);
-  }
-
-  var processPageAndPoll_1 = processPageAndPoll;
-
-  return processPageAndPoll_1;
+  return processPageAndSerializePoll;
 
 }());
 
-  return processPageAndPoll.apply(this, arguments);
+  return processPageAndSerializePoll.apply(this, arguments);
 }
 END
     end
