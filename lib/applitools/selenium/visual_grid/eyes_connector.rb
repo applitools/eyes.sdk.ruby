@@ -44,6 +44,7 @@ module Applitools
 
         match_data = Applitools::Selenium::VgMatchWindowData.new
         match_data.tag = name
+        match_data.render_id = render_status['renderId']
         update_default_settings(match_data)
         begin
           match_data.read_target(target_to_check, driver, selector_regions)

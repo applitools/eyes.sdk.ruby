@@ -18,7 +18,8 @@ module Applitools
       api_key: ENV['APPLITOOLS_API_KEY'] || ENV['bamboo_APPLITOOLS_API_KEY'] || '',
       match_level: Applitools::MatchLevel::STRICT,
       scale: 0,
-      remainder: 0
+      remainder: 0,
+      save_new_tests: false
     }.freeze
 
     class << self
@@ -89,6 +90,7 @@ module Applitools
     string_field :agent_id
     string_field :environment_name
     boolean_field :save_diffs
+    boolean_field :save_new_tests
     enum_field :session_type, Applitools::SessionTypes.enum_values
     object_field :batch_info, Applitools::BatchInfo
     string_field :baseline_env_name

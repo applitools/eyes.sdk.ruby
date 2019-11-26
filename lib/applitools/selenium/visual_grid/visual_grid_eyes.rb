@@ -93,8 +93,9 @@ module Applitools
           #{Applitools::Selenium::Scripts::PROCESS_PAGE_AND_POLL} return __processPageAndSerializePoll();
         END
         render_task = nil
+        target_to_check = target.finalize
         begin
-          check_in_frame(target_frames: target.frames) do
+          check_in_frame(target_frames: target_to_check.frames) do
             sleep wait_before_screenshots
             Applitools::EyesLogger.info 'Trying to get DOM snapshot...'
 
@@ -118,7 +119,7 @@ module Applitools
 
             mod = Digest::SHA2.hexdigest(script_thread_result[:script_result])
 
-            region_x_paths = get_regions_x_paths(target)
+            region_x_paths = get_regions_x_paths(target_to_check)
             render_task = RenderTask.new(
               "Render #{config.short_description} - #{tag}",
               script_thread_result[:result]['value'],
@@ -127,12 +128,12 @@ module Applitools
               region_x_paths,
               size_mod,
               region_to_check,
-              target.options[:script_hooks],
+              target_to_check.options[:script_hooks],
               mod
             )
           end
           test_list.each do |t|
-            t.check(tag, target, render_task)
+            t.check(tag, target_to_check, render_task)
           end
           test_list.each { |t| t.becomes_not_rendered }
           test_list.each { |t| t.becomes_not_rendered }
@@ -150,7 +151,7 @@ module Applitools
           if [::Selenium::WebDriver::Element, Applitools::Selenium::Element].include?(el.class)
             xpath = driver.execute_script(Applitools::Selenium::Scripts::GET_ELEMENT_XPATH_JS, el)
             web_element_region = Applitools::Selenium::WebElementRegion.new(xpath, v)
-            self.region_to_check = web_element_region if v == :target && size_mod == 'selector'
+            self.region_to_check = web_element_region.dup if v == :target && size_mod == 'selector'
             result << web_element_region
             target.regions[el] = result.size - 1
           end

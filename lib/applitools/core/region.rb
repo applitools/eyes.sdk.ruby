@@ -105,6 +105,10 @@ module Applitools
       self.class.sub_regions_with_varying_size self, subregion_size
     end
 
+    def [](value)
+      send value if respond_to? value
+    end
+
     def to_hash
       {
         x: left,

@@ -40,7 +40,7 @@ module Applitools
               'scale' => 0,
               'remainder' => 0,
               'EnablePatterns' => false,
-              'UseDom' => false
+              'UseDom' => false,
             },
             'IgnoreExpectedOutputSettings' => false,
             'ForceMatch' => false,
@@ -49,7 +49,8 @@ module Applitools
             'IgnoreMismatch' => false,
             'Trim' => {
               'Enabled' => false
-            }
+            },
+            'RenderId' => ''
           },
           'Id' => nil,
           'UserInputs' => [],
@@ -64,7 +65,8 @@ module Applitools
               'Y' => 0
             }
           },
-          'Tag' => nil
+          'Tag' => nil,
+          'RenderId' => ''
         }
       end
 
@@ -220,6 +222,15 @@ module Applitools
 
     def ignore_displacements=(value)
       current_data['Options']['ImageMatchSettings']['IgnoreDisplacements'] = value
+    end
+
+    def render_id
+      current_data['Options']['RenderId']
+    end
+
+    def render_id=(value)
+      current_data['Options']['RenderId'] = value
+      current_data['RenderId'] = value
     end
 
     def exact=(value)
