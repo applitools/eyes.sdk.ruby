@@ -13,12 +13,13 @@ RSpec.shared_context "selenium workaround" do
 
   before do |example|
     eyes.hide_scrollbars = true
-    # eyes.save_new_tests = false
+    eyes.save_new_tests = false
     eyes.force_full_page_screenshot = false
     eyes.stitch_mode = Applitools::Selenium::StitchModes::CSS
     eyes.force_full_page_screenshot = true if example.metadata[:fps]
     eyes.stitch_mode = Applitools::Selenium::StitchModes::SCROLL if example.metadata[:scroll]
-    # eyes.proxy = Applitools::Connectivity::Proxy.new('http://localhost:8000')
+    eyes.branch_name = 'master'
+    eyes.proxy = Applitools::Connectivity::Proxy.new('http://localhost:8000')
     driver.get(url_for_test)
   end
 

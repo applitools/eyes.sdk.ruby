@@ -136,7 +136,6 @@ module Applitools
             t.check(tag, target_to_check, render_task)
           end
           test_list.each { |t| t.becomes_not_rendered }
-          test_list.each { |t| t.becomes_not_rendered }
           visual_grid_manager.enqueue_render_task render_task
         rescue StandardError => e
           test_list.each { |t| t.becomes_tested }

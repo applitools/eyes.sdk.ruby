@@ -39,6 +39,7 @@ module Applitools
 
         self.dom_url_mod = mod
         self.running_tests = []
+        @discovered_resources_lock = Mutex.new
         super(name) do
           perform
         end
@@ -143,7 +144,7 @@ module Applitools
         self.request_resources = Applitools::Selenium::RenderResources.new
         dom = parse_frame_dom_resources(data)
 
-        prepare_rg_requests(running_tests, dom, request_resources)
+        prepare_rg_requests(running_tests, dom)
       end
 
       def parse_frame_dom_resources(data)
@@ -151,18 +152,11 @@ module Applitools
         resource_urls = data["resourceUrls"].map { |u| URI(u) }
         discovered_resources = []
 
-        @discovered_resources_lock = Mutex.new
-
         fetch_block = proc {}
 
         handle_css_block = proc do |urls_to_fetch, url|
           urls_to_fetch.each do |discovered_url|
             target_url = self.class.apply_base_url(URI.parse(discovered_url), url)
-            # unless target_url.host
-            #   target_with_base = url.is_a?(URI) ? url.dup : URI.parse(url)
-            #   target_url = target_with_base.merge target_url
-            #   target_url.freeze
-            # end
             next unless /^http/i =~ target_url.scheme
             @discovered_resources_lock.synchronize do
               discovered_resources.push target_url
@@ -215,7 +209,7 @@ module Applitools
         )
       end
 
-      def prepare_rg_requests(running_tests, dom, request_resources)
+      def prepare_rg_requests(running_tests, dom)
         requests = Applitools::Selenium::RenderRequests.new
 
         running_tests.each do |running_test|
