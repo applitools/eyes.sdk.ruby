@@ -93,6 +93,8 @@ module Applitools
           #{Applitools::Selenium::Scripts::PROCESS_PAGE_AND_POLL} return __processPageAndSerializePoll();
         END
         render_task = nil
+        target.default_full_page_for_vg
+
         target_to_check = target.finalize
         begin
           check_in_frame(target_frames: target_to_check.frames) do
@@ -197,13 +199,22 @@ module Applitools
 
         element_or_region = element_or_region(target_element, target, key)
 
-        case element_or_region
+        self.size_mod = case element_or_region
         when ::Selenium::WebDriver::Element, Applitools::Selenium::Element
-          self.size_mod = 'selector'
+          'selector'
         when Applitools::Region
-          self.size_mod = 'region' unless element_or_region == Applitools::Region::EMPTY
+          if element_or_region == Applitools::Region::EMPTY
+            if target.options[:stitch_content]
+              'full-page'
+            else
+              element_or_region = Applitools::Region.from_location_size(Applitools::Location::TOP_LEFT, viewport_size)
+              'region'
+            end
+          else
+            'region'
+          end
         else
-          self.size_mod = 'full-page'
+          'full-page'
         end
 
         self.region_to_check = element_or_region

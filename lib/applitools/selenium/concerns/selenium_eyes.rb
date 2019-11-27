@@ -41,10 +41,19 @@ module Applitools
         #
         # @param [String] tag An optional tag to be assosiated with the snapshot.
         # @param [Fixnum] match_timeout The amount of time to retry matching (seconds)
-        def check_window(tag = nil, match_timeout = USE_DEFAULT_MATCH_TIMEOUT)
+        # def check_window(tag = nil, match_timeout = USE_DEFAULT_MATCH_TIMEOUT)
+        def check_window(*args)
+          tag = args.select { |a| a.is_a?(String) || a.is_a?(Symbol) }.first
+          match_timeout = args.select { |a| a.is_a?(Integer) }.first
+          fully = args.select { |a| a.is_a?(TrueClass) || a.is_a?(FalseClass) }.first
           target = Applitools::Selenium::Target.window.tap do |t|
-            t.timeout(match_timeout)
-            t.fully if force_full_page_screenshot
+            t.timeout(match_timeout || USE_DEFAULT_MATCH_TIMEOUT)
+            if is_a?(Applitools::Selenium::VisualGridEyes)
+              t.fully(true)
+            else
+              t.fully(force_full_page_screenshot)
+            end
+            t.fully(fully) unless fully.nil?
           end
           check(tag, target)
         end

@@ -364,6 +364,24 @@ module Applitools
         self
       end
 
+      def default_full_page_for_vg
+        if (options[:stitch_content].nil?)
+          case region_to_check
+          when nil
+            fully(true)
+          when Proc
+            begin
+              r = region_to_check.call
+              fully(true) if r == Applitools::Region::EMPTY
+            rescue StandardError
+              fully(false)
+            end
+          end
+        end
+        nil
+      end
+
+
       private
 
       def reset_for_fullscreen
@@ -375,7 +393,7 @@ module Applitools
         reset_layout_regions
         reset_strict_regions
         reset_accessibility_regions
-        options[:stitch_content] = false
+        options[:stitch_content] = nil
         options[:timeout] = nil
         options[:trim] = false
       end

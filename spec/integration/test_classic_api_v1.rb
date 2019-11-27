@@ -3,9 +3,9 @@ require 'spec_helper'
 RSpec.shared_examples 'Classic API' do
   let(:url_for_test) { 'https://applitools.github.io/demo/TestPages/FramesTestPage/' }
 
-  # it('TestCheckWindowFully') { eyes.check_window('Full Window', true) }
-  #
-  # it('TestCheckWindowViewport') { eyes.check_window('Viewport Window', false) }
+  it('TestCheckWindowFully') { eyes.check_window('Full Window', true) }
+
+  it('TestCheckWindowViewport') { eyes.check_window('Viewport Window', false) }
 
   it('TestCheckWindow') { eyes.check_window('Window') }
 
@@ -19,7 +19,7 @@ RSpec.shared_examples 'Classic API' do
 
   it('TestCheckWindowAfterScroll') do
     driver.execute_script('document.documentElement.scrollTo(0,350);')
-    eyes.check_window('viewport after scroll')
+    eyes.check_window('viewport after scroll', false)
   end
 
   it('TestDoubleCheckWindow') do
