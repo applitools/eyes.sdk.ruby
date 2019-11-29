@@ -64,7 +64,7 @@ module Applitools::Connectivity
     def render_put_resource(service_url, access_key, resource, render)
       uri = URI(service_url)
       uri.path = RESOURCES_SHA_256 + resource.hash
-      Applitools::EyesLogger.debug("PUT resource: #{uri}")
+      Applitools::EyesLogger.debug("PUT resource: (#{resource.url}) - #{uri}")
       # Applitools::EyesLogger.debug("Resource content: #{resource.content}")
       response = dummy_put(
         uri,
