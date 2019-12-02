@@ -1,10 +1,11 @@
+# frozen_string_literal: true
+
 require 'applitools/selenium/stitch_modes'
 require 'applitools/selenium/browsers_info'
 
 module Applitools
   module Selenium
     class Configuration < Applitools::EyesBaseConfiguration
-
       DEFAULT_CONFIG = proc do
         {
           force_full_page_screenshot: false,
@@ -69,7 +70,7 @@ module Applitools
         new_config = self.class.new
         config_keys.each do |k|
           new_config.send(
-            "#{k}=", case value = self.send(k)
+            "#{k}=", case value = send(k)
                      when Symbol, FalseClass, TrueClass, Integer, Float
                        value
                      else
@@ -84,7 +85,7 @@ module Applitools
         user_defined_vp = super
         user_defined_vp = nil if user_defined_vp.respond_to?(:square) && user_defined_vp.square == 0
         return user_defined_vp if user_defined_vp
-        from_browsers_info = browsers_info.select {|bi| bi.viewport_size.square > 0 }.first
+        from_browsers_info = browsers_info.select { |bi| bi.viewport_size.square > 0 }.first
         return from_browsers_info.viewport_size if from_browsers_info
         nil
       end

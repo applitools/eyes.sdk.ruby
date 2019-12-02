@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 require_relative 'eyes_runner'
 module Applitools
   class ClassicRunner < EyesRunner
     attr_accessor :all_test_results, :all_pending_exceptions
-    def initialize()
+    def initialize
       super
       self.all_test_results = []
       self.all_pending_exceptions = {}

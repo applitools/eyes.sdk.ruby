@@ -40,9 +40,7 @@ module Applitools
     #   Default value is false.
     #   @return [boolean] verbose_results flag
 
-
     # attr_accessor :agent_id, :session_type, :app_name, :test_name,
-
 
     attr_accessor :batch, :full_agent_id,
       :match_timeout, :save_new_tests, :save_failed_tests, :failure_reports, :default_match_settings, :cut_provider,
@@ -196,7 +194,7 @@ module Applitools
 
       logger.info "Agent = #{full_agent_id}"
       logger.info "openBase(app_name: #{app_name}, test_name: #{test_name}," \
-          " viewport_size: #{viewport_size.to_s})"
+          " viewport_size: #{viewport_size})"
 
       raise Applitools::EyesError.new 'API key is missing! Please set it using api_key=' if
         api_key.nil? || (api_key && api_key.empty?)
@@ -459,8 +457,8 @@ module Applitools
     #
     private
 
-    attr_accessor :running_session, :last_screenshot, :scale_provider, :session_start_info, :should_match_window_run_once_on_timeout, :app_output_provider,
-      :failed
+    attr_accessor :running_session, :last_screenshot, :scale_provider, :session_start_info,
+      :should_match_window_run_once_on_timeout, :app_output_provider, :failed
 
     attr_reader :user_inputs, :properties
 

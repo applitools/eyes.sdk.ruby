@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'thread'
 
 module Applitools
@@ -83,7 +84,7 @@ module Applitools
           rescue => e
             Applitools::EyesLogger.logger.error "Failed to execute task - #{task_to_run.name}"
             Applitools::EyesLogger.logger.error e.message
-            Applitools::EyesLogger.logger.error e.backtrace.join( ' ')
+            Applitools::EyesLogger.logger.error e.backtrace.join(' ')
           end
         end
         @thread_group.add thread

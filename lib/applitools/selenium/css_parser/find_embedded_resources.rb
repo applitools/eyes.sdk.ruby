@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'crass'
 
 module Applitools
@@ -35,7 +37,8 @@ module Applitools
           url = node[:tokens].select { |t| t[:node] == :function && t[:value] == 'url' }.first
           url_index = node[:tokens].index(url)
           url_string_node = url_index && node[:tokens][url_index + 1]
-          url_string_node && url_string_node[:node] == :string && !url_string_node[:value].empty? && url_string_node[:value]
+          url_string_node &&
+            url_string_node[:node] == :string && !url_string_node[:value].empty? && url_string_node[:value]
         end
 
         def fetch_urls(nodes)

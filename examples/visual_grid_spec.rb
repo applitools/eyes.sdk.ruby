@@ -23,9 +23,9 @@ RSpec.shared_examples 'Test for url' do |url|
     config.add_browser(1600, 1200, BrowserTypes::CHROME)
           .add_browser(1280, 1024, BrowserTypes::CHROME)
           .add_browser(1280, 1024, BrowserTypes::EDGE)
-          # .add_device_emulation(Devices::BlackBerryZ30, Orientations::PORTRAIT)
-          # .add_device_emulation(Devices::MicrosoftLumia950)
-          # .add_device_emulation(Devices::NokiaLumia520, Orientations::LANDSCAPE)
+          .add_device_emulation(Devices::BlackBerryZ30, Orientations::PORTRAIT)
+          .add_device_emulation(Devices::MicrosoftLumia950)
+          .add_device_emulation(Devices::NokiaLumia520, Orientations::LANDSCAPE)
 
     # config.add_device_emulation(Applitools::Selenium::ChromeEmulationInfo.galaxy_s5(Applitools::Selenium::ChromeEmulationInfo::ORIENTATIONS::PORTRAIT))
     #       .add_device_emulation(Applitools::Selenium::ChromeEmulationInfo.i_phone_4(:portrait))
@@ -95,7 +95,7 @@ RSpec.describe 'My first visual grid test' do
     https://instagram.com
     https://www.target.com/c/blankets-throws/-/N-d6wsb?lnk=ThrowsBlankets%E2%80%9C,tc
     http://applitools-vg-test.surge.sh/test.html
-  )[0..0].each do |url|
+  )[3..3].each do |url|
     it_behaves_like 'Test for url', url
   end
 end

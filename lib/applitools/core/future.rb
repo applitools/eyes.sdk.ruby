@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Applitools
   class Future
     attr_accessor :result, :semaphore, :block, :thread
@@ -8,11 +10,11 @@ module Applitools
       self.semaphore = semaphore
       self.thread = Thread.new do
         begin
-          self.result = block.call(semaphore)
+          self.result = yield(semaphore)
         rescue StandardError => e
-          Applitools::EyesLogger.logger.error "Failed to execute future"
+          Applitools::EyesLogger.logger.error 'Failed to execute future'
           Applitools::EyesLogger.logger.error e.message
-          Applitools::EyesLogger.logger.error e.backtrace.join( ' ')
+          Applitools::EyesLogger.logger.error e.backtrace.join(' ')
         end
       end
     end

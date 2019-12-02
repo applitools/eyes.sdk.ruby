@@ -40,7 +40,7 @@ module Applitools
               'scale' => 0,
               'remainder' => 0,
               'EnablePatterns' => false,
-              'UseDom' => false,
+              'UseDom' => false
             },
             'IgnoreExpectedOutputSettings' => false,
             'ForceMatch' => false,
@@ -424,25 +424,25 @@ module Applitools
     def to_hash
       if @need_convert_accessibility_regions_coordinates
         raise Applitools::EyesError.new(
-            'You should convert coordinates for content_regions!'
+          'You should convert coordinates for content_regions!'
         )
       end
 
       if @need_convert_content_regions_coordinates
         raise Applitools::EyesError.new(
-            'You should convert coordinates for content_regions!'
+          'You should convert coordinates for content_regions!'
         )
       end
 
       if @need_convert_strict_regions_coordinates
         raise Applitools::EyesError.new(
-            'You should convert coordinates for strict_regions!'
+          'You should convert coordinates for strict_regions!'
         )
       end
 
       if @need_convert_layout_regions_coordinates
         raise Applitools::EyesError.new(
-            'You should convert coordinates for layout_regions!'
+          'You should convert coordinates for layout_regions!'
         )
       end
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Applitools
   module Selenium
     class VgMatchWindowData < Applitools::MatchWindowData
@@ -30,7 +32,7 @@ module Applitools
             when Applitools::Region
               @ignored_regions << r
             when Applitools::Selenium::VGRegion
-              region = target.regions.has_key?(r.region) ? selector_regions[target.regions[r.region]] : r.region
+              region = target.regions.key?(r.region) ? selector_regions[target.regions[r.region]] : r.region
               raise RegionCoordinatesError.new(r, region['error']) if region['error']
               retrieved_region = Applitools::Region.new(region['x'], region['y'], region['width'], region['height'])
               @ignored_regions << if r.padding_proc.is_a?(Proc)

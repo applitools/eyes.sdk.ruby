@@ -17,7 +17,7 @@ module Applitools::Connectivity
     API_SESSIONS_RUNNING = API_SESSIONS + '/running/'.freeze
     API_SINGLE_TEST = API_SESSIONS + '/'.freeze
 
-    RENDER_INFO_PATH = API_SESSIONS + "/renderinfo".freeze
+    RENDER_INFO_PATH = API_SESSIONS + '/renderinfo'.freeze
     RENDER = '/render'.freeze
 
     RESOURCES_SHA_256 = '/resources/sha256/'.freeze
@@ -42,7 +42,9 @@ module Applitools::Connectivity
 
     def rendering_info
       response = get(server_url + RENDER_INFO_PATH, content_type: 'application/json')
-      raise Applitools::EyesError, "Error getting render info (#{response.status}})" unless response.status == HTTP_STATUS_CODES[:ok]
+      unless response.status == HTTP_STATUS_CODES[:ok]
+        raise Applitools::EyesError, "Error getting render info (#{response.status}})"
+      end
       Oj.load response.body
     end
 
@@ -57,7 +59,9 @@ module Applitools::Connectivity
         },
         timeout: 10
       )
-      raise Applitools::EyesError, "Error render processing (#{response.status}, #{response.body})" unless response.status == HTTP_STATUS_CODES[:ok]
+      unless response.status == HTTP_STATUS_CODES[:ok]
+        raise Applitools::EyesError, "Error render processing (#{response.status}, #{response.body})"
+      end
       Oj.load response.body
     end
 
@@ -73,9 +77,11 @@ module Applitools::Connectivity
         headers: {
           'X-Auth-Token' => access_key
         },
-        query: {'render-id' => render['renderId']}
+        query: { 'render-id' => render['renderId'] }
       )
-      raise Applitools::EyesError, "Error putting resource: #{response.status}, #{response.body}" unless response.status == HTTP_STATUS_CODES[:ok]
+      unless response.status == HTTP_STATUS_CODES[:ok]
+        raise Applitools::EyesError, "Error putting resource: #{response.status}, #{response.body}"
+      end
       resource.hash
     end
 
@@ -87,11 +93,14 @@ module Applitools::Connectivity
         body: running_renders_json,
         content_type: 'application/json',
         headers: {
-            'X-Auth-Token' => access_key
+          'X-Auth-Token' => access_key
         },
         timeout: 2
       )
-      raise Applitools::EyesError, "Error getting server status, #{response.status} #{response.body}" unless response.status == HTTP_STATUS_CODES[:ok]
+      unless response.status == HTTP_STATUS_CODES[:ok]
+        raise Applitools::EyesError, "Error getting server status, #{response.status} #{response.body}"
+      end
+
       Oj.load(response.body)
     end
 
@@ -109,7 +118,7 @@ module Applitools::Connectivity
       end
       response = resp_proc.call(url)
       redirect_count = 10
-      while response.status == 301 && redirect_count > 0 do
+      while response.status == 301 && redirect_count > 0
         redirect_count -= 1
         response = resp_proc.call(response.headers['location'])
       end
@@ -126,7 +135,7 @@ module Applitools::Connectivity
       Applitools::ArgumentGuard.not_nil(batch_id, 'batch_id')
       Applitools::EyesLogger.info("Called with #{batch_id}")
       url = CLOSE_BATCH % batch_id
-      response = delete(URI.join(endpoint_url,url))
+      response = delete(URI.join(endpoint_url, url))
       Applitools::EyesLogger.info "delete batch is done with #{response.status} status"
     end
 
@@ -296,9 +305,9 @@ module Applitools::Connectivity
 
     def dummy_request(url, method, options = {})
       Faraday::Connection.new(
-          url,
-          ssl: { ca_file: SSL_CERT },
-          proxy: @proxy.nil? ? nil : @proxy.to_hash
+        url,
+        ssl: { ca_file: SSL_CERT },
+        proxy: @proxy.nil? ? nil : @proxy.to_hash
       ).send(method) do |req|
         req.options.timeout = options[:timeout] || DEFAULT_TIMEOUT
         req.headers = DEFAULT_HEADERS.merge(options[:headers] || {})
@@ -349,4 +358,3 @@ module Applitools::Connectivity
     end
   end
 end
-

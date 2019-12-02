@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Applitools
   module EyesConfigurationDSL
     def methods_to_delegate
@@ -23,11 +25,7 @@ module Applitools
 
       define_method("#{field_name}=") do |*args|
         value = args.shift
-        if value
-          config_hash[field_name] = true
-        else
-          config_hash[field_name] = false
-        end
+        config_hash[field_name] = value ? true : false
       end
 
       define_method("defined_#{field_name}?") do
@@ -43,7 +41,9 @@ module Applitools
 
       define_method("#{field_name}=") do |*args|
         value = args.shift
-        raise Applitools::EyesIllegalArgument, "Expected #{field_name} to be a String but got #{value.class} instead" unless value.is_a? String
+        unless value.is_a? String
+          raise Applitools::EyesIllegalArgument, "Expected #{field_name} to be a String but got #{value.class} instead"
+        end
         config_hash[field_name.to_sym] = value.freeze
       end
 
@@ -61,10 +61,12 @@ module Applitools
       end
       define_method("#{field_name}=") do |*args|
         value = args.shift
-        raise(
+        unless value.is_a? klass
+          raise(
             Applitools::EyesIllegalArgument,
             "Expected #{klass} but got #{value.class}"
-        ) unless value.is_a? klass
+          )
+        end
         config_hash[field_name.to_sym] = value
       end
       define_method("defined_#{field_name}?") do
@@ -104,11 +106,13 @@ module Applitools
 
       define_method("#{field_name}=") do |*args|
         value = args.shift
-        raise(
+        unless available_values_array.include? value
+          raise(
             Applitools::EyesIllegalArgument,
             "Unknown #{field_name} #{value}. Allowed session types: " \
-            "#{available_values_array.join(', ')}"
-        ) unless available_values_array.include? value
+           "#{available_values_array.join(', ')}"
+          )
+        end
         config_hash[field_name.to_sym] = value
       end
 

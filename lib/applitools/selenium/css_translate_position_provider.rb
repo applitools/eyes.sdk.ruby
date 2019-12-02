@@ -38,7 +38,7 @@ module Applitools::Selenium
     #
     # @param [Applitools::Location] value The location.
     def restore_state(value)
-      Applitools::Utils::EyesSeleniumUtils.set_current_transforms(executor, "translate(10px, 0px)")
+      Applitools::Utils::EyesSeleniumUtils.set_current_transforms(executor, 'translate(10px, 0px)')
 
       transforms = value.values.compact.map(&:to_s).select { |el| !el.empty? }
       Applitools::Utils::EyesSeleniumUtils.set_transforms(executor, value)

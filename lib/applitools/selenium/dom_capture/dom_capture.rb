@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 module Applitools
   module Selenium
     module DomCapture
       extend self
-      DOM_EXTRACTION_TIMEOUT = 300 #seconds
+      DOM_EXTRACTION_TIMEOUT = 300 # seconds
       def full_window_dom(driver, server_connector, logger, position_provider = nil)
         return get_dom(driver, server_connector, logger) unless position_provider
         scroll_top_and_return_back(position_provider) do
@@ -18,7 +20,6 @@ module Applitools
           driver.switch_to.frames(frame_chain: original_frame_chain)
         end
         # CSS processing
-
         dom
       end
 
@@ -35,7 +36,7 @@ module Applitools
           raise Applitools::EyesError, "DOM extraction error: #{script_response['error']}" if script_response['error']
           sleep(0.2)
         end
-        response_lines = script_response['value'].split /\r?\n/
+        response_lines = script_response['value'].split(/\r?\n/)
         separators = Oj.load(response_lines.shift)
         missing_css_list = []
         missing_frame_list = []
@@ -52,7 +53,6 @@ module Applitools
         end
         logger.info "Missing CSS: #{missing_css_list.count}"
         logger.info "Missing frames: #{missing_frame_list.count}"
-        #fetch_css_files(missing_css_list)
 
         frame_data = recurse_frames(driver, server_connector, logger, missing_frame_list)
         result = replace(separators['iframeStartToken'], separators['iframeEndToken'], data.first, frame_data)
@@ -79,9 +79,10 @@ module Applitools
 
             css = missing_css_response.body
 
-            found_and_missing_css = Applitools::Selenium::CssParser::FindEmbeddedResources.new(css).imported_css.map do |found_url|
-              base_url(url).merge(found_url).to_s
-            end
+            found_and_missing_css =
+              Applitools::Selenium::CssParser::FindEmbeddedResources.new(css).imported_css.map do |found_url|
+                base_url(url).merge(found_url).to_s
+              end
             fetch_css_files(found_and_missing_css, server_connector).each do |_k, v|
               css += v
             end
@@ -139,7 +140,7 @@ module Applitools
 
       def base_url(url)
         uri = URI.parse(url)
-        uri.query = uri.fragment = nil;
+        uri.query = uri.fragment = nil
         uri.path = ''
         uri
       end

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'base64'
 require 'applitools/selenium/visual_grid/vg_task'
 
@@ -168,10 +169,12 @@ module Applitools
         fetch_block = proc do |_s, key|
           resp_proc = proc { |u| server_connector.download_resource(u) }
           retry_count = 3
-          begin
+          response = nil
+          loop do
             retry_count -= 1
             response = resp_proc.call(key.dup)
-          end while response.status != 200 && retry_count > 0
+            break unless response.status != 200 && retry_count > 0
+          end
           Applitools::Selenium::VGResource.parse_response(key.dup, response, on_css_fetched: handle_css_block)
         end
 
@@ -196,7 +199,8 @@ module Applitools
         resource_urls.each do |u|
           begin
             request_resources[u] = resource_cache[u]
-          rescue Applitools::Selenium::RenderResources
+          rescue Applitools::Selenium::RenderResources => e
+            Applitools::EyesLogger.error(e.message)
           end
         end
 
@@ -205,7 +209,7 @@ module Applitools
         end
 
         Applitools::Selenium::RGridDom.new(
-          url: data["url"], dom_nodes: data['cdt'], resources: request_resources
+          url: data['url'], dom_nodes: data['cdt'], resources: request_resources
         )
       end
 
@@ -222,12 +226,12 @@ module Applitools
           end
 
           requests << Applitools::Selenium::RenderRequest.new(
-            webhook: rendering_info["resultsUrl"],
-            url: script_data["url"],
+            webhook: rendering_info['resultsUrl'],
+            url: script_data['url'],
             dom: dom,
             resources: request_resources,
             render_info: r_info,
-            browser: {name: running_test.browser_info.browser_type, platform: running_test.browser_info.platform},
+            browser: { name: running_test.browser_info.browser_type, platform: running_test.browser_info.platform },
             script_hooks: script_hooks,
             selectors_to_find_regions_for: region_selectors,
             send_dom: running_test.eyes.config.send_dom.nil? ? false.to_s : running_test.eyes.config.send_dom.to_s

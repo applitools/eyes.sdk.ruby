@@ -78,7 +78,7 @@ module Applitools::Utils
     when Array
       value.map { |el| stringify_for_hash(el) }.join('')
     when Hash
-      value.keys.sort { |a, b| b.to_s <=> a.to_s }.map { |k| "#{k}#{stringify_for_hash(value[k])}"}.join('')
+      value.keys.sort { |a, b| b.to_s <=> a.to_s }.map { |k| "#{k}#{stringify_for_hash(value[k])}" }.join('')
     else
       value.to_s
     end

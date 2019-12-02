@@ -120,7 +120,7 @@ module Applitools
       }
     end
 
-    alias :json_data :to_hash
+    alias json_data to_hash
 
     def to_s
       "(#{left}, #{top}), #{width} x #{height}"

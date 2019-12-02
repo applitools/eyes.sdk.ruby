@@ -2,14 +2,15 @@
 
 module Applitools::MatchLevelSetter
   def match_level_with_exact(value, exact_options = {})
-    raise Applitools::EyesError unless Applitools::MATCH_LEVEL.keys.include?(value) | Applitools::MatchLevel.enum_values.include?(value)
+    raise Applitools::EyesError unless
+        Applitools::MATCH_LEVEL.keys.include?(value) | Applitools::MatchLevel.enum_values.include?(value)
 
     if value != :exact && value != Applitools::MatchLevel::EXACT && (exact_options && !exact_options.empty?)
       raise Applitools::EyesError.new(
         'Exact options are accepted only for EXACT match level'
       )
     end
-    match_level_value = if (Applitools::MatchLevel.enum_values.include?(value))
+    match_level_value = if Applitools::MatchLevel.enum_values.include?(value)
                           value
                         else
                           Applitools::MATCH_LEVEL[value]

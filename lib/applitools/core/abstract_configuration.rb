@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'applitools/core/eyes_configuration_dsl'
 
 module Applitools

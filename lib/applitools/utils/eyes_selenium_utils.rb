@@ -260,7 +260,8 @@ module Applitools::Utils
     end
 
     def set_transforms(executor, value)
-      root_element = executor.browser.running_browser_name == :internet_explorer ? 'document.body' : 'document.documentElement'
+      root_element =
+        executor.browser.running_browser_name == :internet_explorer ? 'document.body' : 'document.documentElement'
       script = value.keys.map do |k|
         JS_SET_TRANSFORM_VALUE % {
           element: root_element,

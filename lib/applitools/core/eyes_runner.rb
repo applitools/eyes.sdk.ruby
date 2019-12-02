@@ -1,13 +1,14 @@
+# frozen_string_literal: true
+
 module Applitools
   class EyesRunner
     attr_accessor :batches_server_connectors_map
 
-    def initialize()
+    def initialize
       self.batches_server_connectors_map = {}
     end
 
     def add_batch(batch_id, &block)
-      # puts batch_id
       batches_server_connectors_map[batch_id] ||= block if block_given?
     end
 

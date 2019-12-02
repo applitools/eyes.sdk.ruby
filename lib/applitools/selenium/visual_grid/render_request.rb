@@ -1,15 +1,16 @@
+# frozen_string_literal: true
+
 require 'oj'
 module Applitools
   module Selenium
     class RenderRequest
       include Applitools::Jsonable
       json_fields :renderId, :webhook, :url, :dom, :resources, :scriptHooks,
-                  :selectorsToFindRegionsFor, :sendDom
+        :selectorsToFindRegionsFor, :sendDom
 
       json_fields :renderInfo, :browser
 
       def initialize(*args)
-        #String webHook, String url, RGridDom dom, Map<String, RGridResource> resources, RenderInfo renderInfo, String platform, String browserName, Object scriptHooks, String[] selectorsToFindRegionsFor, boolean sendDom, Task task
         options = Applitools::Utils.extract_options! args
         self.script_hooks = {}
         self.selectors_to_find_regions_for = []

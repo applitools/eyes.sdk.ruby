@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Applitools
   module Selenium
     module Concerns
@@ -57,7 +59,6 @@ module Applitools
           end
           check(tag, target)
         end
-
 
         # Takes a snapshot of the application under test and matches a region of
         # a specific element with the expected region output.
@@ -147,7 +148,6 @@ module Applitools
         ensure
           abort_if_not_closed
         end
-
       end
     end
   end

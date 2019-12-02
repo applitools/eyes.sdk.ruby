@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'base64'
 require 'digest'
 module Applitools
@@ -6,8 +8,8 @@ module Applitools
       include Applitools::Jsonable
       json_fields :contentType, :hash, :hashFormat
       attr_accessor :url, :content, :handle_css_block
-      alias :content_type :contentType
-      alias :content_type= :contentType=
+      alias content_type contentType
+      alias content_type= contentType=
 
       class << self
         def parse_blob_from_script(blob, options = {})
@@ -36,10 +38,9 @@ module Applitools
       end
 
       def lookup_for_resources
-        if %r{^text/css}i =~ content_type && handle_css_block
-          parser = Applitools::Selenium::CssParser::FindEmbeddedResources.new(content)
-          handle_css_block.call(parser.imported_css + parser.fonts + parser.images, url)
-        end
+        return unless %r{^text/css}i =~ content_type && handle_css_block
+        parser = Applitools::Selenium::CssParser::FindEmbeddedResources.new(content)
+        handle_css_block.call(parser.imported_css + parser.fonts + parser.images, url)
       end
 
       def stringify

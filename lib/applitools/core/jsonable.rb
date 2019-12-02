@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'oj'
 module Applitools
   module Jsonable
@@ -17,17 +19,15 @@ module Applitools
         field = args.first.to_sym
         options = { method: field }.merge! options
         json_methods[field] = options[:method]
-        if options[:method].to_sym == field
-          attr_accessor field
-          ruby_style_field = Applitools::Utils.underscore(field.to_s)
-          unless field.to_s == ruby_style_field
-            define_method(ruby_style_field) do
-              send(field)
-            end
-            define_method("#{ruby_style_field}=") do |v|
-              send("#{field}=", v)
-            end
-          end
+        return unless options[:method].to_sym == field
+        attr_accessor field
+        ruby_style_field = Applitools::Utils.underscore(field.to_s)
+        return if field.to_s == ruby_style_field
+        define_method(ruby_style_field) do
+          send(field)
+        end
+        define_method("#{ruby_style_field}=") do |v|
+          send("#{field}=", v)
         end
       end
 
@@ -37,7 +37,7 @@ module Applitools
     end
 
     def json_data
-      self.class.json_methods.sort.map {|k,v| [k, json_value(send(v))]}.to_h
+      self.class.json_methods.sort.map { |k, v| [k, json_value(send(v))] }.to_h
     end
 
     def json
@@ -49,7 +49,7 @@ module Applitools
     def json_value(value)
       case value
       when Hash
-        value.map { |k,v| [k, json_value(v)] }.sort {|a,b| a.first.to_s <=> b.first.to_s}.to_h
+        value.map { |k, v| [k, json_value(v)] }.sort { |a, b| a.first.to_s <=> b.first.to_s }.to_h
       when Array
         value.map { |el| json_value(el) }
       else

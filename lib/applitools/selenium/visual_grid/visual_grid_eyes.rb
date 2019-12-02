@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'applitools/selenium/configuration'
 require 'timeout'
 
@@ -5,7 +7,7 @@ module Applitools
   module Selenium
     class VisualGridEyes
       include Applitools::Selenium::Concerns::SeleniumEyes
-      DOM_EXTRACTION_TIMEOUT = 300 #seconds or 5 minutes
+      DOM_EXTRACTION_TIMEOUT = 300 # seconds or 5 minutes
       USE_DEFAULT_MATCH_TIMEOUT = -1
       extend Forwardable
 
@@ -49,7 +51,10 @@ module Applitools
 
         config.app_name = options[:app_name] if config.app_name.nil? || config.app_name && config.app_name.empty?
         config.test_name = options[:test_name] if config.test_name.nil? || config.test_name && config.test_name.empty?
-        config.viewport_size = Applitools::RectangleSize.from_any_argument(options[:viewport_size]) if config.viewport_size.nil? || config.viewport_size && config.viewport_size.empty?
+
+        if config.viewport_size.nil? || config.viewport_size && config.viewport_size.empty?
+          config.viewport_size = Applitools::RectangleSize.from_any_argument(options[:viewport_size])
+        end
 
         self.driver = Applitools::Selenium::SeleniumEyes.eyes_driver(options.delete(:driver), self)
         self.current_url = driver.current_url
@@ -65,9 +70,9 @@ module Applitools
           server_connector.close_batch(batch.id)
         end
 
-        logger.info("getting all browsers info...")
+        logger.info('Getting all browsers info...')
         browsers_info_list = config.browsers_info
-        logger.info("creating test descriptors for each browser info...")
+        logger.info('Creating test descriptors for each browser info...')
         browsers_info_list.each(viewport_size) do |bi|
           test = Applitools::Selenium::RunningTest.new(eyes_connector, bi, driver).tap do |t|
             t.on_results_received do |results|
@@ -86,7 +91,7 @@ module Applitools
       end
 
       def eyes_connector
-        logger.info("creating VisualGridEyes server connector")
+        logger.info('Creating VisualGridEyes server connector')
         ::Applitools::Selenium::EyesConnector.new(server_url, driver_lock: driver_lock).tap do |connector|
           connector.batch = batch
           connector.config = config.deep_clone
@@ -142,10 +147,10 @@ module Applitools
           test_list.each do |t|
             t.check(tag, target_to_check, render_task)
           end
-          test_list.each { |t| t.becomes_not_rendered }
+          test_list.each(&:becomes_not_rendered)
           visual_grid_manager.enqueue_render_task render_task
         rescue StandardError => e
-          test_list.each { |t| t.becomes_tested }
+          test_list.each(&:becomes_tested)
           Applitools::EyesLogger.error e.class.to_s
           Applitools::EyesLogger.error e.message
         end
@@ -154,13 +159,13 @@ module Applitools
       def get_regions_x_paths(target)
         result = []
         collect_selenium_regions(target).each do |el, v|
-          if [::Selenium::WebDriver::Element, Applitools::Selenium::Element].include?(el.class)
-            xpath = driver.execute_script(Applitools::Selenium::Scripts::GET_ELEMENT_XPATH_JS, el)
-            web_element_region = Applitools::Selenium::WebElementRegion.new(xpath, v)
-            self.region_to_check = web_element_region.dup if v == :target && size_mod == 'selector'
-            result << web_element_region
-            target.regions[el] = result.size - 1
-          end
+          next unless [::Selenium::WebDriver::Element, Applitools::Selenium::Element].include?(el.class)
+
+          xpath = driver.execute_script(Applitools::Selenium::Scripts::GET_ELEMENT_XPATH_JS, el)
+          web_element_region = Applitools::Selenium::WebElementRegion.new(xpath, v)
+          self.region_to_check = web_element_region.dup if v == :target && size_mod == 'selector'
+          result << web_element_region
+          target.regions[el] = result.size - 1
         end
         result
       end
@@ -205,22 +210,24 @@ module Applitools
         element_or_region = element_or_region(target_element, target, key)
 
         self.size_mod = case element_or_region
-        when ::Selenium::WebDriver::Element, Applitools::Selenium::Element
-          'selector'
-        when Applitools::Region
-          if element_or_region == Applitools::Region::EMPTY
-            if target.options[:stitch_content]
-              'full-page'
-            else
-              element_or_region = Applitools::Region.from_location_size(Applitools::Location::TOP_LEFT, viewport_size)
-              'region'
-            end
-          else
-            'region'
-          end
-        else
-          'full-page'
-        end
+                        when ::Selenium::WebDriver::Element, Applitools::Selenium::Element
+                          'selector'
+                        when Applitools::Region
+                          if element_or_region == Applitools::Region::EMPTY
+                            if target.options[:stitch_content]
+                              'full-page'
+                            else
+                              element_or_region = Applitools::Region.from_location_size(
+                                Applitools::Location::TOP_LEFT, viewport_size
+                              )
+                              'region'
+                            end
+                          else
+                            'region'
+                          end
+                        else
+                          'full-page'
+                        end
 
         self.region_to_check = element_or_region
       end
@@ -249,7 +256,7 @@ module Applitools
         return false if test_list.empty?
         close_async
 
-        until ((states = test_list.map(&:state_name).uniq).count == 1 && states.first == :completed) do
+        until (states = test_list.map(&:state_name).uniq).count == 1 && states.first == :completed
           sleep 0.5
         end
         self.opened = false
@@ -283,19 +290,21 @@ module Applitools
         opened
       end
 
+      # rubocop:disable Style/AccessorMethodName
       def get_all_test_results
         test_list.map(&:test_result)
       end
+      # rubocop:enable Style/AccessorMethodName
 
+      # rubocop:disable Style/AccessorMethodName
       def set_viewport_size(value)
-        begin
-          Applitools::Utils::EyesSeleniumUtils.set_viewport_size driver, value
-        rescue => e
-          logger.error e.class.to_s
-          logger.error e.message
-          raise Applitools::TestFailedError.new "#{e.class} - #{e.message}"
-        end
+        Applitools::Utils::EyesSeleniumUtils.set_viewport_size driver, value
+      rescue => e
+        logger.error e.class.to_s
+        logger.error e.message
+        raise Applitools::TestFailedError.new "#{e.class} - #{e.message}"
       end
+      # rubocop:enable Style/AccessorMethodName
 
       def new_test_error_message(result)
         original_results = result.original_results
@@ -324,12 +333,16 @@ module Applitools
         @server_connector
       end
 
-      # private :new_test_error_message, :diffs_found_error_message, :test_failed_error_message
+      private :new_test_error_message, :diffs_found_error_message, :test_failed_error_message
 
       private
+
       def add_mouse_trigger(_mouse_action, _element); end
+
       def add_text_trigger(_control, _text); end
+
       def ensure_frame_visible(*_args); end
+
       def reset_frames_scroll_position(*_args); end
     end
   end
