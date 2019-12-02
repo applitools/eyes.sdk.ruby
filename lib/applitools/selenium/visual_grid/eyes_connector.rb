@@ -47,7 +47,9 @@ module Applitools
         match_data.render_id = render_status['renderId']
         update_default_settings(match_data)
         begin
-          match_data.read_target(target_to_check, driver, selector_regions)
+          driver_lock.synchronize do
+            match_data.read_target(target_to_check, driver, selector_regions)
+          end
         rescue Applitools::Selenium::VgMatchWindowData::RegionCoordinatesError => e
           logger.error "Error retrieving coordinates for region #{e.region}"
           logger.error e.message

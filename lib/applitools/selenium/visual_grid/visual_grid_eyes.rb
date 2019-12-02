@@ -30,6 +30,7 @@ module Applitools
         self.visual_grid_manager = visual_grid_manager
         self.test_list = Applitools::Selenium::TestList.new
         self.opened = false
+        self.test_list ||= Applitools::Selenium::TestList.new
         self.driver_lock = Mutex.new
       end
 
@@ -43,7 +44,6 @@ module Applitools
       end
 
       def open(*args)
-        self.test_list = Applitools::Selenium::TestList.new
         options = Applitools::Utils.extract_options!(args)
         Applitools::ArgumentGuard.hash(options, 'options', [:driver])
 
@@ -69,7 +69,12 @@ module Applitools
         browsers_info_list = config.browsers_info
         logger.info("creating test descriptors for each browser info...")
         browsers_info_list.each(viewport_size) do |bi|
-          test_list.push Applitools::Selenium::RunningTest.new(eyes_connector, bi, driver)
+          test = Applitools::Selenium::RunningTest.new(eyes_connector, bi, driver).tap do |t|
+            t.on_results_received do |results|
+              visual_grid_manager.aggregate_result(results)
+            end
+          end
+          test_list.push test
         end
         self.opened = true
         driver
@@ -236,9 +241,13 @@ module Applitools
         end
       end
 
+      def close_async
+        test_list.each(&:close)
+      end
+
       def close(throw_exception = true)
         return false if test_list.empty?
-        test_list.each(&:close)
+        close_async
 
         until ((states = test_list.map(&:state_name).uniq).count == 1 && states.first == :completed) do
           sleep 0.5
@@ -251,15 +260,18 @@ module Applitools
           end
         end
 
+        all_results = test_list.map(&:test_result).compact
+        failed_results = all_results.select { |r| !r.as_expected? }
+
         if throw_exception
-          test_list.map(&:test_result).compact.each do |r|
+          all_results.each do |r|
             raise Applitools::NewTestError.new new_test_error_message(r), r if r.new?
             raise Applitools::DiffsFoundError.new diffs_found_error_message(r), r if r.unresolved? && !r.new?
             raise Applitools::TestFailedError.new test_failed_error_message(r), r if r.failed?
           end
         end
-        failed_results = test_list.map(&:test_result).compact.select { |r| !r.as_expected? }
-        failed_results.empty? ? test_list.map(&:test_result).compact.first : failed_results
+
+        failed_results.empty? ? all_results.first : failed_results
       end
 
       def abort_if_not_closed
@@ -312,7 +324,7 @@ module Applitools
         @server_connector
       end
 
-      private :new_test_error_message, :diffs_found_error_message, :test_failed_error_message
+      # private :new_test_error_message, :diffs_found_error_message, :test_failed_error_message
 
       private
       def add_mouse_trigger(_mouse_action, _element); end
