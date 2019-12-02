@@ -58,7 +58,6 @@ RSpec.describe 'Selenium Browser Tests' do
     include_examples 'Eyes Selenium SDK - Duplicates'
   end
 
-  # # VG: eyes.open returns non-decorated driver, the test uses decorated method switch_to.frame(index: frame_index)
   context 'Eyes Selenium SDK - Duplicates', visual_grid: true do
     include_examples 'Eyes Selenium SDK - Duplicates'
   end
@@ -98,5 +97,5 @@ RSpec.describe 'Selenium Browser Tests' do
   context 'Eyes Selenium SDK - Special Cases', visual_grid: true do
     include_examples 'Eyes Selenium SDK - Special Cases'
   end
-
+  #
 end

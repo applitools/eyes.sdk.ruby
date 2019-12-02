@@ -23,10 +23,6 @@ RSpec.shared_context "selenium workaround" do
     driver.get(url_for_test)
   end
 
-  # after(:all) do
-  #   puts @runner.get_all_test_results
-  # end
-
   around(:example) do |example|
     begin
       @expected_properties = {}
@@ -42,7 +38,6 @@ RSpec.shared_context "selenium workaround" do
         end
       end
       example.run
-      # eyes.abort_if_not_closed
       @eyes_test_result = eyes.close if eyes.open?
       check_expected_properties
       check_expected_accessibility_regions
@@ -51,7 +46,6 @@ RSpec.shared_context "selenium workaround" do
     ensure
       driver.quit
       eyes.abort_if_not_closed
-      # @runner.get_all_test_results
     end
   end
 
@@ -96,7 +90,7 @@ RSpec.shared_context "selenium workaround" do
       Selenium::WebDriver.for :chrome
     end
   end
-  # let(:eyes) {  @runner.is_a?(Applitools::Selenium::VisualGridRunner) ? Applitools::Selenium::Eyes.new(runner: @runner) : @eyes }
+
   let(:eyes) { @eyes }
 
   let(:app_name) do |example|
@@ -109,9 +103,6 @@ RSpec.shared_context "selenium workaround" do
   let(:test_name) do |example|
     name_modifiers = [example.description]
     name_modifiers << test_name_modifiers
-    # name_modifiers << [:FPS] if eyes.force_full_page_screenshot
-    # name_modifiers << [:Scroll] unless eyes.stitch_mode == Applitools::STITCH_MODE[:css]
-    # name_modifiers << [:VG] if eyes.is_a? Applitools::Selenium::VisualGridEyes
     name_modifiers.flatten.join('_')
   end
 

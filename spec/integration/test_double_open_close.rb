@@ -39,9 +39,10 @@ RSpec.shared_examples 'Eyes Selenium SDK - Visual Grid TestDoubleOpenClose' do
   end
 
   before { web_driver.get(url_for_test) }
-  # after do
-  #   runner.get_all_test_results(false); web_driver.quit
-  # end
+
+  after do
+    runner.get_all_test_results(false)
+  end
 
   it 'TestDoubleOpenCheckClose' do
     eyes.open(driver: web_driver, app_name: app_name, test_name: test_name, viewport_size: {width: 1200, height: 800})
@@ -62,16 +63,14 @@ RSpec.shared_examples 'Eyes Selenium SDK - Visual Grid TestDoubleOpenClose' do
   it 'TestDoubleOpenCheckCloseAsync' do
     eyes.open(driver: web_driver, app_name: app_name, test_name: test_name, viewport_size: {width: 1200, height: 800})
     eyes.check('Step 1', target)
-    eyes.close_async(false)
+    eyes.close_async
 
     eyes.open(driver: web_driver, app_name: app_name, test_name: test_name, viewport_size: {width: 1200, height: 800})
     eyes.check('Step 2', target)
-    eyes.close_async(false)
-
-    web_driver.quit
+    eyes.close_async
 
     all_test_results = runner.get_all_test_results(false)
-
+    web_driver.quit
     expect(all_test_results.length).to eq 2
   end
 
@@ -95,11 +94,11 @@ RSpec.shared_examples 'Eyes Selenium SDK - Visual Grid TestDoubleOpenClose' do
   it 'TestDoubleOpenCheckCloseAsyncWithDifferentInstances' do
     eyes1.open(driver: web_driver, app_name: app_name, test_name: test_name, viewport_size: {width: 1200, height: 800})
     eyes1.check('Step 1', target)
-    eyes1.close_async(false)
+    eyes1.close_async
 
     eyes2.open(driver: web_driver, app_name: app_name, test_name: test_name, viewport_size: {width: 1200, height: 800})
     eyes2.check('Step 2', target)
-    eyes2.close_async(false)
+    eyes2.close_async
 
     web_driver.quit
 
