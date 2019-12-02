@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+# rubocop:disable Metrics/BlockLength
 require 'spec_helper'
 
 RSpec.shared_examples 'Fluent API Frames' do
@@ -115,3 +117,4 @@ RSpec.shared_examples 'Fluent API Frames' do
     )
   end
 end
+# rubocop:enable Metrics/BlockLength

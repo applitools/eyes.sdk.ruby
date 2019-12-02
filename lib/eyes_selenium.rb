@@ -25,7 +25,6 @@ Applitools::Selenium.require_dir 'selenium'
 Applitools::Selenium.require_dir 'selenium/dom_capture'
 Applitools::Selenium.require_dir 'selenium/css_parser'
 
-
 if defined? Selenium::WebDriver::Driver
   Selenium::WebDriver::Driver.class_eval do
     def driver_for_eyes(eyes)

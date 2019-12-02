@@ -9,7 +9,6 @@ require 'net/http'
 
 Dir['./spec/support/**/*.rb'].sort.each { |f| require f }
 
-
 RSpec.configure do |config|
   config.before mock_connection: true do
     allow_any_instance_of(Applitools::Connectivity::ServerConnector).to receive(:start_session) do
@@ -29,7 +28,6 @@ RSpec.configure do |config|
     Applitools::Helpers.instance_variable_set :@environment_variables, {}
   end
 
-  config.include_context "selenium workaround", :selenium => true
-  config.include_context "selenium workaround", :visual_grid => true
-
+  config.include_context 'selenium workaround', selenium: true
+  config.include_context 'selenium workaround', visual_grid: true
 end

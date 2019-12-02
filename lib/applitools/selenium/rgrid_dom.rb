@@ -1,3 +1,4 @@
+# frozen_string_literal: false
 module Applitools
   module Selenium
     class RGridDom
@@ -13,20 +14,15 @@ module Applitools
         self.resources = options[:resources]
         self.hash_format = 'sha256'
         self.data = {
-            'resources' => resources,
-            'domNodes' => dom_nodes
+          'resources' => resources,
+          'domNodes' => dom_nodes
         }
         self.hash = calculate_sha_256
       end
 
       def calculate_sha_256
-        # str = Applitools::Utils.stringify_for_hash(data)
         Digest::SHA256.hexdigest(content)
       end
-
-      # def hash
-      #   calculate_sha_256
-      # end
 
       def content
         Oj.dump(json_value(data.sort.to_h))

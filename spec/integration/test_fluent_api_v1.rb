@@ -1,10 +1,14 @@
+# frozen_string_literal: true
+# rubocop:disable Metrics/BlockLength
 require 'spec_helper'
 
 RSpec.shared_examples 'Fluent API' do
   let(:url_for_test) { 'https://applitools.github.io/demo/TestPages/FramesTestPage/' }
 
   it('TestCheckRegionWithIgnoreRegion_Fluent') do
-    target = Applitools::Selenium::Target.region(:id, 'overflowing-div').ignore(Applitools::Region.new(50, 50, 100,100))
+    target = Applitools::Selenium::Target.region(
+      :id, 'overflowing-div'
+    ).ignore(Applitools::Region.new(50, 50, 100, 100))
     eyes.check('Fluent - Region with Ignore region', target)
   end
 
@@ -19,23 +23,46 @@ RSpec.shared_examples 'Fluent API' do
   end
 
   it('TestCheckWindowWithIgnoreBySelector_Centered_Fluent') do
-    eyes.check('Fluent - Window with ignore region by selector centered', Applitools::Selenium::Target.window.ignore(:id, 'centered'))
+    eyes.check(
+      'Fluent - Window with ignore region by selector centered',
+      Applitools::Selenium::Target.window.ignore(:id, 'centered')
+    )
   end
 
   it('TestCheckWindowWithIgnoreBySelector_Stretched_Fluent') do
-    eyes.check('Fluent - Window with ignore region by selector centered', Applitools::Selenium::Target.window.ignore(:id, 'stretched'))
+    eyes.check(
+      'Fluent - Window with ignore region by selector centered',
+      Applitools::Selenium::Target.window.ignore(:id, 'stretched')
+    )
   end
 
   it('TestCheckWindowWithFloatingBySelector_Fluent') do
-    eyes.check('Fluent - Window with ignore region by selector', Applitools::Selenium::Target.window.floating(:id, 'overflowing-div', 3, 3, 20, 30))
+    eyes.check(
+      'Fluent - Window with ignore region by selector',
+      Applitools::Selenium::Target.window.floating(
+        :id, 'overflowing-div', 3, 3, 20, 30
+      )
+    )
   end
 
   it('TestCheckRegionByCoordinates_Fluent') do
-    eyes.check('Fluent - Region by coordinates', Applitools::Selenium::Target.region(Applitools::Region.new(50, 70,90, 110)))
+    eyes.check(
+      'Fluent - Region by coordinates',
+      Applitools::Selenium::Target.region(
+        Applitools::Region.new(
+          50, 70, 90, 110
+        )
+      )
+    )
   end
 
-  it('TestCheckOverflowingRegionByCoordinates_Fluent()') do
-    eyes.check('Fluent - Region by overflowing coordinates', Applitools::Selenium::Target.region(Applitools::Region.new(50, 110, 90, 550)))
+  it('TestCheckOverflowingRegionByCoordinates_Fluent') do
+    eyes.check(
+      'Fluent - Region by overflowing coordinates',
+      Applitools::Selenium::Target.region(
+        Applitools::Region.new(50, 110, 90, 550)
+      )
+    )
   end
 
   it('TestCheckElementWithIgnoreRegionByElementOutsideTheViewport_Fluent') do
@@ -46,8 +73,8 @@ RSpec.shared_examples 'Fluent API' do
   end
 
   it('TestCheckElementWithIgnoreRegionBySameElement_Fluent') do
-    element = driver.find_element(:id, "overflowing-div-image")
-    expected_ignore_regions(Applitools::Region.new(0,0,304, 184))
+    element = driver.find_element(:id, 'overflowing-div-image')
+    expected_ignore_regions(Applitools::Region.new(0, 0, 304, 184))
     eyes.check('Fluent - Region by element', Applitools::Selenium::Target.region(element).ignore(element))
   end
 
@@ -80,18 +107,18 @@ RSpec.shared_examples 'Fluent API' do
 
   it('TestIgnoreDisplacements') do
     eyes.check(
-      "Fluent - Ignore Displacements = true",
+      'Fluent - Ignore Displacements = true',
       Applitools::Selenium::Target.window.ignore_displacements(true).fully
     )
-    expected_property("ignoreDisplacements", true)
+    expected_property('ignoreDisplacements', true)
   end
 
   it('TestIgnoreDisplacements') do
     eyes.check(
-        "Fluent - Ignore Displacements = false",
-        Applitools::Selenium::Target.window.ignore_displacements(false).fully
+      'Fluent - Ignore Displacements = false',
+      Applitools::Selenium::Target.window.ignore_displacements(false).fully
     )
-    expected_property("ignoreDisplacements", false)
+    expected_property('ignoreDisplacements', false)
   end
 
   it('TestCheckWindowWithIgnoreRegion_Fluent') do
@@ -122,9 +149,10 @@ RSpec.shared_examples 'Fluent API' do
       Applitools::Selenium::Target.window.floating(
         Applitools::FloatingRegion.new(
           Applitools::Region.new(10, 10, 20, 20),
-          Applitools::FloatingBounds.new(3,3,20, 30)
+          Applitools::FloatingBounds.new(3, 3, 20, 30)
         )
       )
     )
   end
 end
+# rubocop:enable Metrics/BlockLength

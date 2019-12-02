@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'spec_helper'
 
 RSpec.shared_examples 'Eyes Selenium SDK - Duplicates' do

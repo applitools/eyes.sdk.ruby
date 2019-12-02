@@ -60,9 +60,9 @@ module Applitools
                              when ::Selenium::WebDriver::Element
                                proc do |driver, return_element = false|
                                  region = applitools_element_from_selenium_element(driver, args.first)
-                                 padding_proc = proc do |region|
+                                 padding_proc = proc do |reg|
                                    Applitools::Region.from_location_size(
-                                       region.location, region.size
+                                     reg.location, reg.size
                                    ).padding(requested_padding)
                                  end
                                  next region, padding_proc if return_element
@@ -71,9 +71,9 @@ module Applitools
                              when Applitools::Selenium::Element
                                proc do |_driver, return_element = false|
                                  region = args.first
-                                 padding_proc = proc do |region|
+                                 padding_proc = proc do |reg|
                                    Applitools::Region.from_location_size(
-                                       region.location, region.size
+                                     reg.location, reg.size
                                    ).padding(requested_padding)
                                  end
                                  next region, padding_proc if return_element
@@ -82,9 +82,9 @@ module Applitools
                              else
                                proc do |driver, return_element = false|
                                  region = driver.find_element(*args)
-                                 padding_proc = proc do |region|
+                                 padding_proc = proc do |reg|
                                    Applitools::Region.from_location_size(
-                                       region.location, region.size
+                                     reg.location, reg.size
                                    ).padding(requested_padding)
                                  end
                                  next region, padding_proc if return_element
@@ -134,8 +134,8 @@ module Applitools
                   proc do |driver, return_element = false|
                     args_dup = args.dup
                     region = applitools_element_from_selenium_element(driver, args_dup.shift)
-                    padding_proc = proc do |region|
-                      Applitools::FloatingRegion.any(region, *args_dup).padding(requested_padding)
+                    padding_proc = proc do |reg|
+                      Applitools::FloatingRegion.any(reg, *args_dup).padding(requested_padding)
                     end
                     next region, padding_proc if return_element
                     padding_proc.call(region)
@@ -144,8 +144,8 @@ module Applitools
                   proc do |_driver, return_element = false|
                     args_dup = args.dup
                     region = args_dup.shift
-                    padding_proc = proc do |region|
-                      Applitools::FloatingRegion.any(region, *args_dup).padding(requested_padding)
+                    padding_proc = proc do |reg|
+                      Applitools::FloatingRegion.any(reg, *args_dup).padding(requested_padding)
                     end
                     next region, padding_proc if return_element
                     padding_proc.call(region)
@@ -154,9 +154,9 @@ module Applitools
                   proc do |driver, return_element = false|
                     args_dup = args.dup
                     region = driver.find_element(args_dup.shift, args_dup.shift)
-                    padding_proc = proc do |region|
+                    padding_proc = proc do |reg|
                       Applitools::FloatingRegion.any(
-                          region, *args_dup
+                        reg, *args_dup
                       ).padding(requested_padding)
                     end
                     next region, padding_proc if return_element
@@ -346,7 +346,7 @@ module Applitools
                                    end
                                  when Applitools::Region
                                    Applitools::AccessibilityRegion.new(
-                                       args.first, options[:type]
+                                     args.first, options[:type]
                                    )
                                  when String
                                    proc do |driver, return_element = false|
@@ -365,7 +365,7 @@ module Applitools
       end
 
       def default_full_page_for_vg
-        if (options[:stitch_content].nil?)
+        if options[:stitch_content].nil?
           case region_to_check
           when nil
             fully(true)
@@ -380,7 +380,6 @@ module Applitools
         end
         nil
       end
-
 
       private
 

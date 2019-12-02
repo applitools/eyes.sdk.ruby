@@ -1,4 +1,6 @@
-RSpec.shared_context "selenium workaround" do
+# frozen_string_literal: true
+# rubocop:disable Metrics/BlockLength
+RSpec.shared_context 'selenium workaround' do
   before(:all) do
     OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
 
@@ -60,7 +62,6 @@ RSpec.shared_context "selenium workaround" do
   let(:app_output_ignore) { app_output_image_match_settings['ignore'] }
   let(:app_output_floating) { app_output_image_match_settings['floating'] }
 
-
   let(:session_results) do
     Oj.load(Net::HTTP.get(session_results_url))
   end
@@ -77,7 +78,7 @@ RSpec.shared_context "selenium workaround" do
 
   let(:driver) do
     eyes.open(
-        app_name: app_name, test_name: test_name, viewport_size: viewport_size, driver: web_driver
+      app_name: app_name, test_name: test_name, viewport_size: viewport_size, driver: web_driver
     )
   end
 
@@ -85,7 +86,6 @@ RSpec.shared_context "selenium workaround" do
     case ENV['BROWSER']
     when 'chrome'
       Selenium::WebDriver.for :chrome, options: chrome_options
-    when 'firefox'
     else
       Selenium::WebDriver.for :chrome
     end
@@ -114,15 +114,14 @@ RSpec.shared_context "selenium workaround" do
     name_modifiers
   end
 
-  let(:viewport_size) { {width: 700, height: 460} }
+  let(:viewport_size) { { width: 700, height: 460 } }
   let(:chrome_options) do
     Selenium::WebDriver::Chrome::Options.new(
-        options: { args: %w(headless disable-gpu no-sandbox disable-dev-shm-usage) }
+      options: { args: %w(headless disable-gpu no-sandbox disable-dev-shm-usage) }
     )
   end
 
   let(:test_results) { @eyes_test_result }
-
 
   def expected_accessibility_regions(*args)
     return @expected_accessibility_regions += args.first if args.length == 1 && args.first.is_a?(Array)
@@ -144,8 +143,8 @@ RSpec.shared_context "selenium workaround" do
   end
 
   def check_expected_properties
-    @expected_properties.each do |k,v|
-      path = k.split /\./
+    @expected_properties.each do |k, v|
+      path = k.split(/\./)
       current_hash = app_output_image_match_settings
       path.each do |prop|
         current_hash = current_hash[prop.to_s]
@@ -189,3 +188,4 @@ RSpec.shared_context "selenium workaround" do
     end
   end
 end
+# rubocop:enable Metrics/BlockLength

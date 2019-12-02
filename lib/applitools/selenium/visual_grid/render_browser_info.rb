@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'applitools/selenium/browser_types'
 
 module Applitools

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rspec'
 require 'eyes_selenium'
 require 'pry'
@@ -12,24 +14,20 @@ RSpec.shared_examples 'Test for url' do |url|
 
   let(:config) do
     Applitools::Selenium::Configuration.new.tap do |config|
-    config.app_name = 'Top 10 sites'
-    config.test_name = "Top 10 sites - #{url}"
-    config.viewport_size = Applitools::RectangleSize.new(1280,600)
-    config.proxy = Applitools::Connectivity::Proxy.new('http://localhost:8000')
-    # config.server_url = 'https://testeyes.applitools.com'
-    # config.batch = @batch
-    # emu = Applitools::Selenium::ChromeEmulationInfo.galaxy_s5(Applitools::Selenium::ChromeEmulationInfo::ORIENTATIONS::PORTRAIT)
+      config.app_name = 'Top 10 sites'
+      config.test_name = "Top 10 sites - #{url}"
+      config.viewport_size = Applitools::RectangleSize.new(1280, 600)
+      config.proxy = Applitools::Connectivity::Proxy.new('http://localhost:8000')
+      # config.server_url = 'https://testeyes.applitools.com'
+      # config.batch = @batch
+      # emu = Applitools::Selenium::ChromeEmulationInfo.galaxy_s5(Applitools::Selenium::ChromeEmulationInfo::ORIENTATIONS::PORTRAIT)
 
-    config.add_browser(1600, 1200, BrowserTypes::CHROME)
-          .add_browser(1280, 1024, BrowserTypes::CHROME)
-          .add_browser(1280, 1024, BrowserTypes::EDGE)
-          .add_device_emulation(Devices::BlackBerryZ30, Orientations::PORTRAIT)
-          .add_device_emulation(Devices::MicrosoftLumia950)
-          .add_device_emulation(Devices::NokiaLumia520, Orientations::LANDSCAPE)
-
-    # config.add_device_emulation(Applitools::Selenium::ChromeEmulationInfo.galaxy_s5(Applitools::Selenium::ChromeEmulationInfo::ORIENTATIONS::PORTRAIT))
-    #       .add_device_emulation(Applitools::Selenium::ChromeEmulationInfo.i_phone_4(:portrait))
-
+      config.add_browser(1600, 1200, BrowserTypes::CHROME)
+            .add_browser(1280, 1024, BrowserTypes::CHROME)
+            .add_browser(1280, 1024, BrowserTypes::EDGE)
+            .add_device_emulation(Devices::BlackBerryZ30, Orientations::PORTRAIT)
+            .add_device_emulation(Devices::MicrosoftLumia950)
+            .add_device_emulation(Devices::NokiaLumia520, Orientations::LANDSCAPE)
     end
   end
 
@@ -40,10 +38,11 @@ RSpec.shared_examples 'Test for url' do |url|
 
   let(:target1) { Applitools::Selenium::Target.window.send_dom(true) }
   # let(:target1) { Applitools::Selenium::Target.window.send_dom(true).ignore(:css, '#hlogo img').ignore_displacements }#.script_hook('document.getElementsByTagName("html")[0].appendChild(document.createTextNode("some text"));') }
-  let(:target2) { Applitools::Selenium::Target.window.fully(true).send_dom(true).floating(:css, '#hlogo img', 15, 15, 15, 15) }
+  let(:target2) do
+    Applitools::Selenium::Target.window.fully(true).send_dom(true).floating(:css, '#hlogo img', 15, 15, 15, 15)
+  end
   let(:target3) { Applitools::Selenium::Target.region(:css, '#ulogo img').send_dom(true) }
-  let(:target4) { Applitools::Selenium::Target.region(Applitools::Region.new(80,80, 350, 100)) }
-
+  let(:target4) { Applitools::Selenium::Target.region(Applitools::Region.new(80, 80, 350, 100)) }
 
   let(:eyes) { @eyes }
 
@@ -52,10 +51,6 @@ RSpec.shared_examples 'Test for url' do |url|
     puts eyes.get_all_test_results.map(&:as_expected?)
     driver.quit
     eyes.abort_if_not_closed
-  end
-
-  after(:all) do
-
   end
 
   it url do
@@ -70,12 +65,12 @@ end
 RSpec.describe 'My first visual grid test' do
   before(:all) do
     @runner = Applitools::Selenium::VisualGridRunner.new(48)
-    @eyes = Applitools::Selenium::Eyes.new(visual_grid_runner: @runner )
+    @eyes = Applitools::Selenium::Eyes.new(visual_grid_runner: @runner)
     # @batch = Applitools::BatchInfo.new('MySingleTest')
   end
 
   after(:all) do
-    puts @runner.get_all_test_results.map {|r| r.passed? }
+    puts @runner.get_all_test_results.map(&:passed?)
     @runner.stop
   end
 

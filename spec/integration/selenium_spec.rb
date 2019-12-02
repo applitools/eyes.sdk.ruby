@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'spec_helper'
 require_relative 'test_classic_api_v1'
 require_relative 'test_fluent_api_v1'
@@ -97,5 +98,4 @@ RSpec.describe 'Selenium Browser Tests' do
   context 'Eyes Selenium SDK - Special Cases', visual_grid: true do
     include_examples 'Eyes Selenium SDK - Special Cases'
   end
-  #
 end

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # rubocop:disable Style/SignalException
-
+# rubocop:disable Metrics/BlockLength
 $batch_info ||= Applitools::BatchInfo.new "Ruby tests (#{RUBY_VERSION})"
 
 require_relative 'old_tests/result'
@@ -257,3 +257,4 @@ RSpec.shared_examples 'test special cases' do
     # end
   end
 end
+# rubocop:enable Metrics/BlockLength

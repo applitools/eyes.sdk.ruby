@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'thread'
 module Applitools
   module Selenium
@@ -31,12 +32,12 @@ module Applitools
         update_cache_map(key, value)
       end
 
-      def fetch_and_store(key, &block)
+      def fetch_and_store(key, &_block)
         semaphore.synchronize do
           return cache_map[key] if check_key(key)
           return unless block_given?
           cache_map[key] = Applitools::Future.new(semaphore) do |semaphore|
-            block.call(semaphore, key)
+            yield(semaphore, key)
           end
           return true if cache_map[key].is_a? Applitools::Future
           false

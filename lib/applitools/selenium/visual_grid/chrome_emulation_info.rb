@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'applitools/selenium/visual_grid/emulation_base_info'
 module Applitools
   module Selenium

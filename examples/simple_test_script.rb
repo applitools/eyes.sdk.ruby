@@ -14,10 +14,17 @@ eyes.server_url = 'https://eyesfabric4eyes.applitools.com'
 begin
   web_driver = Selenium::WebDriver.for :chrome
 
-  drv = eyes.open(app_name: 'Ruby SDK', test_name: 'Applitools example', viewport_size: { width: 800, height: 600 }, driver: web_driver)
+  drv = eyes.open(
+    app_name: 'Ruby SDK',
+    test_name: 'Applitools example',
+    viewport_size: { width: 800, height: 600 },
+    driver: web_driver
+  )
+
   drv.get('https://applitools.com/helloworld?diff2')
+
   eyes.check('Example1', Applitools::Selenium::Target.window.fully)
-  drv.find_element(:css, '.section.button-section button').click()
+  drv.find_element(:css, '.section.button-section button').click
   eyes.check('Example2', Applitools::Selenium::Target.window.fully)
   eyes.close
 

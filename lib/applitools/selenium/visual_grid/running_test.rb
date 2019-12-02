@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'state_machine'
 require 'digest'
 require 'applitools/selenium/visual_grid/render_task'
@@ -9,7 +10,7 @@ module Applitools
       def_delegators 'Applitools::EyesLogger', :logger, :log_handler, :log_handler=
       def_delegators 'eyes', :abort_if_not_closed
       attr_accessor  :on_results
-
+      # rubocop:disable Metrics/BlockLength
       state_machine :initial => :new do
         state :new do
           def close
@@ -221,6 +222,7 @@ module Applitools
         uniq_values = watch.values.uniq
         uniq_values.count == 1 && uniq_values.first == true
       end
+      # rubocop:enable Metrics/BlockLength
     end
   end
 end

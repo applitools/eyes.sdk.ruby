@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'rspec'
 require 'eyes_selenium'
 
@@ -9,7 +10,14 @@ RSpec.describe 'Chrome 78 bug' do
     end
   end
   let(:original_driver) { Selenium::WebDriver.for :chrome }
-  let(:driver) { eyes.open(app_name: 'Ruby SDK', test_name: 'Chrome78', viewport_size: { width: 800, height: 600 }, driver: original_driver) }
+  let(:driver) do
+    eyes.open(
+      app_name: 'Ruby SDK',
+      test_name: 'Chrome78',
+      viewport_size: { width: 800, height: 600 },
+      driver: original_driver
+    )
+  end
   before { driver.get('https://applitools.github.io/demo/TestPages/FramesTestPage/') }
 
   it 'full window' do

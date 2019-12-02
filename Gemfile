@@ -10,4 +10,3 @@ gemspec :name => 'eyes_capybara', :development_group => :eyes_capybara
 gemspec :name => 'eyes_appium', :development_group => :eyes_appium
 
 gem 'parallel_tests', group: [:development, :test]
-

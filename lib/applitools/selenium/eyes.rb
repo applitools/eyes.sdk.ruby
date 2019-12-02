@@ -1,7 +1,7 @@
+# frozen_string_literal: true
 module Applitools
   module Selenium
     class Eyes < SimpleDelegator
-
       def initialize(*args)
         options = Applitools::Utils.extract_options!(args)
         server_url = options.delete(:server_url)
@@ -13,7 +13,6 @@ module Applitools
           super Applitools::Selenium::SeleniumEyes.new(server_url, runner: runner || Applitools::ClassicRunner.new)
         end
       end
-
     end
   end
 end

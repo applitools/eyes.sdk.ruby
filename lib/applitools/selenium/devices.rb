@@ -1,3 +1,4 @@
+# frozen_string_literal: false
 module Devices
   extend self
   IPhone4 = 'iPhone 4'.freeze

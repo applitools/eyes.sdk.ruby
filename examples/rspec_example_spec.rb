@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'rspec'
 require 'eyes_selenium'
 require 'pry'
@@ -28,8 +29,15 @@ RSpec.describe 'Eyes example' do
 
   let(:web_driver) { Selenium::WebDriver.for :chrome }
   let(:eyes) { @eyes }
-  let(:driver) { eyes.open(app_name: 'Eyes RSpec example', test_name: example_description, driver: web_driver, viewport_size: { width: 800, height: 600 }) }
-  let(:example_description) { |example| example.description }
+  let(:driver) do
+    eyes.open(
+      app_name: 'Eyes RSpec example',
+      test_name: example_description,
+      driver: web_driver,
+      viewport_size: { width: 800, height: 600 }
+    )
+  end
+  let(:example_description, &:description)
 
   context 'Applitools site' do
     it 'Full page' do
@@ -49,7 +57,7 @@ RSpec.describe 'Eyes example' do
     end
     it 'With a bug' do
       driver.get('https://applitools.com/helloworld?diff2')
-      driver.find_element(:css, '.section.button-section button').click()
+      driver.find_element(:css, '.section.button-section button').click
       eyes.check('Example2', Applitools::Selenium::Target.window.fully)
     end
   end

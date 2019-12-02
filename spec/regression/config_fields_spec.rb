@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'rspec'
 require 'spec_helper'
 
@@ -11,7 +12,9 @@ RSpec.describe 'Config Object fields' do
   let(:new_config) { Applitools::Selenium::Configuration.new }
   before do
     allow(selenium_driver).to receive(:driver_for_eyes).and_return(driver)
-    allow(Applitools::Utils::EyesSeleniumUtils).to receive(:extract_viewport_size).and_return Applitools::RectangleSize.new(0,0)
+    allow(Applitools::Utils::EyesSeleniumUtils).to receive(:extract_viewport_size).and_return(
+      Applitools::RectangleSize.new(0, 0)
+    )
     allow(driver).to receive(:manage)
   end
 
@@ -19,12 +22,12 @@ RSpec.describe 'Config Object fields' do
     before do
       allow_any_instance_of(Applitools::Connectivity::ServerConnector).to receive(:start_session) do |*args|
         expect(args.last.to_hash[:default_match_settings][:match_level]).to eq Applitools::MatchLevel::EXACT
-        expect(args.last.to_hash[:default_match_settings][:exact]).to eq ({
-            'MinDiffIntensity' => 1,
-            'MinDiffWidth' => 2,
-            'MinDiffHeight' => 3,
-            'MatchThreshold' => 4
-        })
+        expect(args.last.to_hash[:default_match_settings][:exact]).to eq(
+          'MinDiffIntensity' => 1,
+          'MinDiffWidth' => 2,
+          'MinDiffHeight' => 3,
+          'MatchThreshold' => 4
+        )
         expect(args.last.to_hash[:default_match_settings][:scale]).to eq 0
         expect(args.last.to_hash[:default_match_settings][:remainder]).to eq 0
         session_info
@@ -33,7 +36,8 @@ RSpec.describe 'Config Object fields' do
 
     context 'through the eyes' do
       it 'set_default_match_level' do
-        eyes.set_default_match_settings(Applitools::MatchLevel::EXACT,
+        eyes.set_default_match_settings(
+          Applitools::MatchLevel::EXACT,
           min_diff_intensity: 1,
           min_diff_width: 2,
           min_diff_height: 3,
@@ -75,13 +79,14 @@ RSpec.describe 'Config Object fields' do
       end
       it 'default_match_level=' do
         eyes.configure do |c|
-          c.set_default_match_settings(Applitools::MatchLevel::EXACT,
+          c.set_default_match_settings(
+            Applitools::MatchLevel::EXACT,
             min_diff_intensity: 1,
             min_diff_width: 2,
             min_diff_height: 3,
             match_threshold: 4
           )
-end
+        end
         eyes.open(driver: selenium_driver, app_name: 'app_name', test_name: 'test_name')
       end
     end
@@ -97,7 +102,7 @@ end
     end
 
     context 'through the eyes' do
-      it {eyes.open(driver: selenium_driver, app_name: 'app_name', test_name: 'test_name')}
+      it { eyes.open(driver: selenium_driver, app_name: 'app_name', test_name: 'test_name') }
     end
 
     context 'config object' do
@@ -142,4 +147,3 @@ end
     end
   end
 end
-

@@ -49,7 +49,7 @@ module Applitools
       def perform
         rq = prepare_data_for_rg(script_data)
         fetch_fails = 0
-        begin
+        loop do
           response = nil
           begin
             response = server_connector.render(rendering_info['serviceUrl'], rendering_info['accessToken'], rq)
@@ -85,21 +85,21 @@ module Applitools
               end
             end
 
-            if need_more_dom
-              put_cache.fetch_and_store(cache_key) do |_s|
-                server_connector.render_put_resource(
-                  rendering_info['serviceUrl'],
-                  rendering_info['accessToken'],
-                  dom_resource,
-                  running_render
-                )
-              end
-              put_cache[cache_key]
+            next unless need_more_dom
+            put_cache.fetch_and_store(cache_key) do |_s|
+              server_connector.render_put_resource(
+                rendering_info['serviceUrl'],
+                rendering_info['accessToken'],
+                dom_resource,
+                running_render
+              )
             end
+            put_cache[cache_key]
           end
 
           still_running = need_more_resources || need_more_dom || fetch_fails > MAX_FAILS_COUNT
-        end while still_running
+          break unless still_running
+        end
         statuses = poll_render_status(rq)
         if statuses.first['status'] == 'error'
           raise Applitools::EyesError, "Render failed for #{statuses.first['renderId']} with the message: " \
@@ -112,7 +112,7 @@ module Applitools
       def poll_render_status(rq)
         iterations = 0
         statuses = []
-        begin
+        loop do
           fails_count = 0
           proc = proc do
             server_connector.render_status_by_id(
@@ -121,18 +121,22 @@ module Applitools
               Oj.dump(json_value(rq.map(&:render_id)))
             )
           end
-          begin
-            statuses = proc.call
-            fails_count = 0
-          rescue StandardError => _e
-            sleep 1
-            fails_count += 1
-          ensure
-            iterations += 1
-            sleep 0.5
-          end while(fails_count > 0 and fails_count < 3)
+          loop do
+            begin
+              statuses = proc.call
+              fails_count = 0
+            rescue StandardError => _e
+              sleep 1
+              fails_count += 1
+            ensure
+              iterations += 1
+              sleep 0.5
+            end
+            break unless fails_count > 0 && fails_count < 3
+          end
           finished = !statuses.map { |s| s['status'] }.uniq.include?('rendering') || iterations > MAX_ITERATIONS
-        end while(!finished)
+          break if finished
+        end
         statuses
       end
 
@@ -149,8 +153,8 @@ module Applitools
       end
 
       def parse_frame_dom_resources(data)
-        all_blobs = data["blobs"]
-        resource_urls = data["resourceUrls"].map { |u| URI(u) }
+        all_blobs = data['blobs']
+        resource_urls = data['resourceUrls'].map { |u| URI(u) }
         discovered_resources = []
 
         fetch_block = proc {}

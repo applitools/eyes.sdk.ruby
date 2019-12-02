@@ -29,7 +29,7 @@ unless ENV['BUILD_ONLY'] && !ENV['BUILD_ONLY'].empty?
     puts ENV['APPLITOOLS_BATCH_ID']
     puts ENV['APPLITOOLS_BATCH_NAME']
   end
-  task :visual_tests => [:set_batch_info, :check, :spec_selenium]
+  task visual_tests: [:set_batch_info, :check, :spec_selenium]
   task :default => :visual_tests
   # case ENV['END_TO_END_TESTS']
   # when 'false'
