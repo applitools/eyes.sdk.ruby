@@ -617,7 +617,7 @@ module Applitools
       end
     end
 
-    def get_app_output_with_screenshot(region_provider, last_screenshot)
+    def get_app_output_with_screenshot(region_provider, _last_screenshot)
       dom_url = ''
       captured_dom_data = dom_data
       unless captured_dom_data.empty?
@@ -650,13 +650,11 @@ module Applitools
 
       screenshot = yield(screenshot) if block_given?
 
-      logger.info 'Compressing screenshot...'
-      compress_result = compress_screenshot64 screenshot, last_screenshot
-      logger.info 'Done! Getting title...'
+      logger.info 'Getting title...'
       a_title = title
       logger.info 'Done!'
       Applitools::AppOutputWithScreenshot.new(
-        Applitools::AppOutput.new(a_title, compress_result).tap do |o|
+        Applitools::AppOutput.new(a_title, screenshot).tap do |o|
           o.location = region.location unless region.empty?
           o.dom_url = dom_url unless dom_url && dom_url.empty?
           o.screenshot_url = screenshot_url if respond_to?(:screenshot_url) && !screenshot_url.nil?
