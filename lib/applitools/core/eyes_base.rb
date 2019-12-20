@@ -663,10 +663,6 @@ module Applitools
       )
     end
 
-    def compress_screenshot64(screenshot, _last_screenshot)
-      screenshot # it is a stub
-    end
-
     class UserInputArray < Array
       def add(trigger)
         raise Applitools::EyesIllegalArgument.new 'trigger must be kind of Trigger!' unless trigger.is_a? Trigger
