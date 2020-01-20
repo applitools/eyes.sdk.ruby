@@ -17,13 +17,14 @@ RSpec.shared_examples 'Test for url' do |url|
       config.app_name = 'Top 10 sites'
       config.test_name = "Top 10 sites - #{url}"
       config.viewport_size = Applitools::RectangleSize.new(1280, 600)
-      config.proxy = Applitools::Connectivity::Proxy.new('http://localhost:8000')
+      # config.proxy = Applitools::Connectivity::Proxy.new('http://localhost:8000')
       # config.server_url = 'https://testeyes.applitools.com'
       # config.batch = @batch
       # emu = Applitools::Selenium::ChromeEmulationInfo.galaxy_s5(Applitools::Selenium::ChromeEmulationInfo::ORIENTATIONS::PORTRAIT)
 
       config.add_browser(1600, 1200, BrowserTypes::CHROME)
-            .add_browser(1280, 1024, BrowserTypes::CHROME)
+            .add_browser(1280, 1024, BrowserTypes::CHROME_ONE_VERSION_BACK)
+            .add_browser(1280, 1024, BrowserTypes::FIREFOX_TWO_VERSIONS_BACK)
             .add_browser(1280, 1024, BrowserTypes::EDGE)
             .add_device_emulation(Devices::BlackBerryZ30, Orientations::PORTRAIT)
             .add_device_emulation(Devices::MicrosoftLumia950)
@@ -32,7 +33,7 @@ RSpec.shared_examples 'Test for url' do |url|
   end
 
   let(:driver) do
-    eyes.config = config
+    eyes.set_configuration(config)
     eyes.open(driver: web_driver)
   end
 
