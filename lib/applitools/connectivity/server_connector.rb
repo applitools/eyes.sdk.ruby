@@ -180,6 +180,7 @@ module Applitools::Connectivity
     end
 
     def server_url=(url)
+      unless url.nil?; uri = URI.parse(url); url = "#{uri.scheme}://#{uri.hostname}".freeze; end
       @server_url = url.nil? ? DEFAULT_SERVER_URL : url
       unless @server_url.is_a? String
         raise Applitools::EyesIllegalArgument.new 'You should pass server url as a String!' \
