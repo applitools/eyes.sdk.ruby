@@ -1,3 +1,6 @@
+## [Eyes.sdk.ruby 3.16.2] - 2020-03-02
+### Fixed
+- double slash issue for custom server URL
 ## [Eyes.sdk.ruby 3.16.2] - 2020-02-06
 ### Fixed
 - DefaultMatchSettings being overridden incorrectly by ImageMatchSettings
