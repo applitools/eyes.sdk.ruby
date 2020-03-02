@@ -44,7 +44,7 @@ module Applitools::Connectivity
     end
 
     def rendering_info
-      response = long_get(server_url + RENDER_INFO_PATH, content_type: 'application/json')
+      response = long_get(URI.join(server_url, RENDER_INFO_PATH), content_type: 'application/json')
       unless response.status == HTTP_STATUS_CODES[:ok]
         raise Applitools::EyesError, "Error getting render info (#{response.status}})"
       end
@@ -52,8 +52,7 @@ module Applitools::Connectivity
     end
 
     def render(service_url, access_key, requests)
-      uri = URI(service_url)
-      uri.path = RENDER
+      uri = URI.join(URI(service_url), RENDER)
       response = dummy_post(
         uri,
         body: requests.json,
@@ -180,7 +179,7 @@ module Applitools::Connectivity
     end
 
     def server_url=(url)
-      unless url.nil?; uri = URI.parse(url); url = "#{uri.scheme}://#{uri.hostname}".freeze; end
+      # unless url.nil?; uri = URI.parse(url); url = "#{uri.scheme}://#{uri.hostname}".freeze; end
       @server_url = url.nil? ? DEFAULT_SERVER_URL : url
       unless @server_url.is_a? String
         raise Applitools::EyesIllegalArgument.new 'You should pass server url as a String!' \
