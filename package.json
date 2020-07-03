@@ -1,0 +1,42 @@
+{
+  "name": "@applitools/coverage-tests",
+  "private": true,
+  "version": "1.0.0",
+  "engines": {
+    "node": ">=10.0.0"
+  },
+  "main": "index.js",
+  "description": "Coverage Tests for Applitools SDKs",
+  "author": "Applitools <team@applitools.com>",
+  "license": "SEE LICENSE IN LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/applitools/sdk.coverage.tests.git"
+  },
+  "scripts": {
+    "ruby": "yarn docker:start && yarn ruby:test; yarn docker:stop",
+    "ruby:prod": "yarn && yarn docker:start && yarn ruby:test:prod",
+    "ruby:ci": "yarn && bundle install && yarn ruby",
+    "ruby:test": "yarn ruby:create && yarn ruby:run:parallel && yarn ruby:report:merge && yarn ruby:report",
+    "ruby:test:prod": "yarn ruby:create && yarn ruby:run:parallel && yarn ruby:report:merge && yarn ruby:report:prod",
+    "ruby:create": "mkdir -p ./coverage_tests/spec/coverage/generic && cd coverage_tests && coverage-tests create-tests --path ./configuration",
+    "ruby:report": "cd coverage_tests && coverage-tests process-report --path ./configuration",
+    "ruby:report:prod": "cd coverage_tests && coverage-tests process-report --path ./configuration --send-report prod",
+    "ruby:run": "cd coverage_tests && APPLITOOLS_BATCH_NAME='Ruby Coverage Tests' APPLITOOLS_BATCH_ID=$(uuidgen) bundle exec rspec spec/coverage/generic",
+    "ruby:run:debug": "cd coverage_tests && APPLITOOLS_BATCH_NAME='Ruby Coverage Tests' APPLITOOLS_BATCH_ID=$(uuidgen) APPLITOOLS_SHOW_LOGS='true' bundle exec rspec spec/coverage/generic",
+    "ruby:run:parallel": "cd coverage_tests && APPLITOOLS_BATCH_NAME='Ruby Coverage Tests' APPLITOOLS_BATCH_ID=$(uuidgen) bundle exec parallel_rspec -n 10 spec/coverage/generic",
+    "ruby:report:merge": "cd coverage_tests && junit-merge -d tmp -o coverage-test-report.xml",
+    "ruby:conf:test": "mocha './coverage_tests/configuration/test/*.spec.js'",
+    "docker:start": "docker run -d -p 4444:4444 --name selenium --shm-size 8g selenium/standalone-chrome:3.141.59 ",
+    "docker:stop": "docker stop selenium && docker rm selenium"
+  },
+  "dependencies": {
+    "@applitools/sdk-coverage-tests": "1.0.7",
+    "junit-merge": "^2.0.0",
+    "@typescript-eslint/parser": "^2.14.0",
+    "typescript": "^3.7.4"
+  },
+  "devDependencies": {
+    "mocha": "^8.0.1"
+  }
+}

@@ -5,6 +5,7 @@ source 'https://rubygems.org'
 gem 'rspec'
 gem 'webdrivers'
 gem 'parallel_tests'
+gem 'rspec_junit_formatter'
 
 source "file://#{ENV['PWD']}/pkg" do
   gem 'eyes_selenium'

@@ -3,7 +3,7 @@ addons:
 
 language: ruby
 rvm:
-  - 2.4.5
+  - 2.5.3
 gemfile:
   - GemfileTravis
 services:
@@ -18,6 +18,8 @@ before_install:
   - BUILD_ONLY=true rake clean build
   - cd pkg; mkdir gems; mv ./*.gem ./gems; gem generate_index; cd ..
 before_script:
+  - nvm install 14.5.0
+  - nvm use 14.5.0
   - export APPLITOOLS_BATCH_ID=$(java UUIDFromString $TRAVIS_COMMIT$TRAVIS_RUBY_VERSION)
   - echo $APPLITOOLS_BATCH_ID
   - export APPLITOOLS_DONT_CLOSE_BATCHES=true
@@ -38,11 +40,9 @@ jobs:
     - stage: "Unit Tests"
       name: "Unit Tests"
       script: bundle exec rake unit_tests:travis
-    - stage: "Visual tests"
-      name: "Classic Selenium"
-      script: bundle exec rake travis_selenium
-    - script: bundle exec rake travis_vg
-      name: "Visual Grid"
+    - stage: "Ruby Coverage tests"
+      name: "Ruby Coverage tests"
+      script: yarn ruby:prod
     - stage: "Build"
       if: tag =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ AND fork == false
       name: "Release event"

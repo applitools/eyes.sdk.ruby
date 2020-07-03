@@ -1,0 +1,4 @@
+--require ./spec/spec_helper
+--format progress
+--format RspecJunitFormatter
+--out coverage-test-report.xml
