@@ -15,7 +15,7 @@
   },
   "scripts": {
     "ruby": "yarn docker:start && yarn ruby:test; yarn docker:stop",
-    "ruby:prod": "yarn && bundle install && yarn docker:start && yarn ruby:test:prod; yarn docker:stop",
+    "ruby:prod": "yarn && yarn docker:start && yarn ruby:test:prod; yarn docker:stop",
     "ruby:ci": "yarn && bundle install && yarn ruby",
     "ruby:test": "yarn ruby:create && yarn ruby:run:parallel && yarn ruby:report:merge && yarn ruby:report",
     "ruby:test:prod": "yarn ruby:create && yarn ruby:run:parallel && yarn ruby:report:merge && yarn ruby:report:prod",

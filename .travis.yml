@@ -35,14 +35,12 @@ before_script:
     fi
 jobs:
   include:
-    - stage: "Unit Tests"
-      name: "Unit Tests"
-      script: bundle exec rake unit_tests:travis
-    - stage: "Visual tests"
-      name: "Classic Selenium"
-      script: bundle exec rake travis_selenium
-    - script: bundle exec rake travis_vg
-      name: "Visual Grid"
+#    - stage: "Unit Tests"
+#      name: "Unit Tests"
+#      script: bundle exec rake unit_tests:travis
+    - stage: "Ruby Coverage tests"
+      name: "Ruby Coverage tests"
+      script: yarn ruby:prod
     - stage: "Build"
       if: tag =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ AND fork == false
       name: "Release event"
