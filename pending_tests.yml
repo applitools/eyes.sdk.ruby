@@ -8,14 +8,14 @@
 #  - TestCheckPageWithHeader_Region_Fully
 #  - TestCheckPageWithHeader_Region
 Selenium Fluent API:
-  - TestCheckWindowWithFloatingByRegion_Fluent_Scroll
+#  - TestCheckWindowWithFloatingByRegion_Fluent_Scroll - FIXED
   - TestCheckWindowWithIgnoreBySelector_Fluent_Scroll
-  - TestCheckWindowWithIgnoreRegion_Fluent_Scroll
+#  - TestCheckWindowWithIgnoreRegion_Fluent_Scroll - FIXED
 #  - TestCheckRegionByCoordinateInFrameFully_Fluent_Scroll
   - TestCheckRegionBySelectorAfterManualScroll_Fluent
-  - TestCheckWindowWithFloatingByRegion_Fluent
+#  - TestCheckWindowWithFloatingByRegion_Fluent - FIXED
   - TestCheckWindowWithIgnoreBySelector_Fluent
-  - TestCheckWindowWithIgnoreRegion_Fluent
+#  - TestCheckWindowWithIgnoreRegion_Fluent - FIXED
 #  - TestCheckFrame_Fluent_Scroll
 #  - TestCheckFrameInFrame_Fully_Fluent2
 #  - TestCheckRegionByCoordinateInFrameFully_Fluent
@@ -25,8 +25,8 @@ Selenium Fluent API:
 #  - TestCheckFrameInFrame_Fully_Fluent
 #  - TestCheckFrame_Fluent
 #  - TestCheckRegionBySelectorAfterManualScroll_Fluent
-  - TestCheckRegionInFrame3_Fluent
-  - TestCheckRegionInFrame3_Fluent_Scroll
+#  - TestCheckRegionInFrame3_Fluent - FIXED
+#  - TestCheckRegionInFrame3_Fluent_Scroll - FIXED
   - TestCheckFullWindowWithMultipleIgnoreRegionsBySelector_Fluent
   - TestCheckFullWindowWithMultipleIgnoreRegionsBySelector_Fluent_Scroll
   - TestIgnoreDisplacements
@@ -52,11 +52,11 @@ UFG Fluent API:
 #  - TestCheckWindowWithIgnoreBySelector_Centered_Fluent_VG
 #  - TestCheckWindow_Fluent_VG
 #  - TestCheckFrameInFrame_Fully_Fluent2_VG
-  - TestCheckRegionInFrame3_Fluent_VG
+  #- TestCheckRegionInFrame3_Fluent_VG - FIXED
   - TestCheckElementWithIgnoreRegionBySameElement_Fluent_VG
   - TestCheckFullWindowWithMultipleIgnoreRegionsBySelector_Fluent_VG
-  - TestCheckWindowWithIgnoreRegion_Fluent_VG
-  - TestCheckWindowWithIgnoreBySelector_Fluent_VG
-  - TestCheckWindowWithFloatingByRegion_Fluent_VG
+  #- TestCheckWindowWithIgnoreRegion_Fluent_VG - FIXED
+  #- TestCheckWindowWithIgnoreBySelector_Fluent_VG - FIXED
+  #- TestCheckWindowWithFloatingByRegion_Fluent_VG FIXED
 Spesial Cases:
   - TestCheckRegionInAVeryBigFrame_Scroll

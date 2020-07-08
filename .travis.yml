@@ -40,6 +40,11 @@ jobs:
     - stage: "Unit Tests"
       name: "Unit Tests"
       script: bundle exec rake unit_tests:travis
+    - stage: "Visual tests"
+      name: "Classic Selenium"
+      script: bundle exec rake travis_selenium
+    - script: bundle exec rake travis_vg
+      name: "Visual Grid"
     - stage: "Ruby Coverage tests"
       name: "Ruby Coverage tests"
       script: yarn ruby:prod

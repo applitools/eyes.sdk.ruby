@@ -211,6 +211,9 @@ module Applitools::Selenium
           frame(name_or_id: frame_name_or_id)
         when Applitools::Selenium::Element
           frame(frame_element: frame_name_or_id)
+        when Proc
+          frame_element = frame_name_or_id.call(driver)
+          frame(frame_element: frame_element)
         else
           Applitools::ArgumentGuard.raise_argument_error Applitools::EyesNoSuchFrame.new frame_name_or_id
         end

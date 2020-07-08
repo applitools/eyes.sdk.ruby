@@ -127,7 +127,6 @@ RSpec.shared_examples 'Fluent API' do
 
   it('TestCheckWindowWithIgnoreRegion_Fluent') do
     driver.find_element(:tag_name, 'input').send_keys('My Input')
-    expected_ignore_regions(Applitools::Region.new(50, 50, 100, 100))
     eyes.check(
       'Fluent - Window with Ignore region',
       Applitools::Selenium::Target.window
@@ -136,27 +135,35 @@ RSpec.shared_examples 'Fluent API' do
         .ignore_caret
         .ignore(Applitools::Region.new(50, 50, 100, 100))
     )
+    app_output(eyes.api_key).with_ignore_regions do |actual_ignore_regions|
+      expect(actual_ignore_regions).to include(Applitools::Region.new(50, 50, 100, 100))
+    end
+
   end
 
   it('TestCheckWindowWithIgnoreBySelector_Fluent') do
-    expected_ignore_regions(Applitools::Region.new(8, 80, 304, 184))
     eyes.check(
       'Fluent - Window with ignore region by selector',
       Applitools::Selenium::Target.window.ignore(:id, 'overflowing-div')
     )
+    app_output(eyes.api_key).with_ignore_regions do |actual_ignore_regions|
+      expect(actual_ignore_regions).to include(Applitools::Region.new(7, 79, 306, 186))
+    end
   end
 
   it('TestCheckWindowWithFloatingByRegion_Fluent') do
-    expected_floating_regions(Applitools::FloatingRegion.new(10, 10, 20, 20, 3, 3, 20, 30))
     eyes.check(
       'Fluent - Window with floating region by region',
       Applitools::Selenium::Target.window.floating(
         Applitools::FloatingRegion.new(
           Applitools::Region.new(10, 10, 20, 20),
-          Applitools::FloatingBounds.new(3, 3, 20, 30)
+          Applitools::FloatingBounds.new(4, 4, 21, 31)
         )
       )
     )
+    app_output(eyes.api_key).with_floating_regions do |actual_floating_regions|
+      expect(actual_floating_regions).to include(Applitools::FloatingRegion.new(10, 10, 20, 20, 5, 5, 22, 32))
+    end
   end
 end
 # rubocop:enable Metrics/BlockLength

@@ -242,7 +242,13 @@ module Applitools
         self
       end
 
-      def frame(element)
+      def frame(*args)
+        element = case args.first
+                  when ::Selenium::WebDriver::Element, Applitools::Selenium::Element, String
+                    args.first
+                  else
+                    proc { |d| d.find_element(*args) }
+                  end
         frames << frame_or_element if frame_or_element
         self.frame_or_element = element
         reset_for_fullscreen

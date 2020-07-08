@@ -90,12 +90,14 @@ RSpec.shared_examples 'Fluent API Frames' do
             .layout
             .floating(Applitools::Region.new(200, 200, 150, 150), 25, 25, 25, 25)
     )
-    expected_floating_regions(
-      Applitools::FloatingRegion.new(
-        Applitools::Region.new(200, 200, 150, 150),
-        Applitools::FloatingBounds.new(25, 25, 25, 25)
+    app_output(eyes.api_key).with_floating_regions do |actual_floating_regions|
+      expect(actual_floating_regions).to include(
+        Applitools::FloatingRegion.new(
+          Applitools::Region.new(200, 200, 150, 150),
+          Applitools::FloatingBounds.new(26, 26, 26, 26)
+        )
       )
-    )
+    end
   end
 
   it 'TestCheckRegionByCoordinateInFrameFully_Fluent' do
