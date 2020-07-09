@@ -1,0 +1,30 @@
+RSpec.describe Applitools::Selenium::RenderRequest do
+  it_should_behave_like 'responds to method', [
+    :render_id,
+    :render_id=,
+    :webhook,
+    :webhook=,
+    :url,
+    :url=,
+    :dom,
+    :dom=,
+    :resources,
+    :resources=,
+    :script_hooks,
+    :script_hooks=,
+    :selectors_to_find_regions_for,
+    :selectors_to_find_regions_for=,
+    :send_dom,
+    :send_dom=,
+    :agent_id,
+    :agent_id=,
+    :render_info,
+    :render_info=,
+    :browser,
+    :browser=,
+    :platform,
+    :platform=,
+    :stitching_service,
+    :stitching_service=
+  ]
+end
