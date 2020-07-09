@@ -258,6 +258,7 @@ module Applitools
           requests << Applitools::Selenium::RenderRequest.new(
             webhook: rendering_info['resultsUrl'],
             url: script_data['url'],
+            stitching_service_url: rendering_info['stitchingServiceUrl'],
             dom: dom,
             resources: request_resources,
             render_info: r_info,

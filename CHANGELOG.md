@@ -1,3 +1,6 @@
+## [3.17.14] - 2020-07-9
+### Updated
+- Added missing `StitchingService` URI field in `RenderRequest`. [Trello 1988](https://trello.com/c/Yr6EsUlL)
 ## [3.17.13] - 2020-07-03
 ## Fixed
 - eyes_appium: Coded Floating Regions Incorrectly Placed [Trello_1960](https://trello.com/c/j6nJh1LS/1960-ruby-native-app-coded-floating-regions-incorrectly-placed)
