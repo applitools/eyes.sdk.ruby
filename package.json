@@ -33,7 +33,7 @@
     "docker:stop": "docker stop selenium && docker rm selenium"
   },
   "dependencies": {
-    "@applitools/sdk-coverage-tests": "1.0.9",
+    "@applitools/sdk-coverage-tests": "latest",
     "junit-merge": "^2.0.0",
     "@typescript-eslint/parser": "^2.14.0",
     "typescript": "^3.7.4"
