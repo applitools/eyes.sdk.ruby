@@ -3,6 +3,7 @@ FROM artemqaapplitools/chrome_ruby:latest
 RUN cd home/project \
     && git clone https://github.com/applitools/tutorial-selenium-ruby-ultrafastgrid.git \
     && cd tutorial-selenium-ruby-ultrafastgrid \
+    && sed -i "s/'APPLITOOLS_API_KEY'/ENV['APPLITOOLS_API_KEY']/g" simple_test_script.rb \
     && bundle install
 
 COPY ./tutorials/gems/. gems/
