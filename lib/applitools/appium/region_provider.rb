@@ -19,6 +19,10 @@ module Applitools
       def coordinate_type
         nil
       end
+      
+      def to_s
+        region.to_s+"(#{eye_region.to_s})"
+      end
 
       private
 

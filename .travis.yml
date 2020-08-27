@@ -43,7 +43,10 @@ jobs:
       script: bundle exec rake travis:vg_tests
       name: "Visual Grid"
     - stage: "Appium"
-      script: bundle exec rake travis:appium_tests
+      script:
+        - bash ./browser_stack_upload.sh "https://applitools.bintray.com/Examples/eyes-android-hello-world.apk" "eyes_sdk_ruby_android_app"
+        - bash ./browser_stack_upload.sh "https://applitools.bintray.com/Examples/eyes-ios-hello-world/1.2/ipa/HelloWorldiOS.ipa" "eyes_sdk_ruby_ios_app"
+        - bundle exec rake travis:appium_tests
       name: "eyes_appium tests"
     - stage: "Ruby Coverage tests"
       name: "Ruby Coverage tests"

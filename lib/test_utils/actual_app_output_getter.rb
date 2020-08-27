@@ -32,7 +32,7 @@ module Applitools
 
       def perform
         @app_output = @get_app_output_block.call
-        @chain.map { |b| b.call }
+        @chain.map(&:call)
       end
 
       private

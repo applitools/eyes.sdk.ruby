@@ -130,7 +130,7 @@ class Applitools::Appium::Eyes < Applitools::Selenium::SeleniumEyes
 
   def obtain_viewport_screenshot
     self.screenshot = screenshot_class.new(
-        Applitools::Screenshot.from_datastream(driver.screenshot_as(:png)),
+        image_provider.take_screenshot,
         status_bar_height: Applitools::Utils::EyesSeleniumUtils.status_bar_height(driver),
         device_pixel_ratio: Applitools::Utils::EyesSeleniumUtils.device_pixel_ratio(driver)
     )

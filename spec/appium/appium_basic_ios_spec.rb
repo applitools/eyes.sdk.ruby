@@ -2,16 +2,19 @@ require 'eyes_appium'
 RSpec.describe 'iOS basic test', appium: true do
   let(:caps) do
     {
-       app: 'bs://cb07da5ba49df57efce74ce59726042108b0a61d',
+       app: 'eyes_sdk_ruby_ios_app',
        device: 'iPhone XS',
        os_version: '12',
        platformName: 'ios',
-      'browserstack.appium_version': '1.17.0'
+       'browserstack.appium_version': '1.17.0'
     }
   end
 
+  let(:button) { driver.find_element(:predicate, 'type == \'XCUIElementTypeButton\'') }
+
+
   it 'Appium_iOS_check_window' do
-    eyes.check('Viewport Window', Applitools::Appium::Target.window)
+    eyes.check('Viewport Window', Applitools::Appium::Target.window.ignore(button))
   end
 
   # it 'Appium_iOS_check_region' do
