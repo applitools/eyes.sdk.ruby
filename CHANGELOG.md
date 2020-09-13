@@ -1,4 +1,3 @@
-## [3.17.21] - 2020-09-01
 ### fixed
 - The viewport screenshot is cropped on the bottom side for Appium Android native tests (for devices has screen height more than 2500 pixels) [Trello_2079](https://trello.com/c/sQJLgtUL/2079-ruby-appium-native-unable-to-capture-element-overlay)
 ## [3.17.20] - 2020-08-20
