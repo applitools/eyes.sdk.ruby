@@ -33,6 +33,8 @@ module Applitools::Connectivity
     RENDER_STATUS = '/render-status'.freeze
     CLOSE_BATCH = '/api/sessions/batches/%s/close/bypointerid'.freeze
 
+    MOBILE_DEVICES_PATH = '/app/info/mobile/devices'.freeze
+
     HTTP_STATUS_CODES = {
       created: 201,
       accepted: 202,
@@ -58,6 +60,14 @@ module Applitools::Connectivity
       return agent_id_proc.call if agent_id_proc
       Applitools::EyesLogger.error('The agent id is not set!')
       "eyes.sdk.ruby/#{Applitools::VERSION}"
+    end
+
+    def mobile_device_info
+      response = long_get(URI.join(server_url, MOBILE_DEVICES_PATH), content_type: 'application/json')
+      unless response.status == HTTP_STATUS_CODES[:ok]
+        raise Applitools::EyesError, "Error getting mobile device info (#{response.status}})"
+      end
+      Oj.load response.body
     end
 
     def rendering_info

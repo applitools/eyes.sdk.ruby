@@ -25,8 +25,10 @@ module Applitools::Appium
     end
 
     # @param [Applitools::Selenium::Driver] executor
-    def device_pixel_ratio(executor)
+    def device_pixel_ratio(executor, server_device_parameters = {})
       session_info = session_capabilities(executor)
+      return server_device_parameters[session_info['deviceName']]['pixelRatio'] if
+          server_device_parameters[session_info['deviceName']]
       return session_info['pixelRatio'].to_f if session_info['pixelRatio']
       1
     end
@@ -37,8 +39,10 @@ module Applitools::Appium
       0
     end
 
-    def viewport_rect(executor)
+    def viewport_rect(executor, server_device_parameters = {})
       session_info = session_capabilities(executor)
+      return server_device_parameters[session_info['deviceName']]['viewportRect'] if
+          server_device_parameters[session_info['deviceName']]
       return session_info['viewportRect'] if session_info['viewportRect']
       {
         'left' => 0,

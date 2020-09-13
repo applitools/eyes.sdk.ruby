@@ -52,7 +52,7 @@ class Applitools::Appium::Eyes < Applitools::Selenium::SeleniumEyes
 
     eyes_element = target_to_check.region_to_check.call(driver)
     self.eyes_element_to_check = eyes_element
-    region_provider = region_provider_class.new(driver, eyes_element)
+    region_provider = region_provider_class.new(driver, eyes_element, server_device_parameters)
     match_data.read_target(target_to_check, driver)
 
     check_window_base(
@@ -91,7 +91,7 @@ class Applitools::Appium::Eyes < Applitools::Selenium::SeleniumEyes
             end
           ),
           status_bar_height: Applitools::Utils::EyesSeleniumUtils.status_bar_height(driver),
-          device_pixel_ratio: Applitools::Utils::EyesSeleniumUtils.device_pixel_ratio(driver)
+          device_pixel_ratio: Applitools::Utils::EyesSeleniumUtils.device_pixel_ratio(driver, server_device_parameters)
         )
       end
     end
@@ -116,7 +116,30 @@ class Applitools::Appium::Eyes < Applitools::Selenium::SeleniumEyes
     check(options[:tag], target)
   end
 
+  def update_scaling_params
+    return unless device_pixel_ratio == UNKNOWN_DEVICE_PIXEL_RATIO
+
+    logger.info 'Trying to extract device pixel ratio...'
+    begin
+      self.device_pixel_ratio = Applitools::Utils::EyesSeleniumUtils.device_pixel_ratio(driver, server_device_parameters)
+    rescue Applitools::EyesDriverOperationException
+      logger.warn 'Failed to extract device pixel ratio! Using default.'
+      self.device_pixel_ratio = DEFAULT_DEVICE_PIXEL_RATIO
+    end
+
+    logger.info "Device pixel_ratio: #{device_pixel_ratio}"
+    logger.info 'Setting scale provider...'
+
+    self.scale_provider = Applitools::FixedScaleProvider.new(1.to_f / device_pixel_ratio)
+    logger.info 'Done!'
+  end
+
   private
+
+  def server_device_parameters
+    return {'ZiPhone X' => {'pixelRatio' => 10, 'viewportRect' => {'left' => 10, 'top' => 15, 'width' => 200, 'height' => 300}}}
+    @server_device_parameters ||= server_connector.mobile_device_info
+  end
 
   def viewport_screenshot
     logger.info 'Viewport screenshot requested...'
@@ -132,7 +155,7 @@ class Applitools::Appium::Eyes < Applitools::Selenium::SeleniumEyes
     self.screenshot = screenshot_class.new(
         image_provider.take_screenshot,
         status_bar_height: Applitools::Utils::EyesSeleniumUtils.status_bar_height(driver),
-        device_pixel_ratio: Applitools::Utils::EyesSeleniumUtils.device_pixel_ratio(driver)
+        device_pixel_ratio: Applitools::Utils::EyesSeleniumUtils.device_pixel_ratio(driver, server_device_parameters)
     )
   end
 

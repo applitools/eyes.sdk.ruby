@@ -6,10 +6,6 @@ module Applitools
     class AndroidRegionProvider < ::Applitools::Appium::RegionProvider
       private
 
-      def window_size
-        driver.window_size
-      end
-
       def convert_element_coordinates
         Applitools::Region.from_location_size(eye_region.location, eye_region.size)
       end
@@ -19,8 +15,8 @@ module Applitools
         Applitools::Region.new(
             region['left'],
             region['top'],
-            window_size.width,
-            window_size.height
+            region['width'],
+            region['height']
         )
       end
     end

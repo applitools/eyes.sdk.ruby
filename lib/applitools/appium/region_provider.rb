@@ -3,12 +3,13 @@
 module Applitools
   module Appium
     class RegionProvider
-      attr_accessor :driver, :eye_region, :region_to_check
+      attr_accessor :driver, :eye_region, :region_to_check, :server_device_parameters
 
-      def initialize(driver, eye_region)
+      def initialize(driver, eye_region, server_device_parameters = {})
         self.driver = driver
         self.eye_region = eye_region
         self.region_to_check = Applitools::Region::EMPTY
+        self.server_device_parameters = server_device_parameters
         convert_region_coordinates
       end
 
@@ -27,7 +28,7 @@ module Applitools
       private
 
       def viewport_rect
-        Applitools::Utils::EyesSeleniumUtils.viewport_rect(driver)
+        Applitools::Utils::EyesSeleniumUtils.viewport_rect(driver, server_device_parameters)
       end
 
       def convert_region_coordinates
