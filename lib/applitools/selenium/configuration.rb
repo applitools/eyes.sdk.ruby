@@ -14,7 +14,8 @@ module Applitools
           hide_scrollbars: true,
           hide_caret: false,
           browsers_info: Applitools::Selenium::BrowsersInfo.new,
-          rendering_grid_force_put: (ENV['APPLITOOLS_RENDERING_GRID_FORCE_PUT'] || 'false').casecmp('true') == 0
+          rendering_grid_force_put: (ENV['APPLITOOLS_RENDERING_GRID_FORCE_PUT'] || 'false').casecmp('true') == 0,
+          visual_grid_options: {}
         }
       end
       class << self
@@ -33,6 +34,12 @@ module Applitools
       object_field :browsers_info, Applitools::Selenium::BrowsersInfo
       int_field :concurrent_sessions
       boolean_field :rendering_grid_force_put
+      object_field :visual_grid_options, Hash, true
+
+      def custom_setter_for_visual_grid_options(value)
+        return {} if value.nil?
+        value
+      end
 
       def add_browser(*args)
         case args.size

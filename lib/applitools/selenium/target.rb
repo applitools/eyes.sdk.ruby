@@ -30,7 +30,8 @@ module Applitools
         self.frames = []
         self.options = {
           ignore_mismatch: false,
-          script_hooks: { beforeCaptureScreenshot: '' }
+          script_hooks: { beforeCaptureScreenshot: '' },
+          visual_grid_options: {}
         }
         self.regions = {}
         self.convert_coordinates_block = nil
@@ -189,6 +190,12 @@ module Applitools
 
       def exact(*args)
         match_level(Applitools::MatchLevel::EXACT, *args)
+      end
+
+      def visual_grid_options(value)
+        Applitools::ArgumentGuard.hash(value, 'value')
+        options[:visual_grid_options] = value
+        self
       end
 
       def process_region(*args)

@@ -1,9 +1,12 @@
+## [vNext]
 ### fixed
 - The viewport screenshot is cropped on the bottom side for Appium Android native tests (for devices has screen height more than 2500 pixels) [Trello_2079](https://trello.com/c/sQJLgtUL/2079-ruby-appium-native-unable-to-capture-element-overlay)
+## [3.17.21] - 2020-08-20
+### added
+- UFG: the ability to set :visual_grid_options for the UFG SDK (Both globally and through the fluent interface) [Trello_2089](https://trello.com/c/d4zggQes/2089-ufg-sdks-visualgridoptionspolyfilladoptedstylesheets)
 ## [3.17.20] - 2020-08-20
 ### fixed
 - Skip resources list: the errorStatusCode is passed to the server for UFG resources (if present) [Trello_2101](https://trello.com/c/vw3Ag8eO/2101-sdk-doesnt-pass-errorstatuscode-for-ufg-resources-if-an-error-occurred)
-
 ## [3.17.19] - 2020-08-18
 ### Updated
 - Skip resources list for UFG is implemented [Trello_1974](https://trello.com/c/44xq8dze/1974-dom-snapshot-should-accept-a-skip-list-for-fetched-resources)

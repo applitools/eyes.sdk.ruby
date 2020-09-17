@@ -166,6 +166,7 @@ module Applitools
               target_to_check.options[:script_hooks],
               config.rendering_grid_force_put,
               Applitools::Utils::EyesSeleniumUtils.user_agent(driver),
+              visual_grid_options.merge(target_to_check.options[:visual_grid_options]),
               mod
             )
           end

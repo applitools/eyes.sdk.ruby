@@ -21,10 +21,11 @@ module Applitools
 
       attr_accessor :script, :running_tests, :resource_cache, :put_cache, :server_connector,
         :rendering_info, :request_resources, :dom_url_mod, :result, :region_selectors, :size_mode,
-        :region_to_check, :script_hooks, :visual_grid_manager, :discovered_resources, :ua_string, :force_put
+        :region_to_check, :script_hooks, :visual_grid_manager, :discovered_resources, :ua_string, :force_put,
+        :visual_grid_options
 
       def initialize(name, script_result, visual_grid_manager, server_connector, region_selectors, size_mode,
-        region, script_hooks, force_put, ua_string, mod = nil)
+        region, script_hooks, force_put, ua_string, options, mod = nil)
 
         self.result = nil
         self.script = script_result
@@ -41,6 +42,7 @@ module Applitools
         self.dom_url_mod = mod
         self.running_tests = []
         self.force_put = force_put
+        self.visual_grid_options = options
         @discovered_resources_lock = Mutex.new
         super(name) do
           perform
@@ -58,6 +60,7 @@ module Applitools
           rescue StandardError => e
             Applitools::EyesLogger.error(e.message)
             fetch_fails += 1
+            break if fetch_fails > 3
             sleep 2
           end
           next unless response
@@ -270,7 +273,8 @@ module Applitools
                         false.to_s
                       else
                         running_test.eyes.configuration.send_dom.to_s
-                      end
+                      end,
+            options: visual_grid_options
           )
         end
         requests

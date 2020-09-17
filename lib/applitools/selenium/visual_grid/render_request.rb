@@ -8,7 +8,7 @@ module Applitools
       json_fields :renderId, :webhook, :url, :dom, :resources, :scriptHooks,
         :selectorsToFindRegionsFor, :sendDom, :agentId
 
-      json_fields :renderInfo, :browser, :platform, :stitchingService
+      json_fields :renderInfo, :browser, :platform, :stitchingService, :options
 
       def initialize(*args)
         options = Applitools::Utils.extract_options! args
