@@ -458,8 +458,8 @@ module.exports = {
     env: {device: 'Samsung Galaxy S8', app: 'https://applitools.bintray.com/Examples/eyes-android-hello-world.apk'},
     features: ['native-selectors'],
     test: ({driver, eyes}) => {
+          driver.click('android.widget.Button')
       eyes.open({appName: 'Applitools Eyes SDK'})
-      driver.click('android.widget.Button')
       eyes.check({region: 'com.applitools.helloworld.android:id/image_container',ignoreRegions: ['You successfully clicked the button!', 'com.applitools.helloworld.android:id/image']})
       eyes.close(throwException)
     },
@@ -487,8 +487,8 @@ module.exports = {
     env: {device: 'iPhone XS Simulator', app: 'https://applitools.bintray.com/Examples/eyes-ios-hello-world/1.2/eyes-ios-hello-world.zip'},
     features: ['native-selectors'],
     test: ({driver, eyes}) => {
-      eyes.open({appName: 'Applitools Eyes SDK'})
 	  driver.click('XCUIElementTypeButton')
+      eyes.open({appName: 'Applitools Eyes SDK'})
       eyes.check({region: 'BottomContainer',ignoreRegions: ['BottomLabel', 'BottomImage']})
       eyes.close(throwException)
     },
