@@ -1,26 +1,30 @@
 'use strict'
 const {makeEmitTracker} = require('@applitools/sdk-coverage-tests')
-const {checkSettingsParser, ruby, driverBuild} = require('./parser')
+const {checkSettingsParser, ruby, SELECTOR_TYPES} = require('./parser')
 
 function initialize(options) {
   const tracker = makeEmitTracker()
-
-  // tracker.storeHook('deps', `require 'eyes_selenium'`)
+  const isMobile = !!(options.env && options.env.device)
   tracker.addSyntax('var', ({name, value}) => `${name} = ${value}`)
   tracker.addSyntax('getter', ({target, key}) => `${target}${key.startsWith('get') ? `.${key.slice(3).toLowerCase()}` : `["${key}"]`}`)
   tracker.addSyntax('call', ({target, args}) => args.length > 0 ? `${target}(${args.map(val => JSON.stringify(val)).join(", ")})` : `${target}`)
 
   tracker.storeHook(
-      'beforeEach',
-      driverBuild(options.capabilities, options.host),
+      'deps',
+      `require '${isMobile? 'eyes_appium' : 'eyes_selenium'}'`
   )
 
   tracker.storeHook(
       'beforeEach',
-      ruby`@eyes = eyes(is_visual_grid: ${options.executionMode.isVisualGrid}, is_css_stitching: ${options.executionMode.isCssStitching}, branch_name: ${options.branchName})`,
+      ruby`@driver = driver(env: ${options.env ? {hash:options.env, isHash: true} : undefined})`,
   )
 
-  tracker.storeHook('afterEach', ruby`@driver.quit`)
+  tracker.storeHook(
+      'beforeEach',
+      ruby`@eyes = eyes(is_visual_grid: ${options.executionMode.isVisualGrid}, is_css_stitching: ${options.executionMode.isCssStitching}, is_mobile: ${isMobile}, branch_name: ${options.branchName})`,
+  )
+
+  tracker.storeHook('afterEach', isMobile ? ruby`@driver.driver_quit` : ruby`@driver.quit`)
   tracker.storeHook('afterEach', ruby`@eyes.abort`)
 
   const driver = {
@@ -75,7 +79,8 @@ function initialize(options) {
       console.log('set window size Need to be implemented')
     },
     click(element) {
-      if(typeof element === 'object') tracker.storeCommand(ruby`${element}.click`)
+      if(element.isRef) tracker.storeCommand(ruby`${element}.click`)
+      else if (isMobile) tracker.storeCommand(`my_find(@driver, '${element}').click`)//if (element.type) tracker.storeCommand(`@driver.find_element(${SELECTOR_TYPES[element.type]}: '${element.selector}').click`)
       else tracker.storeCommand(ruby`@driver.find_element(css: ${element}).click`)
     },
     type(element, keys) {
@@ -127,15 +132,16 @@ function initialize(options) {
 
   const eyes = {
     open({appName, viewportSize}) {
+      const size = viewportSize? `
+      conf.viewport_size = Applitools::RectangleSize.new(${viewportSize.width}, ${viewportSize.height})` : ''
       tracker.storeCommand(ruby`@eyes.configure do |conf|
       conf.app_name = ${appName}
-      conf.test_name =  ${options.baselineTestName}
-      conf.viewport_size = Applitools::RectangleSize.new(${viewportSize.width}, ${viewportSize.height})
+      conf.test_name = ${options.baselineTestName}`+ size +`
     end
     @eyes.open(driver: @driver)`)
     },
     check(checkSettings) {
-      tracker.storeCommand(`@eyes.check(${checkSettingsParser(checkSettings)})`)
+      tracker.storeCommand(`@eyes.check(target: ${checkSettingsParser(checkSettings, isMobile)})`)
     },
     checkWindow(tag, matchTimeout, stitchContent) {
       tracker.storeCommand(ruby`@eyes.check_window(tag: ${tag}, timeout: ${matchTimeout})`)
