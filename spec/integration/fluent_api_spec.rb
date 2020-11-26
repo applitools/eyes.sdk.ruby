@@ -9,11 +9,11 @@ RSpec.describe 'Fluent API', report_me: true do
     include_examples 'Fluent API'
   end
 
-  context 'Eyes Selenium SDK - Fluent API', selenium: true, scroll: true do
+  context 'Eyes Selenium SDK - Fluent API - Scroll', selenium: true, scroll: true do
     include_examples 'Fluent API'
   end
 
-  context 'Eyes Selenium SDK - Fluent API', visual_grid: true do
+  context 'Eyes Selenium SDK - Fluent API - VG', visual_grid: true do
     include_examples 'Fluent API'
   end
 end
