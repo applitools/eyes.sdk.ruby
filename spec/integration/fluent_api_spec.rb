@@ -14,7 +14,6 @@ RSpec.describe 'Fluent API', report_me: true do
   end
 
   context 'Eyes Selenium SDK - Fluent API', visual_grid: true do
-    puts 'Visual Grid'
     include_examples 'Fluent API'
   end
 end
