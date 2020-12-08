@@ -147,7 +147,7 @@ RSpec.shared_examples 'Fluent API' do
       Applitools::Selenium::Target.window.ignore(:id, 'overflowing-div')
     )
     app_output(eyes.api_key).with_ignore_regions do |actual_ignore_regions|
-      expect(actual_ignore_regions).to include(Applitools::Region.new(7, 79, 306, 186))
+      expect(actual_ignore_regions).to include(Applitools::Region.new(7, 80, 306, 186))
     end
   end
 
