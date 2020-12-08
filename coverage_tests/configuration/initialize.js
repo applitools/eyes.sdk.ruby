@@ -1,207 +1,195 @@
 'use strict'
 const {makeEmitTracker} = require('@applitools/sdk-coverage-tests')
-const {checkSettingsParser, ruby, driverBuild} = require('./parser')
+const {checkSettingsParser, ruby, driverBuild, construct, ref, variable, getter, call, returnSyntax} = require('./parser')
 
-function initialize(options) {
-  const tracker = makeEmitTracker()
+module.exports = function (tracker, test) {
+  const {addSyntax, addCommand, addHook} = tracker
+  // addHook('deps', `require 'eyes_selenium'`)
+  addSyntax('var', variable)
+  addSyntax('getter', getter)
+  addSyntax('call', call)
+  addSyntax('return', returnSyntax)
 
-  // tracker.storeHook('deps', `require 'eyes_selenium'`)
-  tracker.addSyntax('var', ({name, value}) => `${name} = ${value}`)
-  tracker.addSyntax('getter', ({target, key}) => `${target}${key.startsWith('get') ? `.${key.slice(3).toLowerCase()}` : `["${key}"]`}`)
-  tracker.addSyntax('call', ({target, args}) => args.length > 0 ? `${target}(${args.map(val => JSON.stringify(val)).join(", ")})` : `${target}`)
-
-  tracker.storeHook(
+  addHook(
       'beforeEach',
-      driverBuild(options.capabilities, options.host),
+      driverBuild(),
   )
 
-  tracker.storeHook(
+  addHook(
       'beforeEach',
-      ruby`@eyes = eyes(is_visual_grid: ${options.executionMode.isVisualGrid}, is_css_stitching: ${options.executionMode.isCssStitching}, branch_name: ${options.branchName})`,
+      ruby`@eyes = eyes(is_visual_grid: ${test.vg}, is_css_stitching: ${test.config.stitchMode === 'CSS'}, branch_name: ${test.branchName})`,
   )
 
-  tracker.storeHook('afterEach', ruby`@driver.quit`)
-  tracker.storeHook('afterEach', ruby`@eyes.abort`)
+  addHook('afterEach', ruby`@driver.quit`)
+  addHook('afterEach', ruby`@eyes.abort`)
 
   const driver = {
-    build(options) {
-      // TODO need implementation
-      console.log('Need to be implemented')
-    },
-    cleanup() {
-      tracker.storeCommand(ruby`@driver.quit`)
+    constructor: {
+      isStaleElementError() {
+        addCommand(ruby`/stale element reference/`)
+      }
     },
     visit(url) {
-      tracker.storeCommand(ruby`@driver.get(${url})`)
+      return addCommand(ruby`@driver.get(${url})`)
+    },
+    getUrl() {
+      return addCommand(ruby`@driver.get_url`)
     },
     executeScript(script, ...args) {
-      return tracker.storeCommand(ruby`@driver.execute_script(${script})`)
+      return addCommand(ruby`@driver.execute_script(${script})`)
     },
     sleep(ms) {
-      // TODO need implementation
-      console.log(`Sleep Need to be implemented`)
+      return addCommand(ruby`@driver.sleep(${Math.floor(ms/1000)})`)
     },
     switchToFrame(selector) {
-      tracker.storeCommand(ruby`@driver.switch_to.frame ${selector}`)
+      addCommand(ruby`@driver.switch_to.frame ${selector}`)
     },
     switchToParentFrame() {
-      // TODO need implementation
-      console.log(`Switch to parent frame Need to be implemented`)
+      addCommand(ruby`@driver.switch_to.parent_frame`)
     },
     findElement(selector) {
-      return tracker.storeCommand(
+      return addCommand(
           ruby`@driver.find_element(css: ${selector})`,
       )
     },
     findElements(selector) {
-      return tracker.storeCommand(
+      return addCommand(
           ruby`@driver.find_elements(css: ${selector})`,
       )
     },
-    getWindowLocation() {
-      // TODO need implementation
-      console.log('Get window location Need to be implemented')
-    },
-    setWindowLocation(location) {
-      // TODO need implementation
-      console.log('Set window location Need to be implemented')
-    },
-    getWindowSize() {
-      // TODO need implementation
-      console.log('get window size Need to be implemented')
-    },
-    setWindowSize(size) {
-      // TODO need implementation
-      console.log('set window size Need to be implemented')
-    },
     click(element) {
-      if(typeof element === 'object') tracker.storeCommand(ruby`${element}.click`)
-      else tracker.storeCommand(ruby`@driver.find_element(css: ${element}).click`)
+      if(typeof element === 'object') addCommand(ruby`${element}.click`)
+      else addCommand(ruby`@driver.find_element(css: ${element}).click`)
     },
     type(element, keys) {
-      tracker.storeCommand(ruby`${element}.send_keys(${keys})`)
+      addCommand(ruby`${element}.send_keys(${keys})`)
     },
-    waitUntilDisplayed() {
-      // TODO: implement if needed
+    scrollIntoView(element, align=false) {
+      driver.executeScript('arguments[0].scrollIntoView(arguments[1])', element, align)
     },
-    getElementRect() {
-      // TODO: implement if needed
-    },
-    getOrientation() {
-      // TODO: implement if needed
-    },
-    isMobile() {
-      // TODO: implement if needed
-    },
-    isAndroid() {
-      // TODO: implement if needed
-    },
-    isIOS() {
-      // TODO: implement if needed
-    },
-    isNative() {
-      // TODO: implement if needed
-    },
-    getPlatformVersion() {
-      // TODO: implement if needed
-    },
-    getBrowserName() {
-      // TODO: implement if needed
-    },
-    getBrowserVersion() {
-      // TODO: implement if needed
-    },
-    getSessionId() {
-      // TODO: implement if needed
-    },
-    takeScreenshot() {
-      // TODO: implement if needed
-    },
-    getTitle() {
-      // TODO: implement if needed
-    },
-    getUrl() {
-      // TODO: implement if needed
+    hover(element, offset){
+      addCommand(ruby`@driver.action.move_to(${element}).perform`)
     },
   }
 
   const eyes = {
-    open({appName, viewportSize}) {
-      tracker.storeCommand(ruby`@eyes.configure do |conf|
-      conf.app_name = ${appName}
-      conf.test_name =  ${options.baselineTestName}
-      conf.viewport_size = Applitools::RectangleSize.new(${viewportSize.width}, ${viewportSize.height})
-    end
-    @eyes.open(driver: @driver)`)
+    constructor: {
+      setViewportSize(viewportSize) {
+        return addCommand(ruby`Applitools::Selenium::Eyes.set_viewport_size(@driver, width: ${viewportSize.width}, height: ${viewportSize.height});`)
+      }
+    },
+    runner: {
+      getAllTestResults(throwEx) {
+        return addCommand(ruby`@eyes.runner.get_all_test_results(${throwEx})`)
+      }
+    },
+    open({appName, testName, viewportSize}) {
+      return addCommand(construct`@eyes.configure do |conf|`
+          .add`  conf.app_name = ${appName || test.config.appName}`
+          .add`  conf.test_name = ${testName || test.config.baselineName}`
+          .extra`  conf.viewport_size = ${ref(viewportSize).type('RectangleSize')}`
+          .add`end`
+          .add`  @eyes.open(driver: @driver)`
+          .build('\n  '))
     },
     check(checkSettings) {
-      tracker.storeCommand(`@eyes.check(${checkSettingsParser(checkSettings)})`)
+      addCommand(`@eyes.check(${checkSettingsParser(checkSettings)})`)
     },
     checkWindow(tag, matchTimeout, stitchContent) {
-      tracker.storeCommand(ruby`@eyes.check_window(tag: ${tag}, timeout: ${matchTimeout})`)
+      addCommand(ruby`@eyes.check_window(tag: ${tag}, timeout: ${matchTimeout})`)
     },
     checkFrame(element, matchTimeout, tag) {
-      tracker.storeCommand(ruby`@eyes.check_frame(frame: ${element}, timeout: ${matchTimeout}, tag: ${tag})`)
-    },
-    checkElement(element, matchTimeout, tag) {
-      // TODO need implementation
-      console.log('checkElement Need to be implemented')
+      addCommand(ruby`@eyes.check_frame(frame: ${element}, timeout: ${matchTimeout}, tag: ${tag})`)
     },
     checkElementBy(selector, matchTimeout, tag) {
-      tracker.storeCommand(ruby`@eyes.check_region(:css, ${selector},
+      addCommand(ruby`@eyes.check_region(:css, ${selector},
                        tag: ${tag},
                        match_timeout: ${matchTimeout})`)
     },
     checkRegion(region, matchTimeout, tag) {
-      tracker.storeCommand(ruby`@eyes.check_region(:css, ${selector},
+      addCommand(ruby`@eyes.check_region(:css, ${selector},
                        tag: ${tag},
                        match_timeout: ${matchTimeout})`)
     },
-    checkRegionByElement(element, matchTimeout, tag) {
-      // TODO need implementation
-      console.log('checkRegionByElement Need to be implemented')
-    },
-    checkRegionBy(selector, tag, matchTimeout, stitchContent) {
-      // TODO need implementation
-      console.log('checkRegionBy Need to be implemented')
-    },
     checkRegionInFrame(frameReference, selector, matchTimeout, tag, stitchContent) {
-      tracker.storeCommand(ruby`@eyes.check_region_in_frame(frame: ${frameReference},
+      addCommand(ruby`@eyes.check_region_in_frame(frame: ${frameReference},
                                 by: [:css, ${selector}],
                                 tag: ${tag},
                                 stitch_content: ${stitchContent},
                                 timeout: ${matchTimeout})`)
     },
     close(throwEx) {
-      tracker.storeCommand(ruby`@eyes.close(throw_exception: ${throwEx})`)
+      return addCommand(ruby`@eyes.close(${throwEx})`)
     },
     abort() {
-      tracker.storeCommand(ruby`@eyes.abort`)
+      return addCommand(ruby`@eyes.abort`)
     },
     getViewportSize() {
-      return tracker.storeCommand(ruby`@eyes.get_viewport_size`)
+      return addCommand(ruby`@eyes.get_viewport_size`)
+    },
+    locate() {
+      return addCommand(ruby`raise 'Eyes locate method havent been implemented'`)
     },
   }
 
   const assert = {
-    strictEqual(actual, expected, message) {
-      tracker.storeCommand(ruby`expect(${actual}).to eql(${expected}), "${message}"`)
+    equal(actual, expected, message) {
+      addCommand(construct`expect(${actual}).to eql(${expected})`.extra`, ${message}`.build())
     },
-    notStrictEqual(actual, expected, message) {
-      console.log('Need to be implemented')
-    },
-    deepStrictEqual(actual, expected, message) {
-      console.log('Need to be implemented')
-    },
-    notDeepStrictEqual(actual, expected, message) {
-      console.log('Need to be implemented')
+    notEqual(actual, expected, message) {
+      addCommand(construct`expect(${actual}).not_to eql(${expected})`.extra`, ${message}`.build())
     },
     ok(value, message) {
-      tracker.storeCommand(ruby`expect(${value}).to be_truthy, "${message}"`)
+      addCommand(construct`expect(${value}).to be_truthy`.extra`, ${message}`.build())
+    },
+    instanceOf(object, className, message) {
+      addCommand(construct`expect(${object}).to be_a(${className})`.extra`, ${message}`.build())
+    },
+    throws(func, check) {
+      let command
+      if (check) {
+        command = ruby`expect {${func}}.to raise_error(${check})`
+      } else {
+        command = ruby`expect {${func}}.to raise_error()`
+      }
+      addCommand(command)
     },
   }
 
-  return {tracker, driver, eyes, assert}
-}
+  const helpers = {
+    getTestInfo(result) {
+      return addCommand(ruby`get_test_info(${result})`).type({
+        type: 'TestInfo',
+        schema: {
+          actualAppOutput: {
+            type: 'Array',
+            items: {
+              type: 'AppOutput',
+              schema: {
+                image: {
+                  type: 'Image',
+                  schema: {hasDom: 'Boolean'},
+                },
+                imageMatchSettings: {
+                  type: 'ImageMatchSettings',
+                  schema: {
+                    ignoreDisplacements: 'Boolean',
+                    ignore: {type: 'Array', items: 'Region'},
+                    floating: {type: 'Array', items: 'FloatingRegion'},
+                    accessibility: {type: 'Array', items: 'AccessibilityRegion'},
+                    accessibilitySettings: {
+                      type: 'AccessibilitySettings',
+                      schema: {level: 'String', version: 'String'},
+                    },
+                    layout: {type: 'Array', items: 'Region'}
+                  },
+                }
+              }},
+          },
+        },
+      })
+    }
+  }
 
-module.exports = {initialize}
+  return {helpers, driver, eyes, assert}
+}

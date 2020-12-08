@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 require 'eyes_selenium'
+require 'test_utils/obtain_actual_app_output'
 require 'logger'
 RSpec.configure do |config|
+  include Applitools::TestUtils::ObtainActualAppOutput
   config.expect_with :rspec do |expectations|
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true
   end
@@ -31,6 +33,10 @@ RSpec.configure do |config|
     puts ENV['APPLITOOLS_SHOW_LOGS']
     eyes.log_handler = Logger.new(STDOUT) if ENV.key?('APPLITOOLS_SHOW_LOGS')
     eyes
+  end
+
+  def get_test_info(results)
+    actual_app_output(@eyes.api_key, results)
   end
 
 end

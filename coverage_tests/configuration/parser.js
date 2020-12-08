@@ -1,10 +1,12 @@
 'use strict';
+const types = require('./mapping/types')
 
 const RUBY_CAPABILITIES = {
     browserName: 'browser_name',
     browserVersion: 'browser_version',
     platformName: 'platform_name'
 };
+
 
 function checkSettings(cs) {
     let ruby = `Applitools::Selenium::Target`;
@@ -24,7 +26,11 @@ function checkSettings(cs) {
 }
 
 function frames(arr) {
-    return arr.reduce((acc, val) => acc + `.frame(css: \'${val}\')`, '')
+    return arr.reduce((acc, val) => acc + `${frame(val)}`, '')
+}
+
+function frame(val) {
+    return val.isRef ? val.ref() : `.frame(css: \'${val}\')`
 }
 
 function region(region) {
@@ -47,26 +53,70 @@ function regionParameter(region) {
             break;
         case "object":
             string = `Applitools::Region.new(${region.left}, ${region.top}, ${region.width}, ${region.height})`
+            break;
+        default:
+            string = serialize(region)
     }
     return string
 }
 
-function ruby(chunks, ...values) {
-    let code = '';
-    values.forEach((value, index) => {
-        let stringified = '';
-        if (value && value.isRef) {
-            stringified = value.ref()
-        } else if (typeof value === 'function') {
-            stringified = value.toString()
-        } else if (typeof value === 'undefined' || value === null) {
-            stringified = 'nil'
-        } else {
-            stringified = JSON.stringify(value)
+function construct(chunks, ...values) {
+    const commands = []
+
+    function isPresent(values) {
+        const value = (values.length > 0 && typeof values[0] !== 'undefined')
+        return value && values[0].isRef ? values[0].ref() !== 'undefined' : value
+    }
+
+    const builder = {
+        add(chunks, ...values) {
+            commands.push(...ruby(chunks, ...values))
+            return this
+        },
+        extra(chunks, ...values) {
+            if (isPresent(values)) commands.push(...ruby(chunks, ...values))
+            return this
+        },
+        build(separator = '') {
+            return [commands.join(separator)]
         }
-        code += chunks[index] + stringified
-    });
-    return code + chunks[chunks.length - 1]
+    }
+    return builder.add(chunks, ...values)
+}
+
+function ruby(chunks, ...values) {
+    const commands = []
+    let code = ''
+    values.forEach((value, index) => {
+        if (typeof value === 'function' && !value.isRef) {
+            code += chunks[index]
+            commands.push(code, value)
+            code = ''
+        } else {
+            code += chunks[index] + serialize(value)
+        }
+    })
+    code += chunks[chunks.length - 1]
+    commands.push(code)
+    return commands
+}
+
+function serialize(value) {
+    let stringified = '';
+    if (value && value.isRef) {
+        stringified = value.ref()
+    } else if (typeof value === 'function') {
+        stringified = value.toString()
+    } else if (typeof value === 'undefined' || value === null) {
+        stringified = 'nil'
+    } else if (typeof value === 'string') {
+        stringified = `'${value}'`
+    } else if (typeof value === 'object') {
+        stringified = `{${Object.keys(value).map(key => `"${key}" => ${value[key]}`).join(', ')}}`
+     } else {
+        stringified = JSON.stringify(value)
+    }
+    return stringified
 }
 
 function driverBuild(caps, host) {
@@ -90,15 +140,60 @@ function driverBuild(caps, host) {
             .concat('{')
             .reverse()
             .join(`${nl}${indent(indentation)}`)
-            .concat(`${nl}${indent(indentation-2)}}`)
+            .concat(`${nl}${indent(indentation - 2)}}`)
         let rubyCapabilities = transformCaps(capabilities, 36)
         let rubyCaps = `,${nl}${indent(34)}desired_capabilities: ${rubyCapabilities}`;
         return rubyCaps
     }
 }
 
+function ref(val) {
+    const wrapped = {
+        isRef: true,
+        ref: () => val,
+        type: (type) => {
+            if (type) {
+                wrapped._type = type;
+                const val = wrapped.ref();
+                wrapped.ref = () => val ? types[type].constructor(val) : val
+                return wrapped
+            } else return wrapped._type;
+        },
+    }
+    return wrapped
+}
+
+function variable({name, value}) {
+    return `${name} = ${value}`
+}
+
+function getter({target, key, type}) {
+    let get;
+    if (type && type.name === 'Array') {
+        get = `[${key}]`
+    } else {
+        get = key.startsWith('get') ? `.${key.slice(3).toLowerCase()}` : `[${serialize(key)}]`
+    }
+    return `${target}${get}`
+}
+
+function call({target, args}) {
+    return args.length > 0 ? `${target}(${args.map(val => JSON.stringify(val)).join(", ")})` : `${target}`
+}
+
+function returnSyntax({value}) {
+    return `return ${value}`
+}
+
+
 module.exports = {
     checkSettingsParser: checkSettings,
     ruby: ruby,
-    driverBuild: driverBuild
+    driverBuild: driverBuild,
+    construct: construct,
+    ref: ref,
+    variable: variable,
+    getter: getter,
+    call: call,
+    returnSyntax: returnSyntax,
 };

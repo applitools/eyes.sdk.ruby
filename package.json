@@ -19,11 +19,11 @@
     "ruby:ci": "yarn && bundle install && yarn ruby",
     "ruby:test": "yarn ruby:create && yarn ruby:run:parallel && yarn ruby:report:merge && yarn ruby:report:sandbox",
     "ruby:test:prod": "[ \"TRAVIS_EVENT_TYPE\" = \"cron\" ] && yarn ruby:create:noskip || yarn ruby:create && yarn ruby:run:parallel && yarn ruby:report:merge && yarn ruby:report",
-    "ruby:create": "mkdir -p ./coverage_tests/spec/coverage/generic && cd coverage_tests && coverage-tests create-tests --path ./configuration",
-    "ruby:create:noskip": "mkdir -p ./coverage_tests/spec/coverage/generic && cd coverage_tests && coverage-tests create-tests --path ./configuration -a",
+    "ruby:create": "cd coverage_tests && coverage-tests generate ./configuration",
+    "ruby:create:noskip": "cd coverage_tests && coverage-tests generate ./configuration -a",
     "ruby:report": "[ \"$TEST_REPORT_SANDBOX\" = \"False\" ] && yarn ruby:report:prod || yarn ruby:report:sandbox ",
-    "ruby:report:sandbox": "cd coverage_tests && coverage-tests process-report --path ./configuration$( [ -z $TRAVIS_COMMIT ] || echo \" --reportId $TRAVIS_COMMIT\" )",
-    "ruby:report:prod": "cd coverage_tests && coverage-tests process-report --path ./configuration --reportId $TRAVIS_COMMIT --send-report prod",
+    "ruby:report:sandbox": "cd coverage_tests && coverage-tests report ./configuration$( [ -z $TRAVIS_COMMIT ] || echo \" --reportId $TRAVIS_COMMIT\" )",
+    "ruby:report:prod": "cd coverage_tests && coverage-tests report ./configuration --reportId $TRAVIS_COMMIT --send-report prod",
     "ruby:run": "cd coverage_tests && APPLITOOLS_BATCH_NAME='Ruby Coverage Tests' APPLITOOLS_BATCH_ID=$(uuidgen) bundle exec rspec spec/coverage/generic",
     "ruby:run:debug": "cd coverage_tests && APPLITOOLS_BATCH_NAME='Ruby Coverage Tests' APPLITOOLS_BATCH_ID=$(uuidgen) APPLITOOLS_SHOW_LOGS='true' bundle exec rspec spec/coverage/generic",
     "ruby:run:parallel": "cd coverage_tests && APPLITOOLS_BATCH_NAME='Ruby Coverage Tests' APPLITOOLS_BATCH_ID=$(uuidgen) bundle exec parallel_rspec -n 6 spec/coverage/generic",
@@ -33,7 +33,7 @@
     "docker:stop": "docker stop selenium && docker rm selenium"
   },
   "dependencies": {
-    "@applitools/sdk-coverage-tests": "^1.0.16",
+    "@applitools/sdk-coverage-tests": "^2.1.0",
     "junit-merge": "^2.0.0",
     "@typescript-eslint/parser": "^2.14.0",
     "typescript": "^3.7.4"
