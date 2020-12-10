@@ -118,7 +118,7 @@ module.exports = function (tracker, test) {
                                 stitch_content: ${stitchContent},
                                 timeout: ${matchTimeout})`)
     },
-    close(throwEx) {
+    close(throwEx=true) {
       return addCommand(ruby`@eyes.close(${throwEx})`)
     },
     abort() {
