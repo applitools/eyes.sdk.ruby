@@ -1,5 +1,6 @@
 'use strict';
 const types = require('./mapping/types')
+const selectors = require('./mapping/selectors')
 
 const RUBY_CAPABILITIES = {
     browserName: 'browser_name',
@@ -21,43 +22,56 @@ function checkSettings(cs) {
         if (cs.region) element += region(cs.region)
     }
     if (cs.ignoreRegions) options += ignoreRegions(cs.ignoreRegions);
+    if (cs.floatingRegions) options += floatingRegions(cs.floatingRegions);
     if (cs.isFully) options += '.fully';
     return ruby + element + options
-}
 
-function frames(arr) {
-    return arr.reduce((acc, val) => acc + `${frame(val)}`, '')
-}
-
-function frame(val) {
-    return val.isRef ? val.ref() : `.frame(css: \'${val}\')`
-}
-
-function region(region) {
-    return `.region(${regionParameter(region)})`
-}
-
-function ignoreRegions(arr) {
-    return arr.reduce((acc, val) => acc + ignore(val), '')
-}
-
-function ignore(region) {
-    return `.ignore(${regionParameter(region)})`
-}
-
-function regionParameter(region) {
-    let string;
-    switch (typeof region) {
-        case 'string':
-            string = `css: \'${region}\'`;
-            break;
-        case "object":
-            string = `Applitools::Region.new(${region.left}, ${region.top}, ${region.width}, ${region.height})`
-            break;
-        default:
-            string = serialize(region)
+    function frames(arr) {
+        return arr.reduce((acc, val) => acc + `${frame(val)}`, '')
     }
-    return string
+
+    function frame(val) {
+        return val.isRef ? val.ref() : `.frame(css: \'${val}\')`
+    }
+
+    function region(region) {
+        return `.region(${regionParameter(region)})`
+    }
+
+    function ignoreRegions(arr) {
+        return arr.reduce((acc, val) => acc + ignore(val), '')
+    }
+
+    function ignore(region) {
+        return `.ignore(${regionParameter(region)})`
+    }
+
+    function floatingRegions(arr) {
+        return arr.reduce((acc, val) => acc + floating(val), '')
+    }
+
+    function floating(floating) {
+        return `.floating(${regionParameter(floating.region)}, ${floatingBounds(floating)})`
+    }
+
+    function floatingBounds(bounds) {
+        return types.FloatingBounds.constructor(bounds)
+    }
+
+    function regionParameter(region) {
+        let string;
+        switch (typeof region) {
+            case 'string':
+                string = `:css, \'${region}\'`;
+                break;
+            case "object":
+                string = region.selector ? selector[region.type](region.selector) : types.Region.constructor(region)
+                break;
+            default:
+                string = serialize(region)
+        }
+        return string
+    }
 }
 
 function construct(chunks, ...values) {

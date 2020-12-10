@@ -8,6 +8,6 @@ module.exports = {
   overrideTests,
   testFrameworkTemplate: testFrameworkTemplate,
   ext: '_spec.rb',
-  emitOnly: ['/should send floating region by coordinates with css stitching/'],
+  // emitOnly: ['/should send floating region by coordinates with css stitching/'],
   outPath: './spec/coverage/generic'
 }
