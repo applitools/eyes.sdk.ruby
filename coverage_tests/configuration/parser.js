@@ -14,6 +14,7 @@ function checkSettings(cs) {
     if (cs === undefined) {
         return ruby + '.window'
     }
+    let name = '';
     let element = '';
     let options = '';
     if (cs.frames === undefined && cs.region === undefined) element = '.window';
@@ -21,10 +22,13 @@ function checkSettings(cs) {
         if (cs.frames) element += frames(cs.frames);
         if (cs.region) element += region(cs.region)
     }
+    if (cs.accessibilityRegions) options += accessibilityRegions(cs.accessibilityRegions)
+    if (cs.layoutRegions) options += layoutRegions(cs.layoutRegions)
     if (cs.ignoreRegions) options += ignoreRegions(cs.ignoreRegions);
     if (cs.floatingRegions) options += floatingRegions(cs.floatingRegions);
     if (cs.isFully) options += '.fully';
-    return ruby + element + options
+    if (cs.name) name = `'${cs.name}', `;
+    return name + ruby + element + options
 
     function frames(arr) {
         return arr.reduce((acc, val) => acc + `${frame(val)}`, '')
@@ -65,7 +69,7 @@ function checkSettings(cs) {
                 string = `:css, \'${region}\'`;
                 break;
             case "object":
-                string = region.selector ? selector[region.type](region.selector) : types.Region.constructor(region)
+                string = region.selector ? selectors[region.type](region.selector) : types.Region.constructor(region)
                 break;
             default:
                 string = serialize(region)
