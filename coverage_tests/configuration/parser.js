@@ -74,7 +74,7 @@ function driverBuild(caps, host) {
     let nl = `
     `;
     let string = `@driver = Selenium::WebDriver.for :remote`;
-    if (!caps && !host) string += `, desired_capabilities: :chrome`;
+    if (!caps && !host) string += `, desired_capabilities: {'browserName' => 'chrome', 'goog:chromeOptions' => {'args' => %w[--disable-gpu --headless]}}`;
     if (caps) string += capsToRuby(caps);
     if (host) string += `,${nl}${indent(34)}url: '${host}'`;
     return string;
