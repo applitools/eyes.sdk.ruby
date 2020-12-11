@@ -150,14 +150,12 @@ function initialize(options) {
     checkElementBy(selector, matchTimeout, tag) {
       tracker.storeCommand(ruby`@eyes.check_region(:css, ${selector},
                        tag: ${tag},
-                       match_timeout: ${matchTimeout},
-                       stitch_content: true)`)
+                       match_timeout: ${matchTimeout})`)
     },
     checkRegion(region, matchTimeout, tag) {
       tracker.storeCommand(ruby`@eyes.check_region(:css, ${selector},
                        tag: ${tag},
-                       match_timeout: ${matchTimeout},
-                       stitch_content: true)`)
+                       match_timeout: ${matchTimeout})`)
     },
     checkRegionByElement(element, matchTimeout, tag) {
       // TODO need implementation
