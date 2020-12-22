@@ -8,6 +8,6 @@ module.exports = {
   overrideTests,
   testFrameworkTemplate: testFrameworkTemplate,
   ext: '_spec.rb',
-  emitOnly: ['/check window with/'],
+  emitOnly: ['/should send dom and location /'],
   outPath: './spec/coverage/generic'
 }

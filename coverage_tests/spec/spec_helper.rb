@@ -39,4 +39,12 @@ RSpec.configure do |config|
     actual_app_output(@eyes.api_key, results)
   end
 
+  def get_dom(results, domId)
+    url = URI.parse(results.url)
+    new_query_ar = URI.decode_www_form(url.query || '') << ['apiKey', ENV['APPLITOOLS_API_KEY_READ']]
+    url.path = "/api/images/dom/#{domId}/"
+    url.query = URI.encode_www_form(new_query_ar)
+    asd = Net::HTTP.get(url)
+    Oj.load(asd)
+  end
 end

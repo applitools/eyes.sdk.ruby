@@ -188,6 +188,9 @@ module.exports = function (tracker, test) {
           },
         },
       })
+    },
+    getDom(results, domId) {
+      return addCommand(ruby`get_dom(${results}, ${domId})`).ref('dom')
     }
   }
 
