@@ -1,3 +1,6 @@
+## [vNext]
+### Added
+- Supporting check full element with ufg [Trello 2145](https://trello.com/c/8tPAnz66)
 ## [3.17.21] - 2020-08-20
 ### added
 - UFG: the ability to set :visual_grid_options for the UFG SDK (Both globally and through the fluent interface) [Trello_2089](https://trello.com/c/d4zggQes/2089-ufg-sdks-visualgridoptionspolyfilladoptedstylesheets)
