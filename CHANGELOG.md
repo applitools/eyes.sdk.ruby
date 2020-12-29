@@ -1,6 +1,8 @@
 ## [vNext]
 ### Added
 - Supporting check full element with ufg [Trello 2145](https://trello.com/c/8tPAnz66)
+### Updated
+- Supporting iPhone 12 in `IosDeviceName` class. [Trello 2269](https://trello.com/c/yWFy2pRE)
 ### Fixed
 - Restart on calling eyes.open with started driver [Trello 2162](https://trello.com/c/1SCQUUnW), [Trello 2233](https://trello.com/c/yPY3jhjW)
 ## [3.17.21] - 2020-08-20
