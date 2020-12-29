@@ -34,7 +34,8 @@ if defined? Appium::Driver
   Appium::Driver.class_eval do
     def driver_for_eyes(eyes)
       Appium.promote_appium_methods(Applitools::Appium::Driver::AppiumLib, self)
-      Applitools::Appium::Driver.new(eyes, driver: self.start_driver, is_mobile_device: true)
+      started_driver = self.http_client ? self : self.start_driver
+      Applitools::Appium::Driver.new(eyes, driver: started_driver, is_mobile_device: true)
     end
   end
 end
