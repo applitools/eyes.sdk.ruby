@@ -171,7 +171,7 @@ module Applitools
             )
           end
 
-          if size_mod == 'selector'
+          if size_mod == 'selector' || size_mod == 'full-selector'
             target_to_check.convert_coordinates(&Applitools::Selenium::VgMatchWindowData::CONVERT_COORDINATES)
           end
 
@@ -201,7 +201,7 @@ module Applitools
 
           xpath = driver.execute_script(Applitools::Selenium::Scripts::GET_ELEMENT_XPATH_JS, el)
           web_element_region = Applitools::Selenium::WebElementRegion.new(xpath, v)
-          self.region_to_check = web_element_region.dup if v == :target && size_mod == 'selector'
+          self.region_to_check = web_element_region.dup if v == :target && (size_mod == 'selector' || size_mod == 'full-selector')
           result << web_element_region
           target.regions[el] = result.size - 1
         end
@@ -237,7 +237,7 @@ module Applitools
             selenium_regions[r] = :accessibility
           end
         end
-        selenium_regions[region_to_check] = :target if size_mod == 'selector'
+        selenium_regions[region_to_check] = :target if size_mod == 'selector' || size_mod == 'full-selector'
 
         selenium_regions
       end
@@ -249,7 +249,11 @@ module Applitools
 
         self.size_mod = case element_or_region
                         when ::Selenium::WebDriver::Element, Applitools::Selenium::Element
-                          'selector'
+                          if target.options[:stitch_content]
+                            'full-selector'
+                          else
+                            'selector'
+                          end
                         when Applitools::Region
                           if element_or_region == Applitools::Region::EMPTY
                             if target.options[:stitch_content]

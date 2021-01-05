@@ -16,6 +16,7 @@ module Applitools
         result['iosDeviceInfo'] = json_value(ios_device_info) if ios_device_info
         result['region'] = json_value(region) if size_mode == 'region'
         result['selector'] = json_value(region) if size_mode == 'selector'
+        result['selector'] = json_value(region) if size_mode == 'full-selector'
         result
       end
     end
