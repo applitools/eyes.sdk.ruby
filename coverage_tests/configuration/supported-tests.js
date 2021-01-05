@@ -242,7 +242,7 @@ module.exports =  [
     {name: 'TestCheckWindowWithFloatingBySelector_Fluent', executionMode: {isCssStitching: true}},
     {name: 'TestCheckWindowWithFloatingBySelector_Fluent', executionMode: {isScrollStitching: true}},
     {name: 'TestCheckWindowWithIgnoreRegion_Fluent', executionMode: {isVisualGrid: true}},
-    {name: 'TestCheckWindowWithIgnoreRegion_Fluent', executionMode: {isCssStitching: true}},
+    {name: 'TestCheckWindowWithIgnoreRegion_Fluent', executionMode: {isCssStitching: true}, disabled: true},
     {name: 'TestCheckWindowWithIgnoreRegion_Fluent', executionMode: {isScrollStitching: true}},
     {
         name: 'TestCheckWindowWithIgnoreBySelector_Fluent',
