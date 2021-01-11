@@ -31,11 +31,11 @@
     "parallel:appium": "cd coverage_tests && bundle exec parallel_rspec -n 2 spec/coverage/generic -o '--tag @native'",
     "ruby:report:merge": "cd coverage_tests && junit-merge -d tmp -o coverage-test-report.xml",
     "ruby:conf:test": "mocha './coverage_tests/configuration/test/*.spec.js'",
-    "docker:start": "docker run -d -p 4444:4444 --name selenium_chrome --shm-size 8g selenium/standalone-chrome:3.141.59 && docker run -d -p 4445:4444 --name selenium_firefox --shm-size 2g selenium/standalone-firefox:3.141.59",
+    "docker:start": "docker run -d -p 4444:4444 --name selenium_chrome --shm-size 6g selenium/standalone-chrome:3.141.59 && docker run -d -p 4445:4444 --name selenium_firefox --shm-size 2g selenium/standalone-firefox:3.141.59",
     "docker:stop": "docker stop selenium_chrome selenium_firefox ; docker rm selenium_chrome selenium_firefox"
   },
   "dependencies": {
-    "@applitools/sdk-coverage-tests": "^2.1.0",
+    "@applitools/sdk-coverage-tests": "^2.3.2",
     "junit-merge": "^2.0.0",
     "@typescript-eslint/parser": "^2.14.0",
     "typescript": "^3.7.4"

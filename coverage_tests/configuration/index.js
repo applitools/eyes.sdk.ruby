@@ -1,13 +1,8 @@
-const overrideTests = require('./ovveride-tests')
-const initializeSdk = require('./initialize')
-const testFrameworkTemplate = require('./template.hbs')
-
 module.exports = {
   name: 'eyes_selenium_ruby',
-  initializeSdk: initializeSdk,
-  overrideTests,
-  // testFrameworkTemplate: testFrameworkTemplate,
-  template: './configuration/template.hbs',
+  emitter: 'https://raw.githubusercontent.com/applitools/sdk.coverage.tests/ruby_implementation/ruby/initialize.js',
+  overrides: 'https://raw.githubusercontent.com/applitools/sdk.coverage.tests/ruby_implementation/ruby/overrides.js',
+  template: 'https://raw.githubusercontent.com/applitools/sdk.coverage.tests/ruby_implementation/ruby/template.hbs',
   ext: '_spec.rb',
   outPath: './spec/coverage/generic'
 }
