@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-require 'test_utils/obtain_actual_app_output'
+require_relative '../../lib/test_utils/obtain_actual_app_output'
 require 'driver_build'
 RSpec.configure do |config|
   include Applitools::TestUtils::ObtainActualAppOutput
