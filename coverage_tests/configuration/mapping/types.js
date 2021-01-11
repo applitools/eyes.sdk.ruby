@@ -8,6 +8,9 @@ const types = {
     "FloatingBounds": {
         constructor: (bounds) => `Applitools::FloatingBounds.new(${bounds.maxLeftOffset}, ${bounds.maxUpOffset}, ${bounds.maxRightOffset}, ${bounds.maxDownOffset})`
     },
+    "TestResults": {
+        class: () => `Applitools::TestResults`
+    }
 }
 
 module.exports = types

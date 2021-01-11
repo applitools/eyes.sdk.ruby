@@ -1,16 +1,10 @@
 'use strict';
 const types = require('./mapping/types')
 const selectors = require('./mapping/selectors')
+const {isSelector, pascalToSnakeCase} = require('./util')
 
-const RUBY_CAPABILITIES = {
-    browserName: 'browser_name',
-    browserVersion: 'browser_version',
-    platformName: 'platform_name'
-};
-
-
-function checkSettings(cs) {
-    let ruby = `Applitools::Selenium::Target`;
+function checkSettings(cs, driver, native) {
+    let ruby =  native ? `target: Applitools::Appium::Target` : `Applitools::Selenium::Target`;
     if (cs === undefined) {
         return ruby + '.window'
     }
@@ -26,6 +20,9 @@ function checkSettings(cs) {
     if (cs.layoutRegions) options += layoutRegions(cs.layoutRegions)
     if (cs.ignoreRegions) options += ignoreRegions(cs.ignoreRegions);
     if (cs.floatingRegions) options += floatingRegions(cs.floatingRegions);
+    if (cs.scrollRootElement ) throw new Error("Scroll root option not implemented in the ruby SDK")
+    if (cs.ignoreDisplacements !== undefined) options += `.ignore_displacements(${cs.ignoreDisplacements})`
+    if (cs.sendDom !== undefined) options += `.send_dom(${serialize(cs.sendDom)})`
     if (cs.isFully) options += '.fully';
     if (cs.name) name = `'${cs.name}', `;
     return name + ruby + element + options
@@ -35,7 +32,20 @@ function checkSettings(cs) {
     }
 
     function frame(val) {
-        return val.isRef ? val.ref() : `.frame(css: \'${val}\')`
+        return ( !val.isRef && val.frame) ? `.frame(${frameSelector(val.frame)})` : `.frame(${frameSelector(val)})`
+        function frameSelector(selector) {
+            if(typeof selector === 'string' && !checkCss(selector)) {
+                return JSON.stringify(selector)
+            } else {
+                return printSelector(selector);
+            }
+            function checkCss(string) {
+                return (string.includes('[') && string.includes(']')) || string.includes('#')
+            }
+        }
+        function printSelector(val) {
+            return serialize((val && val.isRef) ? val : ref(`@driver.find_element(css: '${val}')`))
+        }
     }
 
     function region(region) {
@@ -69,34 +79,55 @@ function checkSettings(cs) {
                 string = `:css, \'${region}\'`;
                 break;
             case "object":
-                string = region.selector ? selectors[region.type](region.selector) : types.Region.constructor(region)
+                string = region.selector ? serialize(region) : types.Region.constructor(region)
                 break;
             default:
                 string = serialize(region)
         }
         return string
     }
+
+    function accessibilityRegions(regions) {
+
+        return regions.map(accessibilityRegion).join('')
+
+        function accessibilityRegion(reg) {
+            return `.accessibility(${regionParameter(reg.region)}, type: ${serialize(reg.type)})`
+        }
+    }
+
+    function layoutRegions(regions) {
+        return regions.map(region => `.layout(${regionParameter(region)})`)
+    }
 }
 
 function construct(chunks, ...values) {
     const commands = []
-
     function isPresent(values) {
         const value = (values.length > 0 && typeof values[0] !== 'undefined')
-        return value && values[0].isRef ? values[0].ref() !== 'undefined' : value
+        return value && values[0].isRef ?
+            values[0].ref() !== 'undefined' &&
+            values[0].ref() !== undefined:
+            value
     }
 
     const builder = {
         add(chunks, ...values) {
             commands.push(...ruby(chunks, ...values))
-            return this
+            return builder
+        },
+        notAdd() {
+            return builder
         },
         extra(chunks, ...values) {
             if (isPresent(values)) commands.push(...ruby(chunks, ...values))
-            return this
+            return builder
         },
         build(separator = '') {
             return [commands.join(separator)]
+        },
+        addIf(bool) {
+            return bool ? builder.add : builder.notAdd
         }
     }
     return builder.add(chunks, ...values)
@@ -123,46 +154,30 @@ function serialize(value) {
     let stringified = '';
     if (value && value.isRef) {
         stringified = value.ref()
+    } else if (Array.isArray(value)) {
+        stringified = `[${value.map(serialize).join(', ')}]`
     } else if (typeof value === 'function') {
         stringified = value.toString()
     } else if (typeof value === 'undefined' || value === null) {
         stringified = 'nil'
     } else if (typeof value === 'string') {
         stringified = `'${value}'`
+    } else if (isSelector(value)) {
+        stringified = selectors[value.type](value.selector)
     } else if (typeof value === 'object') {
-        stringified = `{${Object.keys(value).map(key => `"${key}" => ${value[key]}`).join(', ')}}`
-     } else {
+        stringified = `{ ${Object.keys(value).map(key => `${serialize(key)} => ${serialize(value[key])}`).join(', ')} }`
+    } else {
         stringified = JSON.stringify(value)
     }
     return stringified
 }
 
-function driverBuild(caps, host) {
-    let indent = spaces => ' '.repeat(spaces);
-    let nl = `
-    `;
-    let string = `@driver = Selenium::WebDriver.for :remote`;
-    if (!caps && !host) string += `, desired_capabilities: {'browserName' => 'chrome', 'goog:chromeOptions' => {'args' => %w[--disable-gpu --headless]}}`;
-    if (caps) string += capsToRuby(caps);
-    if (host) string += `,${nl}${indent(34)}url: '${host}'`;
-    return string;
-
-    function capsToRuby(capabilities) {
-        let cap = (key, value) => `${key}: '${value}',`
-        let string = (key, value) => RUBY_CAPABILITIES[key] !== undefined ? cap(RUBY_CAPABILITIES[key], value) : cap(key, value);
-        let transformCaps = (obj, indentation) => Object.keys(obj)
-            .map(property => typeof obj[property] === 'string'
-                ? string(property, obj[property])
-                : `'${property}' => ${transformCaps(obj[property], indentation + 2)}`)
-            .reverse()
-            .concat('{')
-            .reverse()
-            .join(`${nl}${indent(indentation)}`)
-            .concat(`${nl}${indent(indentation - 2)}}`)
-        let rubyCapabilities = transformCaps(capabilities, 36)
-        let rubyCaps = `,${nl}${indent(34)}desired_capabilities: ${rubyCapabilities}`;
-        return rubyCaps
-    }
+function driverBuild(env) {
+    let parsed = env ? '(' +
+        Object.keys(env).map(key => `${key}: '${env[key]}'`).join(', ') +
+        ')' : ''
+    let string = `@driver = build_driver${parsed}`
+    return string
 }
 
 function ref(val) {
@@ -203,6 +218,14 @@ function returnSyntax({value}) {
     return `return ${value}`
 }
 
+function getClassName(coverageClassName) {
+    if (!types[coverageClassName]) throw new Error(`There is no type for the ${coverageClassName}`)
+    return ref(types[coverageClassName].class())
+}
+
+function prepareTestConfig(config) {
+    return Object.keys(config).map(property => `${pascalToSnakeCase(property)}: ${serialize(config[property])}`).join(', ')
+}
 
 module.exports = {
     checkSettingsParser: checkSettings,
@@ -214,4 +237,6 @@ module.exports = {
     getter: getter,
     call: call,
     returnSyntax: returnSyntax,
+    getClassName: getClassName,
+    prepareTestConfig: prepareTestConfig,
 };

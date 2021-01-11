@@ -1,10 +1,17 @@
 'use strict'
 const {makeEmitTracker} = require('@applitools/sdk-coverage-tests')
-const {checkSettingsParser, ruby, driverBuild, construct, ref, variable, getter, call, returnSyntax} = require('./parser')
+const {checkSettingsParser, ruby, driverBuild, construct, ref, variable, getter, call, returnSyntax, getClassName, prepareTestConfig} = require('./parser')
+const {wrapSelector} = require('./util')
+
 
 module.exports = function (tracker, test) {
   const {addSyntax, addCommand, addHook} = tracker
-  // addHook('deps', `require 'eyes_selenium'`)
+  if (test.meta.native) {
+    addHook('deps', `require 'appium_helper'`)
+    test.key += '_Native'
+  } else {
+    addHook('deps', `require 'selenium_helper'`)
+  }
   addSyntax('var', variable)
   addSyntax('getter', getter)
   addSyntax('call', call)
@@ -12,7 +19,7 @@ module.exports = function (tracker, test) {
 
   addHook(
       'beforeEach',
-      driverBuild(),
+      driverBuild(test.env),
   )
 
   addHook(
@@ -20,8 +27,20 @@ module.exports = function (tracker, test) {
       ruby`@eyes = eyes(is_visual_grid: ${test.vg}, is_css_stitching: ${test.config.stitchMode === 'CSS'}, branch_name: ${test.branchName})`,
   )
 
-  addHook('afterEach', ruby`@driver.quit`)
-  addHook('afterEach', ruby`@eyes.abort`)
+  if (test.config) {
+    addHook('beforeEach', ruby`eyes_config(${ref(prepareTestConfig(test.config))})`)
+  }
+
+  addHook('afterEach', `@driver.${test.meta.native ? 'driver_quit' : 'quit'}`)
+  addHook('afterEach', `@eyes.abort`)
+
+  function frameSelector(frame){
+    if(typeof frame === 'string' && !(/[#\[\]]/.test(frame))) {
+      return frame
+    } else {
+      return ref(`{ css: ${JSON.stringify(frame)} }`)
+    }
+  }
 
   const driver = {
     constructor: {
@@ -36,7 +55,10 @@ module.exports = function (tracker, test) {
       return addCommand(ruby`@driver.get_url`)
     },
     executeScript(script, ...args) {
-      return addCommand(ruby`@driver.execute_script(${script})`)
+      let command = construct`@driver.execute_script(${script}`
+      args.forEach(val => command.extra`, ${val}`)
+      command.add`)`
+      return addCommand(command.build(''))
     },
     sleep(ms) {
       return addCommand(ruby`@driver.sleep(${Math.floor(ms/1000)})`)
@@ -49,17 +71,17 @@ module.exports = function (tracker, test) {
     },
     findElement(selector) {
       return addCommand(
-          ruby`@driver.find_element(css: ${selector})`,
+          ruby`@driver.find_element(${wrapSelector(selector)})`,
       )
     },
     findElements(selector) {
       return addCommand(
-          ruby`@driver.find_elements(css: ${selector})`,
+          ruby`@driver.find_elements(${wrapSelector(selector)})`,
       )
     },
     click(element) {
-      if(typeof element === 'object') addCommand(ruby`${element}.click`)
-      else addCommand(ruby`@driver.find_element(css: ${element}).click`)
+      if(element.isRef) addCommand(ruby`${element}.click`)
+      else addCommand(ruby`${driver.findElement(element)}.click`)
     },
     type(element, keys) {
       addCommand(ruby`${element}.send_keys(${keys})`)
@@ -85,34 +107,56 @@ module.exports = function (tracker, test) {
     },
     open({appName, testName, viewportSize}) {
       return addCommand(construct`@eyes.configure do |conf|`
-          .add`  conf.app_name = ${appName || test.config.appName}`
-          .add`  conf.test_name = ${testName || test.config.baselineName}`
-          .extra`  conf.viewport_size = ${ref(viewportSize).type('RectangleSize')}`
-          .add`end`
-          .add`  @eyes.open(driver: @driver)`
+          .add`    conf.app_name = ${appName || test.config.appName}`
+          .add`    conf.test_name = ${testName || test.config.baselineName}`
+          .extra`    conf.viewport_size = ${ref(viewportSize).type('RectangleSize')}`
+          .add`  end`
+          .addIf(test.meta.native)`  @eyes.open(driver: @driver)`
+          .addIf(!test.meta.native)`  @driver = @eyes.open(driver: @driver)`
           .build('\n  '))
     },
-    check(checkSettings) {
-      addCommand(`@eyes.check(${checkSettingsParser(checkSettings)})`)
+    check(checkSettings = {}) {
+      if (test.api !== 'classic') {
+        return addCommand(`@eyes.check(${checkSettingsParser(checkSettings, driver, test.meta.native)})`)
+      } else if (checkSettings.region) {
+        if (checkSettings.frames && checkSettings.frames.length > 0) {
+          const [frameReference] = checkSettings.frames
+          return eyes.checkRegionInFrame(frameReference.frame || frameReference,
+              checkSettings.region,
+              checkSettings.timeout,
+              checkSettings.name,
+              checkSettings.isFully)
+        }
+        return eyes.checkRegion(checkSettings.region,
+            checkSettings.timeout,
+            checkSettings.name,
+            checkSettings.isFully)
+      } else if (checkSettings.frames && checkSettings.frames.length > 0) {
+        const [frameReference] = checkSettings.frames
+        return eyes.checkFrame(frameReference.frame || frameReference,
+            checkSettings.timeout,
+            checkSettings.name)
+      } else {
+        return eyes.checkWindow(checkSettings.name,
+            checkSettings.timeout,
+            checkSettings.isFully)
+      }
+
     },
     checkWindow(tag, matchTimeout, stitchContent) {
-      addCommand(ruby`@eyes.check_window(tag: ${tag}, timeout: ${matchTimeout})`)
+      addCommand(ruby`@eyes.check_window(tag: ${tag}, timeout: ${matchTimeout}, stitchContent: ${stitchContent})`)
     },
     checkFrame(element, matchTimeout, tag) {
-      addCommand(ruby`@eyes.check_frame(frame: ${element}, timeout: ${matchTimeout}, tag: ${tag})`)
+      addCommand(ruby`@eyes.check_frame(frame: ${frameSelector(element)}, timeout: ${matchTimeout}, tag: ${tag})`)
     },
-    checkElementBy(selector, matchTimeout, tag) {
-      addCommand(ruby`@eyes.check_region(:css, ${selector},
+    checkRegion(region, matchTimeout, tag, isFully) {
+      addCommand(ruby`@eyes.check_region(:css, ${region},
                        tag: ${tag},
-                       match_timeout: ${matchTimeout})`)
-    },
-    checkRegion(region, matchTimeout, tag) {
-      addCommand(ruby`@eyes.check_region(:css, ${selector},
-                       tag: ${tag},
-                       match_timeout: ${matchTimeout})`)
+                       match_timeout: ${matchTimeout},
+                       stitch_content: ${isFully})`)
     },
     checkRegionInFrame(frameReference, selector, matchTimeout, tag, stitchContent) {
-      addCommand(ruby`@eyes.check_region_in_frame(frame: ${frameReference},
+      addCommand(ruby`@eyes.check_region_in_frame(frame: ${frameSelector(frameReference)},
                                 by: [:css, ${selector}],
                                 tag: ${tag},
                                 stitch_content: ${stitchContent},
@@ -143,7 +187,7 @@ module.exports = function (tracker, test) {
       addCommand(construct`expect(${value}).to be_truthy`.extra`, ${message}`.build())
     },
     instanceOf(object, className, message) {
-      addCommand(construct`expect(${object}).to be_a(${className})`.extra`, ${message}`.build())
+      addCommand(construct`expect(${object}).to be_a(${getClassName(className)})`.extra`, ${message}`.build())
     },
     throws(func, check) {
       let command
