@@ -15,6 +15,18 @@ RSpec.describe 'iOS device info' do
       it IosDeviceName::IPhone_11_Pro_Max do
         @device_name = IosDeviceName::IPhone_11_Pro_Max
       end
+      it IosDeviceName::IPhone_12_mini do
+        @device_name = IosDeviceName::IPhone_12_mini
+      end
+      it IosDeviceName::IPhone_12 do
+        @device_name = IosDeviceName::IPhone_12
+      end
+      it IosDeviceName::IPhone_12_Pro do
+        @device_name = IosDeviceName::IPhone_12_Pro
+      end
+      it IosDeviceName::IPhone_12_Pro_Max do
+        @device_name = IosDeviceName::IPhone_12_Pro_Max
+      end
     end
     context 'free style' do
       after do
