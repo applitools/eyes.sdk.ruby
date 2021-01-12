@@ -5,6 +5,7 @@
 - Supporting iPhone 12 in `IosDeviceName` class. [Trello 2269](https://trello.com/c/yWFy2pRE)
 ### Fixed
 - Restart on calling eyes.open with started driver [Trello 2162](https://trello.com/c/1SCQUUnW), [Trello 2233](https://trello.com/c/yPY3jhjW)
+
 ## [3.17.21] - 2020-08-20
 ### added
 - UFG: the ability to set :visual_grid_options for the UFG SDK (Both globally and through the fluent interface) [Trello_2089](https://trello.com/c/d4zggQes/2089-ufg-sdks-visualgridoptionspolyfilladoptedstylesheets)
