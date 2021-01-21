@@ -1,12 +1,8 @@
-const supportedTests = require('./supported-tests')
-const {initialize} = require('./initialize')
-const testFrameworkTemplate = require('./template')
-
 module.exports = {
   name: 'eyes_selenium_ruby',
-  initialize: initialize,
-  supportedTests,
-  testFrameworkTemplate: testFrameworkTemplate,
+  emitter: 'https://raw.githubusercontent.com/applitools/sdk.coverage.tests/master/ruby/initialize.js',
+  overrides: 'https://raw.githubusercontent.com/applitools/sdk.coverage.tests/master/ruby/overrides.js',
+  template: 'https://raw.githubusercontent.com/applitools/sdk.coverage.tests/master/ruby/template.hbs',
   ext: '_spec.rb',
-  out: './spec/coverage/generic'
+  outPath: './spec/coverage/generic'
 }
