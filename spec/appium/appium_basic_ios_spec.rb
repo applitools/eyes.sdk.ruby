@@ -10,7 +10,7 @@ RSpec.describe 'iOS basic test', appium: true do
     }
   end
 
-  it 'Appium_iOS_check_window' do
+  it 'Appium_iOS_check_window', pending: true do
     eyes.check('Viewport Window', Applitools::Appium::Target.window)
   end
 

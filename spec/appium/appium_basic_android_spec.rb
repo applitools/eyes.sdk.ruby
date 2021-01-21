@@ -12,7 +12,7 @@ RSpec.describe 'Android Basic test', appium: true do
 
   let(:button) { driver.find_element(:class_name, 'android.widget.Button') }
   let(:label_in_container) { driver.find_element(:uiautomator, 'new UiSelector().textContains("You successfully clicked the button!")') }
-  it 'Appium_Android_CheckWindow' do
+  it 'Appium_Android_CheckWindow', pending: true do
     eyes.check('Window', Applitools::Appium::Target.window.ignore(button))
     app_output(eyes.api_key).with_ignore_regions do |actual_ignore_regions|
       expect(actual_ignore_regions).to include(Applitools::Region.new(151, 237, 90, 48))
@@ -30,7 +30,7 @@ RSpec.describe 'Android Basic test', appium: true do
       fail
     end
   end
-  it 'Appium_Android_CheckRegion' do
+  it 'Appium_Android_CheckRegion', pending: true do
     eyes.check('Button', Applitools::Appium::Target.region(button))
   end
 
