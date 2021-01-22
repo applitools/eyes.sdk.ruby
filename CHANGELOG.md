@@ -1,6 +1,8 @@
-## [vNext]
+## [3.17.23] - 2021-01-22
 ### Fixed
 - Fix viewport rect of a native app at some android devices [Trello 2079](https://trello.com/c/sQJLgtUL)
+### Updated
+- Update Ruby Coverege Tests to v2
 ## [3.17.22] - 2021-01-12
 ### Added
 - Supporting check full element with ufg [Trello 2145](https://trello.com/c/8tPAnz66)
