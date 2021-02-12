@@ -16,13 +16,24 @@ RSpec.configure do |config|
     actual_app_output(@eyes.api_key, results)
   end
 
-  def get_dom(results, domId)
+  def get_dom(results, dom_id)
     url = URI.parse(results.url)
     new_query_ar = URI.decode_www_form(url.query || '') << ['apiKey', ENV['APPLITOOLS_API_KEY_READ']]
-    url.path = "/api/images/dom/#{domId}/"
+    url.path = "/api/images/dom/#{dom_id}/"
     url.query = URI.encode_www_form(new_query_ar)
     asd = Net::HTTP.get(url)
     Oj.load(asd)
+  end
+
+  def get_nodes_by_attribute(node, attr)
+    result = []
+    if node.key?('attributes') && node['attributes'].key?(attr)
+      result.push(node)
+    end
+    if node.key?('childNodes')
+      node['childNodes'].each { |child| result.push(get_nodes_by_attribute(child, attr)) }
+    end
+    result.flatten
   end
 
 end
