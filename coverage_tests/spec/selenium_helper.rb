@@ -8,8 +8,12 @@ RSpec.configure do |config|
   def eyes(args)
     is_visual_grid = args[:is_visual_grid].nil? ? false : args[:is_visual_grid]
     branch_name = args[:branch_name].nil? ? 'master' : args[:branch_name]
-    runner = Applitools::Selenium::VisualGridRunner.new(10) if is_visual_grid
-    eyes = Applitools::Selenium::Eyes.new(runner: runner)
+    @runner = if is_visual_grid
+                Applitools::Selenium::VisualGridRunner.new(10)
+              else
+                Applitools::ClassicRunner.new
+              end
+    eyes = Applitools::Selenium::Eyes.new(runner: @runner)
     eyes.configure do |conf|
       # conf.batch = $run_batch
       conf.api_key = ENV['APPLITOOLS_API_KEY']
