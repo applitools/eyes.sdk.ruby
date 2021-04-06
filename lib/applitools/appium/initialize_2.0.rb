@@ -4,9 +4,9 @@ module Applitools::Appium
   module Init20
     extend self
     def init
-      Applitools::Utils::EyesSeleniumUtils.module_eval do
-        prepend Applitools::Appium::Utils
-        extend self
+      Applitools::Appium::Utils.module_eval do
+        include Applitools::Utils::EyesSeleniumUtils
+        extend Applitools::Utils::EyesSeleniumUtils
       end
     end
   end

@@ -14,6 +14,7 @@ class Applitools::Appium::Eyes < Applitools::Selenium::SeleniumEyes
     self.runner = Applitools::ClassicRunner.new
     self.base_agent_id = "eyes.appium.ruby/#{Applitools::VERSION}".freeze
     self.status_bar_height = 0
+    self.utils = Applitools::Appium::Utils
   end
 
   private :perform_driver_settings_for_appium_driver
@@ -90,8 +91,8 @@ class Applitools::Appium::Eyes < Applitools::Selenium::SeleniumEyes
               raise Applitools::EyesError.new('Unknown image format after scale!')
             end
           ),
-          status_bar_height: Applitools::Utils::EyesSeleniumUtils.status_bar_height(driver),
-          device_pixel_ratio: Applitools::Utils::EyesSeleniumUtils.device_pixel_ratio(driver)
+          status_bar_height: self.utils.status_bar_height(driver),
+          device_pixel_ratio: self.utils.device_pixel_ratio(driver)
         )
       end
     end
@@ -131,20 +132,20 @@ class Applitools::Appium::Eyes < Applitools::Selenium::SeleniumEyes
   def obtain_viewport_screenshot
     self.screenshot = screenshot_class.new(
         Applitools::Screenshot.from_datastream(driver.screenshot_as(:png)),
-        status_bar_height: Applitools::Utils::EyesSeleniumUtils.status_bar_height(driver),
-        device_pixel_ratio: Applitools::Utils::EyesSeleniumUtils.device_pixel_ratio(driver)
+        status_bar_height: self.utils.status_bar_height(driver),
+        device_pixel_ratio: self.utils.device_pixel_ratio(driver)
     )
   end
 
   def screenshot_class
-    return Applitools::Appium::IosScreenshot if Applitools::Utils::EyesSeleniumUtils.ios?(Applitools::Appium::Driver::AppiumLib)
-    return Applitools::Appium::AndroidScreenshot if Applitools::Utils::EyesSeleniumUtils.android?(Applitools::Appium::Driver::AppiumLib)
+    return Applitools::Appium::IosScreenshot if self.utils.ios?(Applitools::Appium::Driver::AppiumLib)
+    return Applitools::Appium::AndroidScreenshot if self.utils.android?(Applitools::Appium::Driver::AppiumLib)
     raise Applitools::EyesError, 'Unknown device type'
   end
 
   def region_provider_class
-    return Applitools::Appium::IosRegionProvider if Applitools::Utils::EyesSeleniumUtils.ios?(Applitools::Appium::Driver::AppiumLib)
-    return Applitools::Appium::AndroidRegionProvider if Applitools::Utils::EyesSeleniumUtils.android?(Applitools::Appium::Driver::AppiumLib)
+    return Applitools::Appium::IosRegionProvider if self.utils.ios?(Applitools::Appium::Driver::AppiumLib)
+    return Applitools::Appium::AndroidRegionProvider if self.utils.android?(Applitools::Appium::Driver::AppiumLib)
     raise Applitools::EyesError, 'Unknown device type'
   end
 end

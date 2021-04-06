@@ -5,13 +5,13 @@ module Applitools::Appium
     extend self
 
     def init
-      Applitools::Utils::EyesSeleniumUtils.module_eval do
+      Applitools::Appium::Utils.module_eval do
+        extend Applitools::Utils::EyesSeleniumUtils
         alias_method :super_mobile_device?, :mobile_device?
         alias_method :super_android?, :android?
         alias_method :super_ios?, :ios?
         alias_method :super_platform_version, :platform_version
         alias_method :super_current_scroll_position, :current_scroll_position
-        include Applitools::Appium::Utils
       end
     end
   end
