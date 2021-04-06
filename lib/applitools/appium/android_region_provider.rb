@@ -13,7 +13,7 @@ module Applitools
       def convert_viewport_rect_coordinates
         region  = viewport_rect
 
-        session_info = Applitools::Utils::EyesSeleniumUtils.session_capabilities(driver)
+        session_info = Applitools::Appium::Utils.session_capabilities(driver)
         if session_info['deviceScreenSize']
           device_height = session_info['deviceScreenSize'].split('x').last.to_i
           system_bars_height = driver.get_system_bars.map {|_,v| v['height'] }.sum

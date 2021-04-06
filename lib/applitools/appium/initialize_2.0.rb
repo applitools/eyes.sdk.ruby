@@ -7,6 +7,7 @@ module Applitools::Appium
       Applitools::Appium::Utils.module_eval do
         include Applitools::Utils::EyesSeleniumUtils
         extend Applitools::Utils::EyesSeleniumUtils
+        extend self
       end
     end
   end
