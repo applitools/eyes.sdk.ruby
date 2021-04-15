@@ -1,3 +1,8 @@
+## [vNext]
+### Fixed
+- Fix Selenium and Appium libraries conflict [Trello 2500](https://trello.com/c/UOwzI2s8)
+## Deprecated
+- Ruby 1.9 support for Appium lib (Requirement 2.2+)
 ## [3.17.23] - 2021-01-22
 ### Fixed
 - Fix viewport rect of a native app at some android devices [Trello 2079](https://trello.com/c/sQJLgtUL)
