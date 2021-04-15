@@ -23,7 +23,7 @@ module Applitools
       private
 
       def viewport_rect
-        Applitools::Utils::EyesSeleniumUtils.viewport_rect(driver)
+        Applitools::Appium::Utils.viewport_rect(driver)
       end
 
       def convert_region_coordinates
@@ -44,7 +44,7 @@ module Applitools
       end
 
       def scale_factor
-        Applitools::Utils::EyesSeleniumUtils.device_pixel_ratio(driver)
+        Applitools::Appium::Utils.device_pixel_ratio(driver)
       end
     end
   end

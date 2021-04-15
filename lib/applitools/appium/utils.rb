@@ -2,6 +2,9 @@
 
 module Applitools::Appium
   module Utils
+    include Applitools::Utils::EyesSeleniumUtils
+    extend self
+
     # true if test is running on mobile device
     def mobile_device?(driver)
       defined?(Appium::Driver) &&

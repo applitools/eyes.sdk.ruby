@@ -32,7 +32,7 @@ module Applitools::Selenium
     attr_reader :browser
     attr_accessor :rotation
 
-    def_delegators :@eyes, :add_mouse_trigger, :add_text_trigger
+    def_delegators :@eyes, :add_mouse_trigger, :add_text_trigger, :utils
     def_delegators :@browser, :user_agent
     def_delegators 'Applitools::EyesLogger', :logger, :log_handler, :log_handler=
 
@@ -214,7 +214,7 @@ module Applitools::Selenium
       current_frames = frame_chain
       switch_to.default_content unless current_frames.empty?
       logger.info 'Extracting viewport size...'
-      @cached_default_content_viewport_size = Applitools::Utils::EyesSeleniumUtils.extract_viewport_size(self)
+      @cached_default_content_viewport_size = utils.extract_viewport_size(self)
       logger.info "Done! Viewport size is #{@cached_default_content_viewport_size}"
 
       switch_to.frames(frame_chain: current_frames) unless current_frames.empty?

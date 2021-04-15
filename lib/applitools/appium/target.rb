@@ -54,7 +54,7 @@ module Applitools
                               end
                             when Applitools::Region
                               result = first_argument.padding(requested_padding)
-                              if Applitools::Utils::EyesSeleniumUtils.ios?(Applitools::Appium::Driver::AppiumLib)
+                              if Applitools::Appium::Utils.ios?(Applitools::Appium::Driver::AppiumLib)
                                 def result.converted?
                                   true
                                 end
@@ -77,7 +77,7 @@ module Applitools
                   args.first
                 when Applitools::Region
                   result = Applitools::FloatingRegion.any(*args)
-                  if Applitools::Utils::EyesSeleniumUtils.ios?(Applitools::Appium::Driver::AppiumLib)
+                  if Applitools::Appium::Utils.ios?(Applitools::Appium::Driver::AppiumLib)
                     def result.converted?
                       true
                     end
@@ -147,7 +147,7 @@ module Applitools
                                    result = Applitools::AccessibilityRegion.new(
                                        args.first, options[:type]
                                    )
-                                   if Applitools::Utils::EyesSeleniumUtils.ios?(Applitools::Appium::Driver::AppiumLib)
+                                   if Applitools::Appium::Utils.ios?(Applitools::Appium::Driver::AppiumLib)
                                      def result.converted?
                                        true
                                      end
@@ -189,7 +189,7 @@ module Applitools
             Applitools::Region.from_location_size(r.location, r.size)
           end
         when Applitools::Region
-          if Applitools::Utils::EyesSeleniumUtils.ios?(Applitools::Appium::Driver::AppiumLib)
+          if Applitools::Appium::Utils.ios?(Applitools::Appium::Driver::AppiumLib)
             def r.converted?
               true
             end

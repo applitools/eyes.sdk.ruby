@@ -98,6 +98,7 @@ module Applitools::Selenium
       :wait_before_screenshots, :debug_screenshots, :stitch_mode, :disable_horizontal_scrolling,
       :disable_vertical_scrolling, :explicit_entire_size, :debug_screenshot_provider, :stitching_overlap,
       :full_page_capture_algorithm_left_top_offset, :screenshot_type, :send_dom, :use_dom, :enable_patterns,
+      :utils,
       :config
     attr_reader :driver
 
@@ -135,6 +136,7 @@ module Applitools::Selenium
       self.use_dom = false
       self.enable_patterns = false
       self.prevent_dom_processing = false
+      self.utils = Applitools::Utils::EyesSeleniumUtils
     end
 
     def ensure_config
@@ -217,7 +219,7 @@ module Applitools::Selenium
     # @!visibility private
     def get_viewport_size(web_driver = driver)
       Applitools::ArgumentGuard.not_nil 'web_driver', web_driver
-      Applitools::Utils::EyesSeleniumUtils.extract_viewport_size(driver)
+      self.utils.extract_viewport_size(driver)
     end
 
     # Takes a snapshot and matches it with the expected output.
@@ -305,14 +307,14 @@ module Applitools::Selenium
           else
             if hide_scrollbars
               begin
-                original_overflow = Applitools::Utils::EyesSeleniumUtils.hide_scrollbars driver
+                original_overflow = self.utils.hide_scrollbars driver
                 driver.find_element(:css, 'html').overflow_data_attribute = original_overflow
               rescue Applitools::EyesDriverOperationException => e
                 logger.warn "Failed to hide scrollbars! Error: #{e.message}"
               ensure
                 ensure_block = lambda do
                   begin
-                    Applitools::Utils::EyesSeleniumUtils.set_overflow driver, original_overflow if original_overflow
+                    self.utils.set_overflow driver, original_overflow if original_overflow
                   rescue Applitools::EyesDriverOperationException => e
                     logger.warn "Failed to revert overflow! Error: #{e.message}"
                   end
@@ -514,7 +516,7 @@ module Applitools::Selenium
       original_frame = driver.frame_chain
       driver.switch_to.default_content
       begin
-        Applitools::Utils::EyesSeleniumUtils.set_viewport_size driver, value
+        self.utils.set_viewport_size driver, value
       rescue => e
         logger.error e.class.to_s
         logger.error e.message
@@ -541,7 +543,7 @@ module Applitools::Selenium
 
       logger.info 'Trying to extract device pixel ratio...'
       begin
-        self.device_pixel_ratio = Applitools::Utils::EyesSeleniumUtils.device_pixel_ratio(driver)
+        self.device_pixel_ratio = utils.device_pixel_ratio(driver)
       rescue Applitools::EyesDriverOperationException
         logger.warn 'Failed to extract device pixel ratio! Using default.'
         self.device_pixel_ratio = DEFAULT_DEVICE_PIXEL_RATIO
@@ -658,13 +660,13 @@ module Applitools::Selenium
       app_env = super
       if app_env.os.nil?
         logger.info 'No OS set, checking for mobile OS...'
-        underlying_driver = Applitools::Utils::EyesSeleniumUtils.mobile_device?(driver)
+        underlying_driver = self.utils.mobile_device?(driver)
         unless underlying_driver.nil?
           logger.info 'Mobile device detected! Checking device type...'
-          if Applitools::Utils::EyesSeleniumUtils.android?(underlying_driver)
+          if self.utils.android?(underlying_driver)
             logger.info 'Android detected...'
             platform_name = 'Android'
-          elsif Applitools::Utils::EyesSeleniumUtils.ios?(underlying_driver)
+          elsif self.utils.ios?(underlying_driver)
             logger.info 'iOS detected...'
             platform_name = 'iOS'
           else
@@ -674,7 +676,7 @@ module Applitools::Selenium
 
         if platform_name && !platform_name.empty?
           os = platform_name
-          platform_version = Applitools::Utils::EyesSeleniumUtils.platform_version(underlying_driver)
+          platform_version = self.utils.platform_version(underlying_driver)
           case platform_version
           when String
             major_version = platform_version.split(/\./).first
