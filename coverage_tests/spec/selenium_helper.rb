@@ -48,6 +48,7 @@ RSpec.configure do |config|
       @eyes.browsers_info = browser_info
     end
     @eyes.parent_branch_name = args[:parent_branch_name] if args.key? :parent_branch_name
+    @eyes.branch_name = args[:branch_name] if args.key? :branch_name
     @eyes.hide_scrollbars = args[:hide_scrollbars] if args.key? :hide_scrollbars
     @eyes.disabled = args[:is_disabled] if args.key? :is_disabled
     if args.key? :default_match_settings
