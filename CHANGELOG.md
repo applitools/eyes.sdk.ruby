@@ -1,4 +1,4 @@
-## [vNext]
+## [3.18.0] - 2021-04-20
 ### Fixed
 - Fix Selenium and Appium libraries conflict [Trello 2500](https://trello.com/c/UOwzI2s8)
 ## Deprecated
