@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
 require 'securerandom'
+require 'applitools/utils/utils'
 require_relative 'helpers'
 
 module Applitools
   class BatchInfo
     extend Helpers
-    attr_accessor :started_at, :id, :notify_on_completion
+    attr_accessor :started_at, :id, :notify_on_completion, :properties
 
     environment_attribute :name, 'APPLITOOLS_BATCH_NAME'
     environment_attribute :id, 'APPLITOOLS_BATCH_ID'
@@ -14,10 +15,24 @@ module Applitools
     environment_attribute :env_notify_on_completion, 'APPLITOOLS_BATCH_NOTIFY'
 
 
-    def initialize(name = nil, started_at = Time.now)
+    def initialize(args = nil, started_at = Time.now)
+      case args
+        when String
+          name = args
+        when Hash
+          sym_args = Applitools::Utils.symbolize_keys args
+          id ||= sym_args[:id]
+          name ||= sym_args[:name]
+          properties ||= sym_args[:properties]
+      end
       self.name = name if name
       @started_at = started_at
-      self.id = SecureRandom.uuid unless id
+      if id
+        self.id = id
+      elsif self.id.nil? || self.id.empty?
+        self.id = SecureRandom.uuid
+      end
+      self.properties = properties if properties
       self.notify_on_completion = 'true'.casecmp(env_notify_on_completion || '') == 0 ? true : false
     end
 
@@ -27,7 +42,8 @@ module Applitools
           'name' => name,
           'startedAt' => @started_at.iso8601,
           'batchSequenceName' => sequence_name,
-          'notifyOnCompletion' => notify_on_completion
+          'notifyOnCompletion' => notify_on_completion,
+          'properties' => properties
       }
     end
 
