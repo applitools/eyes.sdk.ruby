@@ -27,7 +27,11 @@ module Applitools
       end
       self.name = name if name
       @started_at = started_at
-      self.id = id || SecureRandom.uuid
+      if id
+        self.id = id
+      elsif self.id.nil? || self.id.empty?
+        self.id = SecureRandom.uuid
+      end
       self.properties = properties if properties
       self.notify_on_completion = 'true'.casecmp(env_notify_on_completion || '') == 0 ? true : false
     end
