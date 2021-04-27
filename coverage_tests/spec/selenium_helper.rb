@@ -60,6 +60,9 @@ RSpec.configure do |config|
         @eyes.default_match_settings = default_match_settings
       end
     end
+    if args.key? :batch
+      @eyes.batch = Applitools::BatchInfo.new(args[:batch])
+    end
     raise 'Layout_breakpoints arent implemented in the Ruby SDK (Or it is time to update the test)' if args.key? :layout_breakpoints
   end
 
