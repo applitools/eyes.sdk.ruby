@@ -1,3 +1,6 @@
+## [3.18.1] - 2021-04-28
+### Added
+- Allow defining custom properties at the batch level [Trello 2445](https://trello.com/c/IKTydXLv)
 ## [3.18.0] - 2021-04-20
 ### Fixed
 - Fix Selenium and Appium libraries conflict [Trello 2500](https://trello.com/c/UOwzI2s8)
