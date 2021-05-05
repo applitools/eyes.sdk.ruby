@@ -319,7 +319,7 @@ module Applitools
                                                      branch_name: branch_name, parent_branch_name: parent_branch_name,
                                                      baseline_branch_name: baseline_branch_name, save_diffs: save_diffs,
                                                      properties: properties
-
+      session_start_info.agent_run_id = agent_run_id if agent_run_id
       match_window_data.start_info = session_start_info
       match_window_data.update_baseline_if_new = save_new_tests
       match_window_data.update_baseline_if_different = save_failed_tests
@@ -597,6 +597,7 @@ module Applitools
                                                 branch_name: branch_name, parent_branch_name: parent_branch_name,
                                                 baseline_branch_name: baseline_branch_name, save_diffs: save_diffs,
                                                 properties: properties
+      session_start_info.agent_run_id = agent_run_id if agent_run_id
 
       logger.info 'Starting server session...'
       self.running_session = server_connector.start_session session_start_info
