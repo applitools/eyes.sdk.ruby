@@ -249,6 +249,12 @@ module Applitools
         self
       end
 
+      def variation_group_id(value)
+        Applitools::ArgumentGuard.not_nil(value, 'variation_group_id')
+        options[:variation_group_id] = value
+        self
+      end
+
       def frame(*args)
         element = case args.first
                   when ::Selenium::WebDriver::Element, Applitools::Selenium::Element, String

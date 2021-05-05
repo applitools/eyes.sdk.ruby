@@ -87,6 +87,10 @@ module Applitools
       current_data['Options']['Name'] = value
     end
 
+    def variation_group_id=(value)
+      current_data['Options']['variantId'] = value
+    end
+
     def user_inputs=(value)
       Applitools::ArgumentGuard.is_a? value, 'value', Array
       current_data['UserInputs'] += value.select { |i| i.respond_to? :to_hash }
