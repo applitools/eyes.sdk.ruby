@@ -118,6 +118,7 @@ module Applitools
     object_field :accessibility_validation, Applitools::AccessibilitySettings, true
     object_field :properties, Array
     int_field :match_timeout
+    string_field :agent_run_id
 
     methods_to_delegate.delete(:batch_info)
     methods_to_delegate.delete(:batch_info=)

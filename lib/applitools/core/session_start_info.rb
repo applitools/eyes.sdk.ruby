@@ -5,7 +5,7 @@ module Applitools
     include Applitools::Jsonable
     json_fields :batchInfo, :agentId, :appIdOrName, :verId, :environment, :environmentName, :branchName, :defaultMatchSettings,
       :scenarioIdOrName, :properties, :parentBranchName, :compareWithParentBranch, :baselineEnvName, :saveDiffs, :sessionType,
-      :baselineBranchName
+      :baselineBranchName, :agentRunId
 
     wrap_data do |value|
       { startInfo: value }
@@ -28,6 +28,7 @@ module Applitools
       self.save_diffs = options[:save_diffs]
       self.session_type = options[:session_type]
       self.baseline_branch_name = options[:baseline_branch_name]
+      self.agentRunId = options[:agent_run_id] if options[:agent_run_id]
     end
 
     def to_hash

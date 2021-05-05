@@ -63,6 +63,7 @@ module Applitools
 
         config.app_name = options[:app_name] if options[:app_name]
         config.test_name = options[:test_name] if options[:test_name]
+        config.agent_run_id = "#{config.test_name}--#{SecureRandom.hex(10)}"
 
         if config.viewport_size.nil? || config.viewport_size && config.viewport_size.empty?
           config.viewport_size = Applitools::RectangleSize.from_any_argument(options[:viewport_size]) if options[:viewport_size]

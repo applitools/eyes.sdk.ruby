@@ -263,6 +263,7 @@ module Applitools::Selenium
         begin
           match_data = Applitools::MatchWindowData.new(default_match_settings)
           match_data.tag = name
+          match_data.variation_group_id = target_to_check.options[:variation_group_id] if target_to_check.options[:variation_group_id]
           eyes_element = target_to_check.region_to_check.call(driver)
 
           unless force_full_page_screenshot
