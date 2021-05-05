@@ -55,6 +55,9 @@ module Applitools
           logger.error "Error retrieving coordinates for region #{e.region}"
           logger.error e.message
         end
+
+        match_data.variation_group_id = match_data.target.options[:variation_group_id] if match_data.target.options[:variation_group_id]
+
         check_result = check_window_base(
           dummy_region_provider, timeout, match_data
         )
