@@ -1,3 +1,6 @@
+## [3.18.2] - 2021-05-05
+### Added
+- Support variation_group_id and agentRunId [Trello 2527](https://trello.com/c/6SyxJXVZ)
 ## [3.18.1] - 2021-04-28
 ### Added
 - Allow defining custom properties at the batch level [Trello 2445](https://trello.com/c/IKTydXLv)
