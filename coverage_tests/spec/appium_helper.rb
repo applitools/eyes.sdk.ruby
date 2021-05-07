@@ -30,6 +30,7 @@ RSpec.configure do |config|
     @eyes.test_name = args[:baseline_name] if args.key? :baseline_name
     @eyes.app_name = args[:app_name] if args.key? :app_name
     @eyes.parent_branch_name = args[:parent_branch_name] if args.key? :parent_branch_name
+    @eyes.branch_name = args[:branch_name] if args.key? :branch_name
     @eyes.hide_scrollbars = args[:hide_scrollbars] if args.key? :hide_scrollbars
     @eyes.disabled = args[:is_disabled] if args.key? :is_disabled
     if args.key? :default_match_settings
