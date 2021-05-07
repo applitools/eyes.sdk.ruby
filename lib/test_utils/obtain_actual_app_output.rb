@@ -8,7 +8,7 @@ module Applitools
       end
 
       def actual_app_output(api_key, eyes_test_result)
-        session_results(eyes_test_result.['apiUrls']['session'], eyes_test_result.secret_token, api_key)#(eyes_test_result.api_session_url, eyes_test_result.secret_token, api_key)
+        session_results(eyes_test_result.api_session_url, eyes_test_result.secret_token, api_key)
       end
 
       def session_results(api_session_url, secret_token, api_key)
