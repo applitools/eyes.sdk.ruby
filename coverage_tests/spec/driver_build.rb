@@ -100,7 +100,7 @@ DEVICES = {
     'Android 8.0 Chrome Emulator' => {
       capabilities: {
         browserName: 'chrome',
-          'goog:chromeOptions': {
+          BROWSER_OPTIONS_NAME['chrome'] => {
             mobileEmulation: {
               deviceMetrics: {width: 384, height: 512, pixelRatio: 2},
                   userAgent:
