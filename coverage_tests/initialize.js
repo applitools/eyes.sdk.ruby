@@ -109,10 +109,7 @@ module.exports = function (tracker, test) {
             }
         },
         open({appName, testName, viewportSize}) {
-            if ((test.config.baselineName === 'TestCheckRegionInFrame2_Fluent_Scroll') ||
-                (test.config.baselineName === 'TestCheckRegionInFrame2_Fluent') ||
-                (test.config.baselineName === 'TestCheckRegionInFrame3_Fluent_VG') ||
-                (test.config.baselineName === 'TestCheckRegionInFrame3_Fluent'))
+            if (test.config.baselineName === 'TestCheckRegionInFrame3_Fluent_VG')
                   return addCommand(construct`@eyes.configure do |conf|`
                 .add`    conf.app_name = ${appName || test.config.appName}`
                 .add`    conf.test_name = ${testName || test.config.baselineName}`
