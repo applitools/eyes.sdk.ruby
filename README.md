@@ -3,7 +3,7 @@
 [![Gem Version](https://badge.fury.io/rb/eyes_selenium.svg)](http://badge.fury.io/rb/eyes_selenium)
 [![Build Status](https://travis-ci.org/applitools/Eyes.Selenium.Ruby.svg)](https://travis-ci.org/applitools/Eyes.Selenium.Ruby)
 
-Applitools Ruby SDK.
+Applitools Ruby SDK
 
 ## Installation
 
