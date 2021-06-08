@@ -188,7 +188,6 @@ BROWSERS = {
         }.merge(SAUCE_CREDENTIALS)
     },
     'firefox' => {
-      url: 'http://localhost:4445/wd/hub',
         capabilities: {
           browserName: 'firefox',
           BROWSER_OPTIONS_NAME['firefox'] => {
@@ -214,7 +213,8 @@ DEFAULT = {
 def get_env(args = {})
   args = DEFAULT.merge(args)
   env = {
-    url: 'http://localhost:4444/wd/hub',
+    url: 'https://exec-wus.applitools.com/int-rel-tok-ruby-sdk-coverage',
+    # url: 'http://localhost:4444/wd/hub',
     capabilities: {
       browserName: args[:browser] || '',
     }

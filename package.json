@@ -20,6 +20,7 @@
     "ruby:test": "yarn ruby:create && yarn ruby:run:parallel && yarn ruby:report:merge && yarn ruby:report:sandbox",
     "ruby:test:prod": "[ \"TRAVIS_EVENT_TYPE\" = \"cron\" ] && yarn ruby:create:noskip || yarn ruby:create && yarn ruby:run:parallel && yarn ruby:report:merge && yarn ruby:report",
     "ruby:create": "cd coverage_tests && coverage-tests generate ./configuration --pascalizeTests",
+    "local": "cd coverage_tests && coverage-tests generate ./configuration/local.js --pascalizeTests",
     "ruby:create:noskip": "cd coverage_tests && coverage-tests generate ./configuration --pascalizeTests -a",
     "ruby:report": "[ \"$TEST_REPORT_SANDBOX\" = \"False\" ] && yarn ruby:report:prod || yarn ruby:report:sandbox ",
     "ruby:report:sandbox": "cd coverage_tests && coverage-tests report ./configuration --sandbox$( [ -z $TRAVIS_COMMIT ] || echo \" --reportId $TRAVIS_COMMIT\" )",
