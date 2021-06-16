@@ -25,7 +25,10 @@ module Applitools
       default_match_settings: Applitools::ImageMatchSettings.new,
       accessibility_validation: nil,
       properties: [],
-      match_timeout: DEFAULT_MATCH_TIMEOUT
+      match_timeout: DEFAULT_MATCH_TIMEOUT,
+      dont_fetch_resources: true,
+      enable_cross_origin_rendering: true,
+      dont_use_cookies: false,
     }.freeze
 
     class << self
@@ -119,6 +122,9 @@ module Applitools
     object_field :properties, Array
     int_field :match_timeout
     string_field :agent_run_id
+    boolean_field :dont_fetch_resources
+    boolean_field :enable_cross_origin_rendering
+    boolean_field :dont_use_cookies
 
     methods_to_delegate.delete(:batch_info)
     methods_to_delegate.delete(:batch_info=)
@@ -186,6 +192,18 @@ module Applitools
 
     def add_property(name, value)
       properties << { name: name, value: value } if name && value
+    end
+
+    def set_disable_browser_fetching=(value)
+      self.dont_fetch_resources = value
+    end
+
+    def set_enable_cross_origin_rendering=(value)
+      self.enable_cross_origin_rendering = value
+    end
+
+    def set_dont_use_cookies=(value)
+      self.dont_use_cookies = value
     end
 
     methods_to_delegate.push(:set_proxy)

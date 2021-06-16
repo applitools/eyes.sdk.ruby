@@ -8,7 +8,6 @@ module Applitools
   module Selenium
     class VisualGridEyes
       include Applitools::Selenium::Concerns::SeleniumEyes
-      DOM_EXTRACTION_TIMEOUT = 300 # seconds or 5 minutes
       USE_DEFAULT_MATCH_TIMEOUT = -1
       extend Forwardable
 
@@ -125,9 +124,6 @@ module Applitools
           tag = first_arg[:name] || first_arg[:tag]
         end
 
-        script = <<-END
-          #{Applitools::Selenium::Scripts::PROCESS_PAGE_AND_POLL} return __processPageAndSerializePoll(document, {skipResources: [#{visual_grid_manager.resource_cache.urls_to_skip}]});
-        END
         render_task = nil
         target.default_full_page_for_vg
 
@@ -136,31 +132,33 @@ module Applitools
           check_in_frame(target_frames: target_to_check.frames) do
             sleep wait_before_screenshots
             Applitools::EyesLogger.info 'Trying to get DOM snapshot...'
+            begin
+              dont_fetch_resources = self.dont_fetch_resources
+              enable_cross_origin_rendering = self.enable_cross_origin_rendering
+              use_cookies = !self.dont_use_cookies
+              urls_to_skip = visual_grid_manager.resource_cache.urls_to_skip
+              dom_script = Applitools::Selenium::DomSnapshotScript.new driver
 
-            script_thread = Thread.new do
-              result = {}
-              while result['status'] != 'SUCCESS'
-                Thread.current[:script_result] = driver.execute_script(script)
-                begin
-                  Thread.current[:result] = result = Oj.load(Thread.current[:script_result])
-                  sleep 0.5
-                rescue Oj::ParseError => e
-                  Applitools::EyesLogger.warn e.message
-                end
-              end
+              script_dom = dom_script.create_dom_snapshot(
+                dont_fetch_resources,
+                urls_to_skip,
+                enable_cross_origin_rendering,
+                use_cookies
+              )
+            rescue StandardError => e
+              Applitools::EyesLogger.error e.class.to_s
+              Applitools::EyesLogger.error e.message
+              raise ::Applitools::EyesError.new 'Error while getting dom snapshot!'
             end
-            sleep 0.5
-            script_thread_result = script_thread.join(DOM_EXTRACTION_TIMEOUT)
-            raise ::Applitools::EyesError.new 'Timeout error while getting dom snapshot!' unless script_thread_result
             Applitools::EyesLogger.info 'Done!'
 
-            mod = Digest::SHA2.hexdigest(script_thread_result[:script_result])
+            mod = Digest::SHA2.hexdigest(script_dom.to_s)
 
             region_x_paths = get_regions_x_paths(target_to_check)
 
             render_task = RenderTask.new(
               "Render #{config.short_description} - #{tag}",
-              script_thread_result[:result]['value'],
+              script_dom,
               visual_grid_manager,
               server_connector,
               region_x_paths,
