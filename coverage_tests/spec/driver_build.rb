@@ -1,24 +1,30 @@
 # frozen_string_literal: true
+
 SAUCE_SERVER_URL = 'https://ondemand.saucelabs.com:443/wd/hub'.freeze
 SAUCE_CREDENTIALS = {
   username: ENV['SAUCE_USERNAME'],
-  accessKey: ENV['SAUCE_ACCESS_KEY']
+    accessKey: ENV['SAUCE_ACCESS_KEY']
 }.freeze
 BROWSER_OPTIONS_NAME = {
   'chrome' => 'goog:chromeOptions',
-  'firefox' => 'moz:firefoxOptions'
+    'firefox' => 'moz:firefoxOptions'
 }.freeze
+is_eg = ENV.key?('EXECUTION_GRID_TOKEN')
+FIREFOX_SERVER_URL = 'http://localhost:4445/wd/hub'
+CHROME_SERVER_URL = is_eg ? "https://exec-wus.applitools.com/#{ENV['EXECUTION_GRID_TOKEN']}" : 'http://localhost:4444/wd/hub'
+
+
 DEVICES = {
   'Android Emulator' => {
     type: 'sauce',
       url: SAUCE_SERVER_URL,
       capabilities: {
         browserName: '',
-        deviceName: 'Android Emulator',
-        platformName: 'Android',
-        platformVersion: '6.0',
-        clearSystemFiles: true,
-        noReset: true
+          deviceName: 'Android Emulator',
+          platformName: 'Android',
+          platformVersion: '6.0',
+          clearSystemFiles: true,
+          noReset: true
       }.merge(SAUCE_CREDENTIALS)
   },
     'Pixel 3a XL' => {
@@ -26,35 +32,35 @@ DEVICES = {
         url: SAUCE_SERVER_URL,
         capabilities: {
           browserName: '',
-          deviceName: 'Google Pixel 3a XL GoogleAPI Emulator',
-          platformName: 'Android',
-          platformVersion: '10.0',
-          deviceOrientation: 'portrait'
+            deviceName: 'Google Pixel 3a XL GoogleAPI Emulator',
+            platformName: 'Android',
+            platformVersion: '10.0',
+            deviceOrientation: 'portrait'
         }.merge(SAUCE_CREDENTIALS)
     },
     'Pixel 3 XL' => {
       capabilities: {
         browserName: '',
-        deviceName: 'Google Pixel 3 XL GoogleAPI Emulator',
-        platformName: 'Android',
-        platformVersion: '10.0',
-        deviceOrientation: 'portrait'
+          deviceName: 'Google Pixel 3 XL GoogleAPI Emulator',
+          platformName: 'Android',
+          platformVersion: '10.0',
+          deviceOrientation: 'portrait'
       }.merge(SAUCE_CREDENTIALS),
         url: SAUCE_SERVER_URL,
         sauce: true
     },
-    'Samsung Galaxy S8'=> {
+    'Samsung Galaxy S8' => {
       type: 'sauce',
         url: SAUCE_SERVER_URL,
         capabilities: {
           browserName: '',
-          name: 'Android Demo',
-          platformName: 'Android',
-          platformVersion: '7.0',
-          appiumVersion: '1.9.1',
-          deviceName: 'Samsung Galaxy S8 FHD GoogleAPI Emulator',
-          automationName: 'uiautomator2',
-          newCommandTimeout: 600
+            name: 'Android Demo',
+            platformName: 'Android',
+            platformVersion: '7.0',
+            appiumVersion: '1.9.1',
+            deviceName: 'Samsung Galaxy S8 FHD GoogleAPI Emulator',
+            automationName: 'uiautomator2',
+            newCommandTimeout: 600
         }.merge(SAUCE_CREDENTIALS)
     },
     'iPhone 5S' => {
@@ -62,9 +68,9 @@ DEVICES = {
         url: SAUCE_SERVER_URL,
         capabilities: {
           browserName: '',
-          deviceName: 'iPhone 5s Simulator',
-          platformVersion: '12.4',
-          platformName: 'iOS'
+            deviceName: 'iPhone 5s Simulator',
+            platformVersion: '12.4',
+            platformName: 'iOS'
         }.merge(SAUCE_CREDENTIALS)
     },
     'iPhone 11 Pro' => {
@@ -72,9 +78,9 @@ DEVICES = {
         url: SAUCE_SERVER_URL,
         capabilities: {
           browserName: '',
-          deviceName: 'iPhone 11 Pro Simulator',
-          platformVersion: '13.4',
-          platformName: 'iOS'
+            deviceName: 'iPhone 11 Pro Simulator',
+            platformVersion: '13.4',
+            platformName: 'iOS'
         }.merge(SAUCE_CREDENTIALS)
     },
     'iPhone XS' => {
@@ -82,9 +88,9 @@ DEVICES = {
         url: SAUCE_SERVER_URL,
         capabilities: {
           browserName: '',
-          platformName: 'iOS',
-          platformVersion: '13.0',
-          deviceName: 'iPhone XS Simulator'
+            platformName: 'iOS',
+            platformVersion: '13.0',
+            deviceName: 'iPhone XS Simulator'
         }.merge(SAUCE_CREDENTIALS)
     },
     'iPad Air' => {
@@ -92,9 +98,9 @@ DEVICES = {
         url: SAUCE_SERVER_URL,
         capabilities: {
           browserName: '',
-          deviceName: 'iPad Air Simulator',
-          platformVersion: '12.4',
-          platformName: 'iOS'
+            deviceName: 'iPad Air Simulator',
+            platformVersion: '12.4',
+            platformName: 'iOS'
         }.merge(SAUCE_CREDENTIALS)
     },
     'Android 8.0 Chrome Emulator' => {
@@ -167,7 +173,7 @@ BROWSERS = {
             seleniumVersion: '3.4.0'
         }.merge(SAUCE_CREDENTIALS)
     },
-    'safari-12'=> {
+    'safari-12' => {
       type: 'sauce',
         url: SAUCE_SERVER_URL,
         capabilities: {
@@ -188,36 +194,37 @@ BROWSERS = {
         }.merge(SAUCE_CREDENTIALS)
     },
     'firefox' => {
+      url: FIREFOX_SERVER_URL,
         capabilities: {
           browserName: 'firefox',
-          BROWSER_OPTIONS_NAME['firefox'] => {
-            args: []
-          }
+            BROWSER_OPTIONS_NAME['firefox'] => {
+              args: []
+            }
         }
     },
     'chrome' => {
-      capabilities: {
-        browserName: 'chrome',
-        BROWSER_OPTIONS_NAME['chrome'] => {
-            args: []
+      url: CHROME_SERVER_URL,
+        capabilities: {
+          browserName: 'chrome',
+            BROWSER_OPTIONS_NAME['chrome'] => {
+              args: []
+            }
         }
-      }
     }
 }.freeze
 
 DEFAULT = {
   browser: 'chrome',
-  headless: true
+    headless: true
 }.freeze
 
 def get_env(args = {})
   args = DEFAULT.merge(args)
   env = {
-    url: 'https://exec-wus.applitools.com/int-rel-tok-ruby-sdk-coverage',
-    # url: 'http://localhost:4444/wd/hub',
-    capabilities: {
-      browserName: args[:browser] || '',
-    }
+    url: CHROME_SERVER_URL,
+      capabilities: {
+        browserName: args[:browser] || '',
+      }
   }
   env[:capabilities].merge!(args[:capabilities]) unless args[:capabilities].nil?
   env[:capabilities][:app] = args[:app] unless args[:app].nil?
