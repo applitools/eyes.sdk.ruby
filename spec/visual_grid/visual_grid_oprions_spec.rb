@@ -76,12 +76,17 @@ RSpec.describe 'Visual Grid Options', mock_connection: true do
                       .with(Applitools::Utils::EyesSeleniumUtils::JS_GET_CURRENT_SCROLL_POSITION)
                       .and_return(left: 0, top: 0)
       allow(d).to receive(:execute_script).with(any_args) do |*_args|
-        Oj.dump('status' => 'SUCCESS', 'value' => {'blobs' => [], 'resourceUrls' => [], 'frames' => []})
+        Oj.dump('status' => 'SUCCESS', 'value' => {'blobs' => [], 'resourceUrls' => [], 'frames' => [], 'crossFrames' => []})
       end
       allow(d).to receive(:title)
       allow(d).to receive(:user_agent).and_return(nil)
       allow(d).to receive(:frame_chain).and_return([])
       allow(d).to receive(:current_url).and_return('http://www.google.com')
+      allow(d).to receive(:manage).and_return(
+        double(Selenium::WebDriver::Manager).tap do |m|
+          allow(m).to receive(:all_cookies).and_return([])
+        end
+      )
     end
   end
 
