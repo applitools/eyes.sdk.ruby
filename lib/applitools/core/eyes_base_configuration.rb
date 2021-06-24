@@ -194,16 +194,8 @@ module Applitools
       properties << { name: name, value: value } if name && value
     end
 
-    def set_disable_browser_fetching=(value)
+    def disable_browser_fetching=(value)
       self.dont_fetch_resources = value
-    end
-
-    def set_enable_cross_origin_rendering=(value)
-      self.enable_cross_origin_rendering = value
-    end
-
-    def set_dont_use_cookies=(value)
-      self.dont_use_cookies = value
     end
 
     methods_to_delegate.push(:set_proxy)

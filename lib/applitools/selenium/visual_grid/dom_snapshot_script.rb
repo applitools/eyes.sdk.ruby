@@ -19,7 +19,9 @@ module Applitools
         cross_origin_rendering,
         use_cookies
       )
-        script = DomSnapshotScript.new(driver, urls_to_skip, dont_fetch_resources)
+        serialize_resources = true
+        compress_resources = false
+        script = DomSnapshotScript.new(driver, urls_to_skip, dont_fetch_resources, serialize_resources, compress_resources)
         snapshotter = RecursiveSnapshotter.new(driver, script, cross_origin_rendering, use_cookies)
 
         begin
@@ -35,12 +37,14 @@ module Applitools
       class DomSnapshotScript
         DOM_EXTRACTION_TIMEOUT = 300
 
-        attr_accessor :driver, :urls_to_skip, :dont_fetch_resources
+        attr_accessor :driver, :urls_to_skip, :dont_fetch_resources, :serialize_resources, :compress_resources
 
-        def initialize(driver, urls_to_skip, dont_fetch_resources)
+        def initialize(driver, urls_to_skip, dont_fetch_resources, serialize_resources = false, compress_resources = false)
           self.driver = driver
           self.urls_to_skip = urls_to_skip
           self.dont_fetch_resources = dont_fetch_resources
+          self.compress_resources = compress_resources
+          self.serialize_resources = serialize_resources
         end
 
         def process_page_script
@@ -49,13 +53,15 @@ module Applitools
 
         def script_options
           options = []
-          options.push("dontFetchResources: #{dont_fetch_resources}") if dont_fetch_resources
-          options.push("skipResources: [#{urls_to_skip}]") if urls_to_skip
+          options.push("dontFetchResources: #{dont_fetch_resources}")
+          options.push("skipResources: [#{urls_to_skip}]")
+          options.push("compressResources: #{compress_resources}")
+          options.push("serializeResources: #{serialize_resources}")
           "{#{options.join(', ')}}"
         end
 
         def script
-          "#{process_page_script} return __processPageAndSerializePoll(document, #{script_options});"
+          "#{process_page_script} return __processPageAndSerializePoll(#{script_options});"
         end
 
         def run
