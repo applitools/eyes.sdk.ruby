@@ -1,3 +1,6 @@
+## [3.18.3] - 2021-06-24
+### Added
+- Support cross origin iframes in UFG [Trello 2259](https://trello.com/c/iJKPvd75), [Trello 2584](https://trello.com/c/QyLzmnGl)
 ## [3.18.2] - 2021-05-05
 ### Added
 - Support variation_group_id and agentRunId [Trello 2527](https://trello.com/c/6SyxJXVZ)
