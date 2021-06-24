@@ -188,12 +188,13 @@ module Applitools
         end
 
         fetch_block = proc do |_s, key|
-          resp_proc = proc { |u| server_connector.download_resource(u, ua_string) }
+          resp_proc = proc { |u, cookies| server_connector.download_resource(u, ua_string, cookies) }
           retry_count = 3
+          matching_cookies = data['cookies'].to_a.select {|c| is_cookie_for_url(c, key)}
           response = nil
           loop do
             retry_count -= 1
-            response = resp_proc.call(key.dup)
+            response = resp_proc.call(key.dup, matching_cookies)
             break unless response.status != 200 && retry_count > 0
           end
           Applitools::Selenium::VGResource.parse_response(
@@ -286,6 +287,24 @@ module Applitools
         end
         running_tests << running_test
         running_tests.length - 1
+      end
+
+      def is_cookie_for_url(cookie, url)
+        return false if cookie[:secure] && url.scheme != 'https'
+        return false if cookie[:expires] && DateTime.now > cookie[:expires]
+
+        subdomains_allowed = cookie[:domain].start_with? '.'
+        domain = subdomains_allowed ? cookie[:domain][1..-1] : cookie[:domain]
+        domain_match = url.hostname === domain
+        subdomain_match = url.hostname.end_with?('.' + domain)
+        return false unless domain_match || (subdomains_allowed && subdomain_match)
+
+        path = cookie[:path]
+        path = path.end_with?('/') ? path[0..-2] : path
+
+        return true if url.path === path
+        return true if url.path.start_with?(path + '/')
+        false
       end
     end
   end
