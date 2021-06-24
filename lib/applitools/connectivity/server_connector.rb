@@ -167,7 +167,7 @@ module Applitools::Connectivity
       Oj.load(response.body)
     end
 
-    def download_resource(url, ua_string = nil)
+    def download_resource(url, ua_string = nil, cookies=nil)
       Applitools::EyesLogger.debug "Fetching #{url}..."
       resp_proc = proc do |u|
         faraday_connection(u, false).send(:get) do |req|
@@ -175,6 +175,7 @@ module Applitools::Connectivity
           req.headers[:accept_encoding] = 'identity'
           req.headers[:accept_language] = '*'
           req.headers[:user_agent] = ua_string if ua_string
+          req.headers[:Cookie] = cookies.map { |h| [h[:name], h[:value]].join('=') }.join('; ') unless cookies.to_a.empty?
         end
       end
       response = resp_proc.call(url)
