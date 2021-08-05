@@ -31,18 +31,23 @@ RSpec.configure do |config|
   end
 
   def build_driver(args = {})
+    use_local_driver = args[:useLocalDriver] ? true : false
     env = get_env(args)
-    driver = if use_docker
-               Selenium::WebDriver.for :remote, desired_capabilities: env[:capabilities], url: env[:url]
-             else
-               case env[:capabilities][:browserName]
-               when 'chrome' then
-                 Selenium::WebDriver.for :chrome, desired_capabilities: env[:capabilities]
-               when 'firefox' then
-                 Selenium::WebDriver.for :firefox, desired_capabilities: env[:capabilities]
-               else
+    driver = if use_local_driver
+               if use_docker
                  Selenium::WebDriver.for :remote, desired_capabilities: env[:capabilities], url: env[:url]
+               else
+                 case env[:capabilities][:browserName]
+                 when 'chrome' then
+                   Selenium::WebDriver.for :chrome, desired_capabilities: env[:capabilities]
+                 when 'firefox' then
+                   Selenium::WebDriver.for :firefox, desired_capabilities: env[:capabilities]
+                 else
+                   raise 'Only Chrome and Firefox are using direct drivers'
+                 end
                end
+             else
+               Selenium::WebDriver.for :remote, desired_capabilities: env[:capabilities], url: env[:url]
              end
     driver
   end
