@@ -5,6 +5,7 @@ require 'logger'
 
 
 RSpec.configure do |config|
+
   def eyes(args)
     is_visual_grid = args[:is_visual_grid].nil? ? false : args[:is_visual_grid]
     branch_name = args[:branch_name].nil? ? 'master' : args[:branch_name]
@@ -31,7 +32,19 @@ RSpec.configure do |config|
 
   def build_driver(args = {})
     env = get_env(args)
-    Selenium::WebDriver.for :remote, desired_capabilities: env[:capabilities], url: env[:url]
+    driver = if use_docker
+               Selenium::WebDriver.for :remote, desired_capabilities: env[:capabilities], url: env[:url]
+             else
+               case env[:capabilities][:browserName]
+               when 'chrome' then
+                 Selenium::WebDriver.for :chrome, desired_capabilities: env[:capabilities]
+               when 'firefox' then
+                 Selenium::WebDriver.for :firefox, desired_capabilities: env[:capabilities]
+               else
+                 Selenium::WebDriver.for :remote, desired_capabilities: env[:capabilities], url: env[:url]
+               end
+             end
+    driver
   end
 
   def eyes_config(args)
@@ -85,13 +98,30 @@ RSpec.configure do |config|
 
   def get_browser_type(browser)
     case browser
-    when 'chrome' then BrowserType::CHROME
-    when 'firefox' then BrowserType::FIREFOX
-    when 'safari' then BrowserType::SAFARI
-    when 'ie10' then BrowserType::IE_10
-    when 'ie11' then BrowserType::IE_11
+    when 'chrome' then
+      BrowserType::CHROME
+    when 'firefox' then
+      BrowserType::FIREFOX
+    when 'safari' then
+      BrowserType::SAFARI
+    when 'ie10' then
+      BrowserType::IE_10
+    when 'ie11' then
+      BrowserType::IE_11
     end
   end
+
+  def use_docker
+    ci = ENV['CI'] == 'true' unless ENV['CI'].nil?
+    use_docker_selenium = ENV['USE_DOCKER_SELENIUM'] == 'true' unless ENV['USE_DOCKER_SELENIUM'].nil?
+    result = if use_docker_selenium
+               use_docker_selenium
+             else
+               !ci
+             end
+    result
+  end
+
 end
 
 

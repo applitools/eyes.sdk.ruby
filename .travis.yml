@@ -45,11 +45,10 @@ jobs:
       name: "eyes_appium tests"
     - stage: "Ruby Coverage tests"
       name: "Ruby Coverage tests"
-      script: yarn ruby:prod
-#    - stage: "Ruby tutorials checks"
-#      script:
-#        - ./tutorials/buildTravis.sh
-#        - ./tutorials/checkTutorials.sh
+      script:
+        - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
+        - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
+        - yarn ruby:prod
     - stage: "Report all test results"
       if: branch = master AND type = cron
       name: "Report all test results"

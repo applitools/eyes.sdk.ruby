@@ -27,15 +27,15 @@
     "ruby:report:prod": "cd coverage_tests && coverage-tests report ./configuration --reportId $TRAVIS_COMMIT",
     "ruby:run": "cd coverage_tests && APPLITOOLS_BATCH_NAME='Ruby Coverage Tests' APPLITOOLS_BATCH_ID=$(uuidgen) bundle exec rspec spec/coverage/generic",
     "ruby:run:debug": "cd coverage_tests && APPLITOOLS_BATCH_NAME='Ruby Coverage Tests' APPLITOOLS_BATCH_ID=$(uuidgen) APPLITOOLS_SHOW_LOGS='true' bundle exec rspec spec/coverage/generic",
-    "ruby:run:parallel": "[ -z \"$EXECUTION_GRID_TOKEN\" ] && yarn ruby:parallel:local || yarn ruby:parallel:eg",
+    "ruby:run:parallel": "if [ -z \"$EXECUTION_GRID_URL\" ]; then yarn ruby:parallel:local; else yarn ruby:parallel:eg; fi",
     "ruby:parallel:local": "cd coverage_tests && APPLITOOLS_BATCH_NAME='Ruby Coverage Tests' APPLITOOLS_BATCH_ID=$(uuidgen) bundle exec parallel_rspec -n 6 spec/coverage/generic -i -s 'Native'",
-    "ruby:parallel:eg": "cd coverage_tests && APPLITOOLS_BATCH_NAME='Ruby Coverage Tests' APPLITOOLS_BATCH_ID=$(uuidgen) bundle exec parallel_rspec -n 24 spec/coverage/generic -i -s 'Native'",
+    "ruby:parallel:eg": "cd coverage_tests && APPLITOOLS_BATCH_NAME='Ruby Coverage Tests' APPLITOOLS_BATCH_ID=$(uuidgen) bundle exec parallel_rspec -n 40 spec/coverage/generic -i -s 'Native'",
     "ruby:report:merge": "cd coverage_tests && junit-merge -d tmp -o coverage-test-report.xml",
     "docker:start": "docker compose up -d",
     "docker:stop": "docker compose down"
   },
   "dependencies": {
-    "@applitools/sdk-coverage-tests": "^2.3.2",
+    "@applitools/sdk-coverage-tests": "^2.3.14",
     "junit-merge": "^2.0.0",
     "@typescript-eslint/parser": "^2.14.0",
     "typescript": "^3.7.4"

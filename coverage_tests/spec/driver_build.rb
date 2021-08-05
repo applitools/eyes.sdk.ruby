@@ -9,8 +9,10 @@ BROWSER_OPTIONS_NAME = {
   'chrome' => 'goog:chromeOptions',
     'firefox' => 'moz:firefoxOptions'
 }.freeze
-is_eg = ENV.key?('EXECUTION_GRID_TOKEN')
+is_eg = ENV.key?('EXECUTION_GRID_URL')
+LOCAL_SERVER_URL = 'http://localhost:4444/wd/hub'
 FIREFOX_SERVER_URL = 'http://localhost:4445/wd/hub'
+CHROME_LOCAL_SERVER_URL = LOCAL_SERVER_URL
 CHROME_SERVER_URL = is_eg ? "https://exec-wus.applitools.com/#{ENV['EXECUTION_GRID_TOKEN']}" : 'http://localhost:4444/wd/hub'
 
 
@@ -104,17 +106,18 @@ DEVICES = {
         }.merge(SAUCE_CREDENTIALS)
     },
     'Android 8.0 Chrome Emulator' => {
-      capabilities: {
-        browserName: 'chrome',
-          BROWSER_OPTIONS_NAME['chrome'] => {
-            mobileEmulation: {
-              deviceMetrics: {width: 384, height: 512, pixelRatio: 2},
+      url: CHROME_LOCAL_SERVER_URL,
+        capabilities: {
+          browserName: 'chrome',
+            BROWSER_OPTIONS_NAME['chrome'] => {
+              mobileEmulation: {
+                deviceMetrics: {width: 384, height: 512, pixelRatio: 2},
                   userAgent:
                       'Mozilla/5.0 (Linux; Android 8.0.0; Android SDK built for x86_64 Build/OSR1.180418.004) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Mobile Safari/537.36'
-            },
-              args: ['hide-scrollbars']
-          }
-      }
+              },
+                args: ['hide-scrollbars']
+            }
+        }
     }
 }.freeze
 
@@ -203,13 +206,12 @@ BROWSERS = {
         }
     },
     'chrome' => {
-      url: CHROME_SERVER_URL,
-        capabilities: {
-          browserName: 'chrome',
-            BROWSER_OPTIONS_NAME['chrome'] => {
-              args: []
-            }
-        }
+      capabilities: {
+        browserName: 'chrome',
+          BROWSER_OPTIONS_NAME['chrome'] => {
+            args: []
+          }
+      }
     }
 }.freeze
 
@@ -218,10 +220,17 @@ DEFAULT = {
     headless: true
 }.freeze
 
+def chrome_url(use_local_driver)
+  is_eg = ENV.key?('EXECUTION_GRID_URL')
+  return ENV['EXECUTION_GRID_URL'] if is_eg && !use_local_driver
+  CHROME_LOCAL_SERVER_URL
+end
+
 def get_env(args = {})
   args = DEFAULT.merge(args)
+  use_local_driver = args[:useLocalDriver] ? true : false
   env = {
-    url: CHROME_SERVER_URL,
+    url: chrome_url(use_local_driver),
       capabilities: {
         browserName: args[:browser] || '',
       }
