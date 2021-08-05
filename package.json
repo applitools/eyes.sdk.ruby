@@ -15,7 +15,7 @@
   },
   "scripts": {
     "ruby": "yarn docker:start && yarn ruby:test; yarn docker:stop",
-    "ruby:prod": "yarn && yarn docker:start && yarn ruby:test:prod",
+    "ruby:prod": "yarn && yarn ruby:test:prod",
     "ruby:ci": "yarn && bundle install && yarn ruby",
     "ruby:test": "yarn ruby:create && yarn ruby:run:parallel && yarn ruby:report:merge && yarn ruby:report:sandbox",
     "ruby:test:prod": "[ \"TRAVIS_EVENT_TYPE\" = \"cron\" ] && yarn ruby:create:noskip || yarn ruby:create && yarn ruby:run:parallel && yarn ruby:report:merge && yarn ruby:report",
