@@ -5,4 +5,4 @@ echo $latestChromeDriverURL
 wget "http://chromedriver.storage.googleapis.com/${latestChromeDriverURL}/chromedriver_linux64.zip"
 unzip chromedriver_linux64.zip -d /home/travis/bin/
 chmod +x /home/travis/bin/chromedriver
-/home/travis/build/chromedriver --version
+/home/travis/bin/chromedriver --version
