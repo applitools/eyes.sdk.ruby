@@ -118,7 +118,7 @@ RSpec.configure do |config|
     elsif use_docker
       build_remote(caps, url)
     else
-      Selenium::WebDriver.for :chrome, desired_capabilities: env[:capabilities]
+      Selenium::WebDriver.for :chrome, desired_capabilities: caps
     end
   end
 
