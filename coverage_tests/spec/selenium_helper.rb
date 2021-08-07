@@ -126,7 +126,7 @@ RSpec.configure do |config|
     if use_docker
       build_remote(caps, url)
     else
-      Selenium::WebDriver.for :firefox, desired_capabilities: env[:capabilities]
+      Selenium::WebDriver.for :firefox, desired_capabilities: caps
     end
   end
 
