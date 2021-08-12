@@ -5,6 +5,7 @@ require 'logger'
 
 
 RSpec.configure do |config|
+
   def eyes(args)
     is_visual_grid = args[:is_visual_grid].nil? ? false : args[:is_visual_grid]
     branch_name = args[:branch_name].nil? ? 'master' : args[:branch_name]
@@ -30,8 +31,19 @@ RSpec.configure do |config|
   end
 
   def build_driver(args = {})
+    execution_grid = args[:executionGrid] ? true : false
+    args = DEFAULT.merge(args)
     env = get_env(args)
-    Selenium::WebDriver.for :remote, desired_capabilities: env[:capabilities], url: env[:url]
+    case env[:type]
+    when 'chrome'
+      build_chrome(env[:capabilities], env[:url], execution_grid)
+    when 'firefox'
+      build_firefox(env[:capabilities], env[:url])
+    when 'sauce'
+      build_sauce(env[:capabilities], env[:url])
+    else
+      raise "Unsupported type of the capabilities used #{env[:type]}"
+    end
   end
 
   def eyes_config(args)
@@ -85,13 +97,56 @@ RSpec.configure do |config|
 
   def get_browser_type(browser)
     case browser
-    when 'chrome' then BrowserType::CHROME
-    when 'firefox' then BrowserType::FIREFOX
-    when 'safari' then BrowserType::SAFARI
-    when 'ie10' then BrowserType::IE_10
-    when 'ie11' then BrowserType::IE_11
+    when 'chrome' then
+      BrowserType::CHROME
+    when 'firefox' then
+      BrowserType::FIREFOX
+    when 'safari' then
+      BrowserType::SAFARI
+    when 'ie10' then
+      BrowserType::IE_10
+    when 'ie11' then
+      BrowserType::IE_11
     end
   end
+
+  def build_chrome(caps, url, execution_grid)
+    if execution_grid
+      is_eg_url = ENV.key?('EXECUTION_GRID_URL')
+      raise 'No url for set for the execution grid, check environmental variable EXECUTION_GRID_URL' unless is_eg_url
+      build_remote(caps, ENV['EXECUTION_GRID_URL'])
+    elsif use_docker
+      build_remote(caps, url)
+    else
+      Selenium::WebDriver.for :chrome, desired_capabilities: caps
+    end
+  end
+
+  def build_firefox(caps, url)
+    if use_docker
+      build_remote(caps, url)
+    else
+      Selenium::WebDriver.for :firefox, desired_capabilities: caps
+    end
+  end
+
+  def build_remote(caps, url)
+    Selenium::WebDriver.for :remote, desired_capabilities: caps, url: url
+  end
+
+  alias build_sauce build_remote
+
+  def use_docker
+    ci = ENV['CI'] == 'true' unless ENV['CI'].nil?
+    use_docker_selenium = ENV['USE_DOCKER_SELENIUM'] == 'true' unless ENV['USE_DOCKER_SELENIUM'].nil?
+    result = if use_docker_selenium
+               use_docker_selenium
+             else
+               !ci
+             end
+    result
+  end
+
 end
 
 
