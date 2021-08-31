@@ -1,4 +1,4 @@
-## [vNext]
+## [3.18.4] - 2021-08-31
 ### Fixed
 - Fix Appium runner option [Trello 2697](https://trello.com/c/F6dLF1VF)
 - Fix parsing css transition [Trello 2647](https://trello.com/c/CIzoKPNY)
