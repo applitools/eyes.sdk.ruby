@@ -2,6 +2,7 @@
 ### Fixed
 - Fix Appium runner option [Trello 2697](https://trello.com/c/F6dLF1VF)
 - Fix parsing css transition [Trello 2647](https://trello.com/c/CIzoKPNY)
+- Fix require warning: No such file or directory @ dir_chdir - lib/applitools/selenium/scripts/node_modules [Trello 2148](https://trello.com/c/j5sAPSBa)
 ## [3.18.3] - 2021-06-24
 ### Added
 - Support cross origin iframes in UFG [Trello 2259](https://trello.com/c/iJKPvd75), [Trello 2584](https://trello.com/c/QyLzmnGl)
