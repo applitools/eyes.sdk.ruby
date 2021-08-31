@@ -4,6 +4,7 @@ module Applitools
       extend self
       def get_script_by_file_name(fname)
         script = nil
+        return script unless Dir.exist?(Applitools::JS_PATH)
         begin
           Dir.chdir(Applitools::JS_PATH) do
             script = File.open(File.join('@applitools', 'dom-snapshot', 'dist', "#{fname}.js"), 'r').read
