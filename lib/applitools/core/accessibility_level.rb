@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative './eyes_configuration_dsl'
 module Applitools
   module AccessibilityLevel
     extend self
@@ -20,6 +21,11 @@ module Applitools
     end
   end
 
+  # CheckSettings :
+  # accessibilitySettings?: {
+  #     level?: AccessibilityLevel;
+  #     guidelinesVersion?: AccessibilityGuidelinesVersion;
+  # };
   class AccessibilitySettings
     attr_reader :config_hash
     attr_accessor :validation_errors
@@ -36,7 +42,11 @@ module Applitools
     end
 
     def to_h
-      @config_hash
+      {
+        level: level,
+        version: version,
+        guidelinesVersion: version
+      }
     end
 
     def json_data

@@ -1,9 +1,0 @@
-{
-  "name": "applitools_related_scripts",
-  "version": "1.0.0",
-  "main": "index.js",
-  "license": "MIT",
-  "dependencies": {
-    "@applitools/dom-snapshot": "^4.0.5"
-  }
-}

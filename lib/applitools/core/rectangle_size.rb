@@ -77,6 +77,10 @@ module Applitools
     def empty?
       square.zero?
     end
+
+    def to_socket_output
+      {width: width, height: height}
+    end
   end
   # rubocop:enable Metrics/BlockLength
 end

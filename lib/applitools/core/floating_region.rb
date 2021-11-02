@@ -103,6 +103,32 @@ module Applitools
         'MaxDownOffset' => max_bottom_offset + padding_bottom
       }
     end
+
+    def to_socket_output
+      {
+        region: {
+          # x: left,
+          # y: top,
+          # height: height,
+          # width: width
+          # 'Top' => top,
+          # 'Left' => left,
+          # 'Width' => width,
+          # 'Height' => height,
+          # x: left,
+          # y: top,
+          left: left,
+          top: top,
+          width: width,
+          height: height
+      },
+        'maxUpOffset' => max_top_offset + padding_top,
+        'maxLeftOffset' => max_left_offset + padding_left,
+        'maxRightOffset' => max_right_offset + padding_right,
+        'maxDownOffset' => max_bottom_offset + padding_bottom
+      }
+    end
+
   end
 
   class FloatingBounds
@@ -122,6 +148,15 @@ module Applitools
       self.max_top_offset = max_top_offset
       self.max_right_offset = max_right_offset
       self.max_bottom_offset = max_bottom_offset
+    end
+
+    def to_socket_output
+      {
+        maxUpOffset: max_top_offset,
+        maxDownOffset: max_bottom_offset,
+        maxLeftOffset: max_left_offset,
+        maxRightOffset: max_right_offset
+      }
     end
   end
 end

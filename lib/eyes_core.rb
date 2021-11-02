@@ -4,7 +4,7 @@ require 'forwardable'
 require 'delegate'
 require 'time'
 require_relative 'require_utils'
-require_relative 'eyes_consts'
+# require_relative 'eyes_consts'
 
 module Applitools
   extend Applitools::RequireUtils
@@ -60,13 +60,15 @@ module Applitools
   class DiffsFoundError < TestFailedError; end
 end
 
-require_relative 'applitools/method_tracer'
-require_relative 'applitools/extensions'
+# require_relative 'applitools/method_tracer'
+# require_relative 'applitools/extensions'
 require_relative 'applitools/version'
-require_relative 'applitools/chunky_png_patch'
+# require_relative 'applitools/chunky_png_patch'
 
 Applitools.require_dir 'utils'
 Applitools.require_dir 'core'
-Applitools.require_dir 'connectivity'
+# Applitools.require_dir 'connectivity'
 
 require_relative 'applitools/eyes_logger'
+
+Applitools.require_dir 'universal_client'

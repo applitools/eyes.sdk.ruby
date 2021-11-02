@@ -54,6 +54,10 @@ module Applitools
       original_results['isAborted']
     end
 
+    def is_empty?
+      original_results['isEmpty']
+    end
+
     def api_session_url
       original_results['apiUrls']['session']
     end
@@ -94,5 +98,21 @@ module Applitools
       "#{is_new_str} [ steps: #{steps}, matches: #{matches}, mismatches: #{mismatches}, missing: #{missing} ], " \
         "URL: #{url}"
     end
+
+    def session_results_url
+      original_results['url']
+    end
+
+    def app_id_or_name
+      original_results['appName']
+    end
+
+    def batch_results_url
+      return '' if original_results[:message] && original_results[:stack]
+      original_results['appUrls']['batch']
+    rescue
+      binding.pry
+    end
+
   end
 end

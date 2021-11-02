@@ -1,3 +1,4 @@
+require 'oj'
 module Applitools
   module TestUtils
     module ObtainActualAppOutput

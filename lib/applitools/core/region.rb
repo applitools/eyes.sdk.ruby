@@ -120,6 +120,7 @@ module Applitools
       }
     end
 
+    alias to_socket_output to_hash
     alias json_data to_hash
 
     def to_s
