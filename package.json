@@ -26,6 +26,7 @@
     "report": "[ \"$TEST_REPORT_SANDBOX\" = \"False\" ] && yarn report:prod || yarn report:sandbox ",
     "report:sandbox": "cd coverage_tests && coverage-tests report ./configuration --sandbox$( [ -z $TRAVIS_COMMIT ] || echo \" --reportId $TRAVIS_COMMIT\" )",
     "report:prod": "cd coverage_tests && coverage-tests report ./configuration --reportId $TRAVIS_COMMIT",
+    "universal:debug": "eyes-universal --singleton --lazy",
     "run": "cd coverage_tests && APPLITOOLS_BATCH_NAME='Ruby Coverage Tests' APPLITOOLS_BATCH_ID=$(uuidgen) bundle exec rspec spec/coverage/generic",
     "run:debug": "cd coverage_tests && APPLITOOLS_BATCH_NAME='Ruby Coverage Tests' APPLITOOLS_BATCH_ID=$(uuidgen) APPLITOOLS_SHOW_LOGS='true' bundle exec rspec spec/coverage/generic",
     "run:parallel": "if [ -z \"$EXECUTION_GRID_URL\" ]; then yarn parallel:local; else yarn parallel:eg; fi",
@@ -36,7 +37,8 @@
     "docker:stop": "docker-compose down"
   },
   "dependencies": {
-    "@applitools/sdk-coverage-tests": "^2.3.14",
+    "@applitools/eyes-universal": "0.1.5",
+    "@applitools/sdk-coverage-tests": "^2.3.15",
     "junit-merge": "^2.0.0",
     "@typescript-eslint/parser": "^2.14.0",
     "typescript": "^3.7.4"
