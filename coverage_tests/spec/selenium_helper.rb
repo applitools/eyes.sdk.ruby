@@ -10,7 +10,7 @@ RSpec.configure do |config|
     is_visual_grid = args[:is_visual_grid].nil? ? false : args[:is_visual_grid]
     branch_name = args[:branch_name].nil? ? 'master' : args[:branch_name]
     @runner = if is_visual_grid
-                Applitools::Selenium::VisualGridRunner.new(10)
+                Applitools::Selenium::VisualGridRunner.new(1)
               else
                 Applitools::ClassicRunner.new
               end
@@ -75,7 +75,8 @@ RSpec.configure do |config|
     if args.key? :batch
       @eyes.batch = Applitools::BatchInfo.new(args[:batch])
     end
-    raise 'Layout_breakpoints arent implemented in the Ruby SDK (Or it is time to update the test)' if args.key? :layout_breakpoints
+    @eyes.layout_breakpoints = args[:layout_breakpoints] if args.key? :layout_breakpoints
+    # raise 'Layout_breakpoints arent implemented in the Ruby SDK (Or it is time to update the test)' if args.key? :layout_breakpoints
   end
 
   def parse_browser_info(instance)

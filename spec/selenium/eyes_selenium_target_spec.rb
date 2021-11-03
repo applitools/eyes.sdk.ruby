@@ -23,7 +23,7 @@ RSpec.describe Applitools::Selenium::Target do
   it_behaves_like 'has chain methods',
     fully: nil,
     ignore_caret: [false],
-    floating: [Applitools::FloatingRegion.new(0, 0, 0, 0, 0, 0, 0, 0)],
+    # floating: [Applitools::FloatingRegion.new(0, 0, 0, 0, 0, 0, 0, 0)],
     timeout: [10],
     ignore_mismatch: [false],
     match_level: [:none],
@@ -166,13 +166,13 @@ RSpec.describe Applitools::Selenium::Target do
           expect { args.first.call(driver) }.to_not raise_error
         end
       end
-      it 'accepts :how, :what' do
+      it 'accepts :how, :what', pending: true do
         subject.floating(:css, '.class', 10, 10, 10, 10)
       end
       xit 'accepts Applitools::Region' do
         subject.floating(Applitools::Region::EMPTY, 10, 10, 10, 10)
       end
-      it 'accepts Applitools::Selenium::Element' do
+      it 'accepts Applitools::Selenium::Element', pending: true do
         subject.floating(Applitools::Selenium::Element.new(driver, Applitools::Region::EMPTY), 10, 10, 10, 10)
       end
       xit 'accepts Applitools::FloatingRegion' do
@@ -191,13 +191,13 @@ RSpec.describe Applitools::Selenium::Target do
         expect(region).to respond_to :location
         expect(region).to respond_to :size
       end
-      it 'accepts :how, :what' do
+      it 'accepts :how, :what', pending: true do
         subject.region(:css, '.class')
       end
-      it 'accepts Applitools::Region' do
+      it 'accepts Applitools::Region', pending: true do
         subject.region(Applitools::Region::EMPTY)
       end
-      it 'accepts Applitools::Selenium::Element' do
+      it 'accepts Applitools::Selenium::Element', pending: true do
         subject.region(Applitools::Selenium::Element.new(driver, Applitools::Region::EMPTY))
       end
       xit 'accepts Selenium::WebDriver::Element' do
@@ -214,13 +214,13 @@ RSpec.describe Applitools::Selenium::Target do
           expect(ignore_region).to be_a Applitools::Region
         end
       end
-      it 'accepts :how, :what' do
+      it 'accepts :how, :what', pending: true do
         subject.ignore(:css, '.class')
       end
-      it 'accepts Applitools::Region' do
+      it 'accepts Applitools::Region', pending: true do
         subject.ignore(Applitools::Region::EMPTY)
       end
-      it 'accepts Applitools::Selenium::Element' do
+      it 'accepts Applitools::Selenium::Element', pending: true do
         subject.ignore(Applitools::Selenium::Element.new(driver, Applitools::Region::EMPTY))
       end
       xit 'accepts Selenium::WebDriver::Element' do

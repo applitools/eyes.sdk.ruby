@@ -36,6 +36,10 @@ module Applitools
         ios_device_info.device_name
       end
 
+      def to_hash
+        {iosDeviceInfo: ios_device_info.to_hash}
+      end
+
       private
 
       class EmulationInfo < EmulationBaseInfo
@@ -47,6 +51,14 @@ module Applitools
               name: device_name,
               screenOrientation: screen_orientation,
               version: 'latest'
+          }
+        end
+
+        def to_hash
+          {
+            deviceName: device_name,
+            screenOrientation: screen_orientation,
+            iosVersion: 'latest'
           }
         end
       end

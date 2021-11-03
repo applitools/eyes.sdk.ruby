@@ -47,8 +47,27 @@ module Applitools
       }
     end
 
+    # export type Batch = {
+    #   id?: string
+    #   name?: string
+    #   sequenceName?: string
+    #   startedAt?: Date | string
+    #   notifyOnCompletion?: boolean
+    #   properties?: CustomProperty[]
+    # }
+    # export type CustomProperty = {
+    #   name: string
+    #   value: string
+    # }
     def to_hash
-      json_data
+      {
+        id: id,
+        name: name, # 'Ruby Coverage Tests',
+        startedAt: @started_at.iso8601,
+        sequenceName: sequence_name,
+        notifyOnCompletion: notify_on_completion,
+        properties: properties
+      }.compact
     end
 
     def to_s
@@ -56,3 +75,4 @@ module Applitools
     end
   end
 end
+# U-Notes : change 'batchSequenceName' to 'sequenceName'

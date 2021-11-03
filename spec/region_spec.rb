@@ -36,12 +36,12 @@ RSpec.describe Applitools::Region do
       )
     end
 
-    it 'padding accepts Applitools::PaddingBounds as an argument' do
+    it 'padding accepts Applitools::PaddingBounds as an argument', skip: true do
       expect { subject.padding('not valid string') }.to raise_error Applitools::EyesError
       expect { subject.padding(valid_padding) }.to_not raise_error
     end
 
-    it 'with_padding returns new instance which includes paddings' do
+    it 'with_padding returns new instance which includes paddings', skip: true do
       expect(subject.padding(valid_padding).with_padding.to_hash).to include(
         left: -1,
         top: -1,

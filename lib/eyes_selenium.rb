@@ -31,5 +31,14 @@ if defined? Selenium::WebDriver::Driver
       is_mobile_device = capabilities['platformName'] ? true : false
       Applitools::Selenium::Driver.new(eyes, driver: self, is_mobile_device: is_mobile_device)
     end
+
+    def universal_driver_config
+      hidden_server_url = bridge.http.send(:server_url).to_s
+      {
+        serverUrl: hidden_server_url,
+        sessionId: session_id,
+        capabilities: capabilities.as_json
+      }
+    end
   end
 end

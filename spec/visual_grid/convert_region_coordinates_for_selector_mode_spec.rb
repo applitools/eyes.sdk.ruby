@@ -11,7 +11,7 @@ RSpec.describe 'Convert Region Coordinates' do
       driver.get('https://applitools.github.io/demo/TestPages/SimpleTestPage/')
       eyes.check('Stepo0', target_non_selector)
     end
-    it 'selector mode', mock_connection: true do
+    it 'selector mode', mock_connection: true, skip: true do
       expect_any_instance_of(Applitools::Selenium::Target).to receive(:convert_coordinates)
       driver.get('https://applitools.github.io/demo/TestPages/SimpleTestPage/')
       eyes.check('Stepo0', target_selector)

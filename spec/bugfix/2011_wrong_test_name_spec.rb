@@ -10,28 +10,29 @@ RSpec.describe '2011_bugfix_wrong_test_name' do
     end
   end
   context 'Eyes test name' do
-    class TestDriver
-      def driver_for_eyes(eyes)
-        Applitools::Selenium::Driver.new(eyes, driver: self, is_mobile_device: false)
-      end
-      def current_url
-        'current_url'
-      end
-      def manage
-        self
-      end
-      def window
-        self
-      end
-      def size
-        Applitools::RectangleSize.new(1024, 768)
-      end
-    end
+    # class TestDriver
+    #   def driver_for_eyes(eyes)
+    #     Applitools::Selenium::Driver.new(eyes, driver: self, is_mobile_device: false)
+    #   end
+    #   def current_url
+    #     'current_url'
+    #   end
+    #   def manage
+    #     self
+    #   end
+    #   def window
+    #     self
+    #   end
+    #   def size
+    #     Applitools::RectangleSize.new(1024, 768)
+    #   end
+    # end
 
     let(:runner) { Applitools::Selenium::VisualGridRunner.new(1) }
     let(:eyes) { Applitools::Selenium::Eyes.new(runner: runner) }
     let(:driver) do
-      TestDriver.new
+      Selenium::WebDriver.for :chrome
+      # TestDriver.new
     end
 
     it 'updates test name' do

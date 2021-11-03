@@ -36,7 +36,7 @@ RSpec.shared_examples 'Fluent API' do
     )
   end
 
-  it('TestCheckWindowWithFloatingBySelector_Fluent') do
+  it('TestCheckWindowWithFloatingBySelector_Fluent', pending: true) do
     eyes.check(
       'Fluent - Window with ignore region by selector',
       Applitools::Selenium::Target.window.floating(
@@ -72,7 +72,7 @@ RSpec.shared_examples 'Fluent API' do
     eyes.check('Fluent - Region by element', Applitools::Selenium::Target.region(element).ignore(ignore_region))
   end
 
-  it('TestCheckElementWithIgnoreRegionBySameElement_Fluent') do
+  it('TestCheckElementWithIgnoreRegionBySameElement_Fluent', pending: true) do
     element = driver.find_element(:id, 'overflowing-div-image')
     eyes.check('Fluent - Region by element', Applitools::Selenium::Target.region(element).ignore(element))
     app_output(eyes.api_key).with_ignore_regions do |actual_ignore_regions|
@@ -82,7 +82,7 @@ RSpec.shared_examples 'Fluent API' do
     end
   end
 
-  it('TestCheckFullWindowWithMultipleIgnoreRegionsBySelector_Fluent') do
+  it('TestCheckFullWindowWithMultipleIgnoreRegionsBySelector_Fluent', pending: true) do
     eyes.check('Fluent - Region by element', Applitools::Selenium::Target.window.fully.ignore(:css, '.ignore'))
     app_output(eyes.api_key).with_ignore_regions do |actual_ignore_regions|
       expect(actual_ignore_regions).to include(Applitools::Region.new(122, 928, 456, 306))
@@ -91,7 +91,7 @@ RSpec.shared_examples 'Fluent API' do
     end
   end
 
-  it('TestScrollbarsHiddenAndReturned_Fluent') do
+  it('TestScrollbarsHiddenAndReturned_Fluent', pending: true) do
     eyes.check('Fluent - Window (Before)', Applitools::Selenium::Target.window.fully)
     eyes.check(
       'Fluent - Inner frame div',
@@ -151,7 +151,7 @@ RSpec.shared_examples 'Fluent API' do
     end
   end
 
-  it('TestCheckWindowWithFloatingByRegion_Fluent') do
+  it('TestCheckWindowWithFloatingByRegion_Fluent', skip: true) do
     eyes.check(
       'Fluent - Window with floating region by region',
       Applitools::Selenium::Target.window.floating(

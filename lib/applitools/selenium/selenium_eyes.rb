@@ -1,5 +1,7 @@
 # frozen_string_literal: false
 
+require_relative '../universal_sdk/universal_client'
+
 module Applitools::Selenium
   # The main API gateway for the SDK
   class SeleniumEyes < Applitools::EyesBase
@@ -59,8 +61,13 @@ module Applitools::Selenium
         Applitools::ArgumentGuard.not_nil(driver, 'Driver')
         Applitools::ArgumentGuard.not_nil(viewport_size, 'viewport_size')
         Applitools::ArgumentGuard.is_a?(viewport_size, 'viewport_size', Applitools::RectangleSize)
+        Applitools::EyesLogger.info "Set viewport size #{viewport_size}"
         begin
-          Applitools::Utils::EyesSeleniumUtils.set_viewport_size eyes_driver(driver), viewport_size
+          # Applitools::Utils::EyesSeleniumUtils.set_viewport_size eyes_driver(driver), viewport_size
+          driver_config_json = driver.universal_driver_config
+          required_size = Applitools::RectangleSize.from_any_argument viewport_size
+          @universal_client = Applitools::Connectivity::UniversalClient.new
+          @universal_client.core_set_viewport_size(driver_config_json, required_size.to_hash)
         rescue => e
           Applitools::EyesLogger.error e.class
           Applitools::EyesLogger.error e.message
@@ -100,7 +107,7 @@ module Applitools::Selenium
       :full_page_capture_algorithm_left_top_offset, :screenshot_type, :send_dom, :use_dom, :enable_patterns,
       :utils,
       :config
-    attr_reader :driver
+    attr_accessor :driver
 
     def_delegators 'Applitools::EyesLogger', :logger, :log_handler, :log_handler=
     def_delegators 'config', *Applitools::Selenium::Configuration.methods_to_delegate
@@ -162,41 +169,42 @@ module Applitools::Selenium
     # @return [Applitools::Selenium::Driver] A wrapped web driver which enables Eyes
     #   trigger recording and frame handling
     def open(options = {})
-      original_driver = options.delete(:driver)
-      options[:viewport_size] = Applitools::RectangleSize.from_any_argument options[:viewport_size] if
-          options[:viewport_size]
-      Applitools::ArgumentGuard.not_nil original_driver, 'options[:driver]'
-      # Applitools::ArgumentGuard.hash options, 'open(options)', [:app_name, :test_name]
-
-      if disabled?
-        logger.info('Ignored')
-        return driver
-      end
-
-      @driver = self.class.eyes_driver(original_driver, self)
-      perform_driver_specific_settings(original_driver)
-
-      self.device_pixel_ratio = UNKNOWN_DEVICE_PIXEL_RATIO
-      self.position_provider = self.class.position_provider(
-        stitch_mode, driver, disable_horizontal_scrolling, disable_vertical_scrolling, explicit_entire_size
-      )
-
-      self.eyes_screenshot_factory = lambda do |image|
-        Applitools::Selenium::ViewportScreenshot.new(
-          image, driver: @driver, force_offset: position_provider.force_offset
-        )
-      end
-
-      open_base(options) do
-        self.viewport_size = get_viewport_size if force_driver_resolution_as_viewport_size
-        ensure_running_session
-      end
-      if runner
-        runner.add_batch(batch.id) do
-          server_connector.close_batch(batch.id)
-        end
-      end
-      @driver
+      universal_open(options)
+      # original_driver = options.delete(:driver)
+      # options[:viewport_size] = Applitools::RectangleSize.from_any_argument options[:viewport_size] if
+      #     options[:viewport_size]
+      # Applitools::ArgumentGuard.not_nil original_driver, 'options[:driver]'
+      # # Applitools::ArgumentGuard.hash options, 'open(options)', [:app_name, :test_name]
+      #
+      # if disabled?
+      #   logger.info('Ignored')
+      #   return driver
+      # end
+      #
+      # @driver = self.class.eyes_driver(original_driver, self)
+      # perform_driver_specific_settings(original_driver)
+      #
+      # self.device_pixel_ratio = UNKNOWN_DEVICE_PIXEL_RATIO
+      # self.position_provider = self.class.position_provider(
+      #   stitch_mode, driver, disable_horizontal_scrolling, disable_vertical_scrolling, explicit_entire_size
+      # )
+      #
+      # self.eyes_screenshot_factory = lambda do |image|
+      #   Applitools::Selenium::ViewportScreenshot.new(
+      #     image, driver: @driver, force_offset: position_provider.force_offset
+      #   )
+      # end
+      #
+      # open_base(options) do
+      #   self.viewport_size = get_viewport_size if force_driver_resolution_as_viewport_size
+      #   ensure_running_session
+      # end
+      # if runner
+      #   runner.add_batch(batch.id) do
+      #     server_connector.close_batch(batch.id)
+      #   end
+      # end
+      # @driver
     end
 
     def perform_driver_specific_settings(original_driver)
@@ -219,7 +227,15 @@ module Applitools::Selenium
     # @!visibility private
     def get_viewport_size(web_driver = driver)
       Applitools::ArgumentGuard.not_nil 'web_driver', web_driver
-      self.utils.extract_viewport_size(driver)
+      # self.utils.extract_viewport_size(driver)
+      driver_config_json = web_driver.universal_driver_config
+
+      Applitools::EyesLogger.debug 'extract_viewport_size()'
+      viewport_size = runner.universal_client.core_get_viewport_size(driver_config_json)
+      result = Applitools::RectangleSize.new viewport_size[:width], viewport_size[:height]
+
+      Applitools::EyesLogger.debug "Viewport size is #{result}."
+      result
     end
 
     # Takes a snapshot and matches it with the expected output.
@@ -242,6 +258,9 @@ module Applitools::Selenium
       logger.info "check(#{name}) is called"
       self.tag_for_debug = name
       Applitools::ArgumentGuard.is_a? target, 'target', Applitools::Selenium::Target
+
+      return universal_check(name, target)
+
       target_to_check = target.finalize
       original_overflow = nil
       original_position_provider = position_provider

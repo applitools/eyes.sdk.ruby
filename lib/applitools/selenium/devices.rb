@@ -16,6 +16,7 @@ module Devices
   Nexus6P = 'Nexus 6P'.freeze
   Pixel2 = 'Pixel 2'.freeze
   Pixel2XL = 'Pixel 2 XL'.freeze
+  Pixel4XL = 'Pixel 4 XL'.freeze
   LGOptimusL70 = 'LG Optimus L70'.freeze
   NokiaN9 = 'Nokia N9'.freeze
   NokiaLumia520 = 'Nokia Lumia 520'.freeze
@@ -39,7 +40,8 @@ module Devices
       IPhone4, IPhone5SE, IPhone678, IPhone678Plus, IPhoneX, IPad, IPadPro, BlackBerryZ30, Nexus4, Nexus5, Nexus5X,
       Nexus6, Nexus6P, Pixel2, Pixel2XL, LGOptimusL70, NokiaN9, NokiaLumia520, MicrosoftLumia550, MicrosoftLumia950,
       GalaxyS3, GalaxyS5, KindleFireHDX, IPadMini, BlackberryPlayBook, Nexus10, Nexus7, GalaxyNote3, GalaxyNote2,
-      LaptopWithTouch, LaptopWithHDPIScreen, LaptopWithMDPIScreen
+      LaptopWithTouch, LaptopWithHDPIScreen, LaptopWithMDPIScreen,
+      Pixel4XL
     ]
   end
 end

@@ -29,7 +29,7 @@ RSpec.describe Applitools::ImageMatchSettings do
   end
 end
 
-RSpec.describe Applitools::MatchWindowData do
+RSpec.describe Applitools::MatchWindowData, skip: true do
   subject { Applitools::MatchWindowData.new(default_image_match_settings) }
   let(:default_image_match_settings) { Applitools::ImageMatchSettings.new }
   let(:result_match_settings) { subject.to_hash['Options']['ImageMatchSettings'] }

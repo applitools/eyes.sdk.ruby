@@ -123,5 +123,14 @@ module Applitools
       self.max_right_offset = max_right_offset
       self.max_bottom_offset = max_bottom_offset
     end
+
+    def to_hash
+      {
+        maxUpOffset: max_top_offset,
+        maxDownOffset: max_bottom_offset,
+        maxLeftOffset: max_left_offset,
+        maxRightOffset: max_right_offset
+      }
+    end
   end
 end

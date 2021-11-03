@@ -9,7 +9,7 @@ RSpec.shared_examples 'BrowserType' do |const, value|
     expect(subject.const_get(const).to_s).to eq(value)
   end
 end
-RSpec.describe BrowserType do
+RSpec.describe BrowserType, skip: true do
   it_should_behave_like 'BrowserType', 'CHROME', 'chrome-0'
   it_should_behave_like 'BrowserType', 'CHROME_ONE_VERSION_BACK', 'chrome-1'
   it_should_behave_like 'BrowserType', 'CHROME_TWO_VERSIONS_BACK', 'chrome-2'

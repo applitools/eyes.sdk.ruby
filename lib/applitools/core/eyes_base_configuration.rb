@@ -11,7 +11,7 @@ require 'applitools/core/image_match_settings'
 
 module Applitools
   class EyesBaseConfiguration < AbstractConfiguration
-    DEFAULT_MATCH_TIMEOUT = 2 # seconds
+    DEFAULT_MATCH_TIMEOUT = 0 # seconds
 
     DEFAULT_CONFIG = {
       branch_name: ENV['APPLITOOLS_BRANCH'],
@@ -200,5 +200,26 @@ module Applitools
 
     methods_to_delegate.push(:set_proxy)
     methods_to_delegate.push(:add_property)
+
+    # U-Notes : Universal Add
+
+    # layoutBreakpoints?: boolean | number[]
+    def layout_breakpoints=(value)
+      config_hash[:layout_breakpoints] = (value.is_a?(Array) && value.all? {|v| v.is_a?(Numeric)}) ? value : !!value
+    end
+    def layout_breakpoints
+      config_hash[:layout_breakpoints]
+    end
+    collect_method :layout_breakpoints
+
+    # scrollRootElement?: TElement | TSelector
+    def scroll_root_element=(value)
+      config_hash[:scroll_root_element] = value
+    end
+    def scroll_root_element
+      config_hash[:scroll_root_element]
+    end
+    collect_method :scroll_root_element
+
   end
 end

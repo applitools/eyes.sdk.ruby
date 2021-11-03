@@ -26,8 +26,8 @@ module Applitools
       @mismatches = results.fetch('mismatches', 0)
       @missing = results.fetch('missing', 0)
       @status = results.fetch('status', 0)
-      @is_new = nil
-      @url = nil
+      @is_new = results.fetch('isNew', nil)
+      @url = results.fetch('url', nil)
     end
 
     def passed?

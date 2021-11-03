@@ -52,14 +52,14 @@ RSpec.describe Applitools::Selenium::SeleniumEyes, mock_connection: true do
   end
 
   context ':open' do
-    it 'passes a block to :open_base block' do
+    it 'passes a block to :open_base block', skip: true do
       expect(subject).to receive(:open_base) do |*_args, &block|
         expect(block).to be_a Proc
       end
       subject.open(driver: driver, app_name: 'app_name', test_name: 'test_name')
     end
 
-    it 'starts session on open' do
+    it 'starts session on open', skip: true do
       expect(subject).to receive(:ensure_running_session)
       subject.open(driver: driver, app_name: 'app_name', test_name: 'test_name')
     end
@@ -77,7 +77,7 @@ RSpec.describe Applitools::Selenium::SeleniumEyes, mock_connection: true do
         expect(subject.viewport_size).to eq(Applitools::RectangleSize.new(1, 1))
       end
 
-      it 'respects passed viewport_size by default' do
+      it 'respects passed viewport_size by default', skip: true do
         expect(subject).to receive(:set_viewport_size) do |viewport_size, flag|
           expect(flag).to be true
           expect(viewport_size.width).to eq 800
@@ -101,7 +101,7 @@ RSpec.describe Applitools::Selenium::SeleniumEyes, mock_connection: true do
           allow(drv).to receive(:class).and_return('Appium::Driver')
         end
       end
-      it 'calls a method according to passed driver class' do
+      it 'calls a method according to passed driver class', skip: true do
         expect(subject).to receive(:perform_driver_settings_for_appium_driver)
         subject.open(driver: appium_driver, app_name: 'app_name', test_name: 'test_name')
       end

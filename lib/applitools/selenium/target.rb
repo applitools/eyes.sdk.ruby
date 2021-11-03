@@ -49,49 +49,25 @@ module Applitools
         if args.empty?
           reset_ignore
         else
-          requested_padding = if args.last.is_a? Applitools::PaddingBounds
-                                args.pop
-                              else
-                                Applitools::PaddingBounds::PIXEL_PADDING
-                              end
+          # requested_padding = get_requested_padding(args)
           ignored_regions << case args.first
-                             when Applitools::Region
-                               proc { args.first.padding(requested_padding) }
-                             when ::Selenium::WebDriver::Element
-                               proc do |driver, return_element = false|
-                                 region = applitools_element_from_selenium_element(driver, args.first)
-                                 padding_proc = proc do |reg|
-                                   Applitools::Region.from_location_size(
-                                     reg.location, reg.size
-                                   ).padding(requested_padding)
-                                 end
-                                 next region, padding_proc if return_element
-                                 padding_proc.call(region)
-                               end
-                             when Applitools::Selenium::Element
-                               proc do |_driver, return_element = false|
-                                 region = args.first
-                                 padding_proc = proc do |reg|
-                                   Applitools::Region.from_location_size(
-                                     reg.location, reg.size
-                                   ).padding(requested_padding)
-                                 end
-                                 next region, padding_proc if return_element
-                                 padding_proc.call(region)
-                               end
-                             else
-                               proc do |driver, return_element = false|
-                                 region = driver.find_element(*args)
-                                 padding_proc = proc do |reg|
-                                   Applitools::Region.from_location_size(
-                                     reg.location, reg.size
-                                   ).padding(requested_padding)
-                                 end
-                                 next region, padding_proc if return_element
-                                 padding_proc.call(region)
-                               end
-                             end
-
+            when Applitools::Region
+              args.first.to_hash
+            when Applitools::Selenium::Element, ::Selenium::WebDriver::Element
+              { elementId: args.first.ref }
+            when :uiautomator # ANDROID_UI_AUTOMATOR: '-android uiautomator'
+              {type: '-android uiautomator', selector: args[1]}
+            when :predicate # IOS_PREDICATE: '-ios predicate string',
+              {type: '-ios predicate string', selector: args[1]}
+            when :accessibility_id
+              {type: 'accessibility id', selector: args[1]}
+            when :class # Applitools::Selenium::Driver::FINDERS
+              {type: 'class name', selector: args[1]}
+            when :id
+              proc { |driver| driver.find_element(name_or_id: args[1]) }
+            else
+              {type: args.first.to_s, selector: args[1]}
+          end
         end
         self
       end
@@ -120,49 +96,26 @@ module Applitools
       # @!parse def floating(region_or_element, bounds, left,top, right, bottom, padding); end;
 
       def floating(*args)
-        requested_padding = if args.last.is_a? Applitools::PaddingBounds
-                              args.pop
-                            else
-                              Applitools::PaddingBounds::PIXEL_PADDING
-                            end
-        value = case args.first
-                when Applitools::FloatingRegion
-                  args.first.padding(requested_padding)
-                when ::Applitools::Region
-                  Applitools::FloatingRegion.any(args.shift, *args).padding(requested_padding)
-                when ::Selenium::WebDriver::Element
-                  proc do |driver, return_element = false|
-                    args_dup = args.dup
-                    region = applitools_element_from_selenium_element(driver, args_dup.shift)
-                    padding_proc = proc do |reg|
-                      Applitools::FloatingRegion.any(reg, *args_dup).padding(requested_padding)
-                    end
-                    next region, padding_proc if return_element
-                    padding_proc.call(region)
-                  end
-                when ::Applitools::Selenium::Element
-                  proc do |_driver, return_element = false|
-                    args_dup = args.dup
-                    region = args_dup.shift
-                    padding_proc = proc do |reg|
-                      Applitools::FloatingRegion.any(reg, *args_dup).padding(requested_padding)
-                    end
-                    next region, padding_proc if return_element
-                    padding_proc.call(region)
-                  end
-                else
-                  proc do |driver, return_element = false|
-                    args_dup = args.dup
-                    region = driver.find_element(args_dup.shift, args_dup.shift)
-                    padding_proc = proc do |reg|
-                      Applitools::FloatingRegion.any(
-                        reg, *args_dup
-                      ).padding(requested_padding)
-                    end
-                    next region, padding_proc if return_element
-                    padding_proc.call(region)
-                  end
-                end
+        requested_padding = get_requested_padding(args)
+        first = args[0]
+        second = args[1]
+        value = case first
+          when Applitools::FloatingRegion, Applitools::Region
+            { region: first.to_hash }
+          when ::Selenium::WebDriver::Element, Applitools::Selenium::Element
+            { region: { elementId: first.ref } }
+          when Symbol
+            { region: { type: first, selector: second } }
+        end
+        value = value.merge(requested_padding)
+        # interface FloatingRegion {
+        #   target: RegionCoordinates | Selector | number;
+        #   maxUp: number;
+        #   maxDown: number;
+        #   maxLeft: number;
+        #   maxRight: number;
+        # }
+
         floating_regions << value
         self
       end
@@ -262,8 +215,9 @@ module Applitools
                   else
                     proc { |d| d.find_element(*args) }
                   end
-        frames << frame_or_element if frame_or_element
-        self.frame_or_element = element
+        frames << element
+        # frames << frame_or_element if frame_or_element
+        # self.frame_or_element = element
         reset_for_fullscreen
         self
       end
@@ -280,23 +234,38 @@ module Applitools
       # @!parse def region(element, how, what); end;
 
       def region(*args)
-        handle_frames
-        self.region_to_check = case args.first
-                               when ::Selenium::WebDriver::Element
-                                 proc do |driver|
-                                   applitools_element_from_selenium_element(driver, args.first)
-                                 end
-                               when Applitools::Selenium::Element, Applitools::Region
-                                 proc { args.first }
-                               when String
-                                 proc do |driver|
-                                   driver.find_element(name_or_id: args.first)
-                                 end
-                               else
-                                 proc do |driver|
-                                   driver.find_element(*args)
-                                 end
-                               end
+        first = args[0]
+        second = args[1]
+        self.region_to_check = case first
+          when String
+            proc { |driver| driver.find_element(name_or_id: first) }
+          when Applitools::Region
+            first.to_hash
+          when Applitools::Selenium::Element, ::Selenium::WebDriver::Element
+            { elementId: first.ref }
+          when :uiautomator # ANDROID_UI_AUTOMATOR: '-android uiautomator'
+            {type: '-android uiautomator', selector: second}
+          when :predicate # IOS_PREDICATE: '-ios predicate string'
+            {type: '-ios predicate string', selector: second}
+          when :accessibility_id
+            {type: 'accessibility id', selector: second}
+          when :class_name # Applitools::Selenium::Driver::FINDERS
+            {type: 'class name', selector: second}
+          when :id
+            proc { |driver| driver.find_element(name_or_id: second) }
+          when :tag_name
+            {type: 'tag name', selector: second}
+          when Hash
+            if first['selector'] && first['shadow']
+              {selector: first['selector'], shadow: first['shadow']}
+            elsif first['selector']
+              {selector: first['selector']}
+            else
+              {type: first.to_s, selector: second}
+            end
+          else
+            {type: first.to_s, selector: second}
+        end
         self.coordinate_type = Applitools::EyesScreenshot::COORDINATE_TYPES[:context_relative]
         options[:timeout] = nil
         reset_ignore
@@ -315,11 +284,16 @@ module Applitools
       end
 
       def before_render_screenshot_hook(hook)
-        options[:script_hooks][:beforeCaptureScreenshot] = hook
+        if hook.is_a?(Hash) && hook[:beforeCaptureScreenshot]
+          options[:script_hooks] = hook
+        else
+          options[:script_hooks][:beforeCaptureScreenshot] = hook
+        end
         self
       end
 
       alias script_hook before_render_screenshot_hook
+      alias hooks before_render_screenshot_hook
 
       def finalize
         return self unless frame_or_element
@@ -339,11 +313,7 @@ module Applitools
             "The region type should be one of [#{Applitools::AccessibilityRegionType.enum_values.join(', ')}]"
         end
         handle_frames
-        padding_proc = proc do |region|
-          Applitools::AccessibilityRegion.new(
-            region, options[:type]
-          )
-        end
+        padding_proc = proc { |region| Applitools::AccessibilityRegion.new(region, options[:type]) }
 
         accessibility_regions << case args.first
                                  when ::Selenium::WebDriver::Element
@@ -367,12 +337,16 @@ module Applitools
                                      next element, padding_proc if return_element
                                      padding_proc.call(element)
                                    end
+          when :css
+            # (:css, '.ignore', type: 'LargeText')
+            { region: args[1], type: options[:type] }
                                  else
                                    proc do |driver, return_element = false|
                                      elements = driver.find_elements(*args)
                                      next elements, padding_proc if return_element
                                      elements.map { |e| padding_proc.call(e) }
                                    end
+
                                  end
         self
       end
@@ -385,7 +359,7 @@ module Applitools
           when Proc
             begin
               r = region_to_check.call
-              fully(true) if r == Applitools::Region::EMPTY
+              # fully(true) if r == Applitools::Region::EMPTY
             rescue StandardError
               fully(false)
             end
@@ -396,6 +370,16 @@ module Applitools
 
       def convert_coordinates(&block)
         self.convert_coordinates_block = block
+      end
+
+      def scroll_root_element(by, what = nil)
+        options[:scroll_root_element] = what ? { type: by.to_s, selector: what } : by
+        self
+      end
+
+      def layout_breakpoints(value = true)
+        options[:layout_breakpoints] = value.is_a?(Array) ? value : value
+        self
       end
 
       private
@@ -447,6 +431,16 @@ module Applitools
       def applitools_element_from_selenium_element(driver, selenium_element)
         xpath = driver.execute_script(Applitools::Selenium::Scripts::GET_ELEMENT_XPATH_JS, selenium_element)
         driver.find_element(:xpath, xpath)
+      end
+
+      def get_requested_padding(args)
+        if args.last.is_a? Applitools::PaddingBounds
+          args.pop
+        elsif args.last.is_a?(Applitools::FloatingBounds)
+          args.pop.to_hash
+        else
+          Applitools::PaddingBounds::PIXEL_PADDING
+        end
       end
     end
   end

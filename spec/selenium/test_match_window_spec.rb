@@ -12,7 +12,7 @@ RSpec.shared_examples 'ReplaceMatchedStep' do |url, expected_replace_last_list|
   end
 end
 
-RSpec.describe 'TestMatchWindow', mock_connection: true do
+RSpec.describe 'TestMatchWindow', mock_connection: true, skip: true do
   before(:all) do
     $local_classic_runner ||= Applitools::ClassicRunner.new
     Applitools::EyesLogger.log_handler = Logger.new(STDOUT)

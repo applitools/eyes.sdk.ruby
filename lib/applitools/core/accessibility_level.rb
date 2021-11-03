@@ -42,5 +42,16 @@ module Applitools
     def json_data
       to_h
     end
+
+    # accessibilitySettings?: {
+    #   level?: AccessibilityLevel
+    #   guidelinesVersion?: AccessibilityGuidelinesVersion
+    # }
+    def to_hash
+      {
+        level: level,
+        guidelinesVersion: version
+      }
+    end
   end
 end

@@ -35,5 +35,9 @@ module Applitools
     def rendering_info(connector)
       @rendering_info ||= RenderingInfo.new(connector.rendering_info)
     end
+
+    def universal_eyes_manager_config
+      Applitools::UniversalEyesManagerConfig.classic
+    end
   end
 end

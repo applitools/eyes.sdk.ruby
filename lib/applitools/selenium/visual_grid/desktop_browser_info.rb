@@ -40,6 +40,12 @@ module Applitools
         'desktop'
       end
 
+      def to_hash
+        result = viewport_size.to_h
+        result[:name] = browser_type unless browser_type.nil?
+        result
+      end
+
     end
   end
 end

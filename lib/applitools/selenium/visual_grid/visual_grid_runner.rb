@@ -61,6 +61,10 @@ module Applitools
         super
       end
 
+      def universal_eyes_manager_config
+        Applitools::UniversalEyesManagerConfig.vg
+      end
+
       private
 
       def all_running_tests

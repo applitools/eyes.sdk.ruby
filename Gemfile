@@ -9,6 +9,10 @@ gemspec :name => 'eyes_calabash', :development_group => :eyes_calabash
 gemspec :name => 'eyes_capybara', :development_group => :eyes_capybara
 gemspec :name => 'eyes_appium', :development_group => :eyes_appium
 
+gemspec name: 'eyes_universal'
+gemspec name: 'eyes_universal-osx'
+gemspec name: 'eyes_universal-win'
+
 gem 'parallel_tests', group: [:development, :test]
 gem 'rspec_junit_formatter'
 # gem 'httpx', path: '../../httpx'

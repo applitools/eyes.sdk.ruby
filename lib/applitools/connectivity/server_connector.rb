@@ -310,10 +310,11 @@ module Applitools::Connectivity
     private
 
     def faraday_connection(url, pass_user_agent_header = true)
+      raise Applitools::NotUniversalServerRequestError.new(url)
       Faraday.new(
         url: url,
         ssl: { ca_file: SSL_CERT },
-        proxy: @proxy.nil? ? nil : @proxy.to_hash
+        proxy: @proxy.nil? ? nil : {uri: @proxy.uri}
       ) do |faraday|
         if pass_user_agent_header
           faraday.use(

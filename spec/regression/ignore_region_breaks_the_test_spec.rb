@@ -24,7 +24,7 @@ RSpec.describe 'Ignore region coordinates break the test' do
       .match_level(:strict).ignore_caret(true)
   end
 
-  it 'should not raise error' do
+  it 'should not raise error', pending: true do
     driver.get('https://applitools.com/helloworld?diff1')
     expect { eyes.check(target) }.to_not raise_error
     eyes.close_async

@@ -21,6 +21,14 @@ module Applitools
         end
         yield(default)
       end
+
+      def to_hash
+        return nil if empty?
+        map(&:to_hash)
+        # require 'pry'
+        # binding.pry
+      end
+
     end
   end
 end

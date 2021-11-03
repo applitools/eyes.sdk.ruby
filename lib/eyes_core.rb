@@ -31,6 +31,8 @@ module Applitools
   # @!visibility private
   class UnknownNetworkStackError < EyesError; end
 
+  class NotUniversalServerRequestError < EyesError; end
+
   # @!visibility private
   class AbstractMethodCalled < EyesError
     attr_accessor :method_name, :object
@@ -68,5 +70,6 @@ require_relative 'applitools/chunky_png_patch'
 Applitools.require_dir 'utils'
 Applitools.require_dir 'core'
 Applitools.require_dir 'connectivity'
+Applitools.require_dir 'universal_sdk'
 
 require_relative 'applitools/eyes_logger'

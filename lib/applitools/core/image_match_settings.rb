@@ -98,6 +98,60 @@ module Applitools
           min_diff_height == other.min_diff_height &&
           match_threshold == other.match_threshold
       end
+
+      def to_hash
+        {
+          minDiffIntensity: min_diff_intensity,
+          minDiffWidth: min_diff_width,
+          minDiffHeight: min_diff_height,
+          matchThreshold: match_threshold
+        }
+      end
     end
+
+    # export type MatchSettings<TRegion> = {
+    #   exact?: {
+    #     minDiffIntensity: number
+    #     minDiffWidth: number
+    #     minDiffHeight: number
+    #     matchThreshold: number
+    #   }
+    #   matchLevel?: MatchLevel
+    #   sendDom?: boolean
+    #   useDom?: boolean
+    #   enablePatterns?: boolean
+    #   ignoreCaret?: boolean
+    #   ignoreDisplacements?: boolean
+    #   accessibilitySettings?: {
+    #     level?: AccessibilityLevel
+    #     guidelinesVersion?: AccessibilityGuidelinesVersion
+    #   }
+    #   ignoreRegions?: TRegion[]
+    #   layoutRegions?: TRegion[]
+    #   strictRegions?: TRegion[]
+    #   contentRegions?: TRegion[]
+    #   floatingRegions?: (TRegion | FloatingRegion<TRegion>)[]
+    #   accessibilityRegions?: (TRegion | AccessibilityRegion<TRegion>)[]
+    # }
+    def to_hash
+      result = {}
+      result[:exact] = exact.to_hash unless exact == Exact.new # ...
+      result[:matchLevel] = match_level
+      # result[:sendDom] = nil # duplicate configuration ?
+      result[:useDom] = use_dom if use_dom
+      result[:enablePatterns] = enable_patterns if enable_patterns
+      result[:ignoreCaret] = ignore_caret if ignore_caret
+      result[:ignoreDisplacements] = ignore_displacements if ignore_displacements
+      result[:accessibilitySettings] = accessibility_settings.to_hash if accessibility_settings
+      result[:ignoreRegions] = ignore unless ignore.empty?
+      result[:layoutRegions] = layout unless layout.empty?
+      result[:strictRegions] = strict unless strict.empty?
+      result[:contentRegions] = content unless content.empty?
+      result[:floatingRegions] = floating unless floating.empty?
+      result[:accessibilityRegions] = accessibility unless accessibility.empty?
+      result.compact
+      # :SplitTopHeight, :SplitBottomHeight, :scale, :remainder - deprecated ?
+    end
+
   end
 end

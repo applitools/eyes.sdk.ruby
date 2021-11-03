@@ -12,21 +12,21 @@ module BrowserTypes
 end
 module BrowserType
   extend self
-  CHROME = :'chrome-0'
-  CHROME_ONE_VERSION_BACK = :'chrome-1'
-  CHROME_TWO_VERSIONS_BACK = :'chrome-2'
+  CHROME = :'chrome'
+  CHROME_ONE_VERSION_BACK = :'chrome-one-version-back'
+  CHROME_TWO_VERSIONS_BACK = :'chrome-two-versions-back'
 
-  FIREFOX = :'firefox-0'
-  FIREFOX_ONE_VERSION_BACK = :'firefox-1'
-  FIREFOX_TWO_VERSIONS_BACK = :'firefox-2'
+  FIREFOX = :'firefox'
+  FIREFOX_ONE_VERSION_BACK = :'firefox-one-version-back'
+  FIREFOX_TWO_VERSIONS_BACK = :'firefox-two-versions-back'
 
-  SAFARI = :'safari-0'
-  SAFARI_ONE_VERSION_BACK = :'safari-1'
-  SAFARI_TWO_VERSIONS_BACK = :'safari-2'
+  SAFARI = :'safari'
+  SAFARI_ONE_VERSION_BACK = :'safari-one-version-back'
+  SAFARI_TWO_VERSIONS_BACK = :'safari-two-versions-back'
   IOS_SAFARI = :safari
 
   EDGE_CHROMIUM = :'edgechromium'
-  EDGE_CHROMIUM_ONE_VERSION_BACK = :'edgechromium-1'
+  EDGE_CHROMIUM_ONE_VERSION_BACK = :'edgechromium-one-version-back'
 
   IE_11 = :ie
   EDGE_LEGACY = :edgelegacy

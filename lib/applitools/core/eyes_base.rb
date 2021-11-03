@@ -6,6 +6,11 @@ require 'applitools/core/eyes_base_configuration'
 require 'applitools/core/match_level'
 require 'zlib'
 
+require_relative 'universal_eyes_open'
+require_relative 'universal_eyes_checks'
+# require_relative 'universal_viewports'
+require_relative 'universal_new_api'
+
 require_relative 'match_level_setter'
 
 module Applitools
@@ -19,6 +24,13 @@ module Applitools
   }.freeze
 
   class EyesBase
+    # new open, with eyes-manager
+    include Applitools::UniversalEyesOpen
+    # all checks here
+    include Applitools::UniversalEyesChecks
+    # add extract_text, extract_text_regions, locate
+    include Applitools::UniversalNewApi
+
     include Applitools::MatchLevelSetter
     extend Forwardable
     extend Applitools::Helpers
@@ -60,6 +72,9 @@ module Applitools
 
     def_delegators 'config', *Applitools::EyesBaseConfiguration.methods_to_delegate
 
+    # attr_accessor :universal_client, :universal_eyes_manager
+    attr_accessor :universal_eyes, :universal_driver
+
     def initialize(*args)
       options = Applitools::Utils.extract_options!(args)
       self.runner = options[:runner]
@@ -100,6 +115,9 @@ module Applitools
       self.server_scale = 0
       self.server_remainder = 0
       self.compare_with_parent_branch = false
+
+      self.universal_eyes = nil # eyes.open
+      self.universal_driver = nil # eyes.open
     end
 
     def ensure_config
@@ -158,15 +176,20 @@ module Applitools
       self.last_screenshot = nil
       clear_user_inputs
 
+      if !running_session && !universal_eyes
+        logger.info('Server session was not started')
+        logger.info('--- Empty test ended')
+        return Applitools::TestResults.new
+      end
+
+
       if running_session.nil?
         logger.info 'Closed'
         return false
       end
 
       logger.info 'Aborting server session...'
-      server_connector.stop_session(running_session, true, false)
-      logger.info '---Test aborted'
-
+      universal_sdk_abort
     rescue Applitools::EyesError => e
       logger.error e.message
 
@@ -207,18 +230,18 @@ module Applitools
       raise e
     end
 
-    def update_config_from_options(options)
-      # Applitools::ArgumentGuard.hash options, 'open_base parameter', [:test_name]
-      default_options = { session_type: 'SEQUENTIAL' }
-      options = default_options.merge options
-
-      self.app_name = options[:app_name] if options[:app_name]
-
-      # Applitools::ArgumentGuard.not_nil options[:test_name], 'options[:test_name]'
-      self.test_name = options[:test_name] if options[:test_name]
-      self.viewport_size = options[:viewport_size] if options[:viewport_size]
-      self.session_type = options[:session_type] if options[:session_type]
-    end
+    # def update_config_from_options(options)
+    #   # Applitools::ArgumentGuard.hash options, 'open_base parameter', [:test_name]
+    #   default_options = { session_type: 'SEQUENTIAL' }
+    #   options = default_options.merge options
+    #
+    #   self.app_name = options[:app_name] if options[:app_name]
+    #
+    #   # Applitools::ArgumentGuard.not_nil options[:test_name], 'options[:test_name]'
+    #   self.test_name = options[:test_name] if options[:test_name]
+    #   self.viewport_size = options[:viewport_size] if options[:viewport_size]
+    #   self.session_type = options[:session_type] if options[:session_type]
+    # end
 
     def merge_config(other_config)
       config.merge(other_config)
@@ -393,40 +416,50 @@ module Applitools
 
       clear_user_inputs
 
-      unless running_session
+      if !running_session && !universal_eyes
         be_silent || logger.info('Server session was not started')
         be_silent || logger.info('--- Empty test ended')
         return Applitools::TestResults.new
       end
 
-      is_new_session = running_session.new_session?
-      session_results_url = running_session.url
+      # is_new_session = running_session.new_session?
+      # session_results_url = running_session.url
 
       logger.info 'Ending server session...'
 
-      save = is_new_session && save_new_tests || !is_new_session && failed && save_failed_tests
+      # save = is_new_session && save_new_tests || !is_new_session && failed && save_failed_tests
 
-      logger.info "Automatically save test? #{save}"
+      # logger.info "Automatically save test? #{save}"
 
-      results = server_connector.stop_session running_session, false, save
+      # U-Notes : universal server returns Array ; keys as sym
+      universal_results = universal_eyes.close # Array even for one test
+      # require 'pry'
+      # binding.pry
+      key_transformed_results = Applitools::Utils.deep_stringify_keys(universal_results)
+      results = key_transformed_results.map {|result| Applitools::TestResults.new(result) }
+      results = results.first if results.size == 1
+      session_results_url = results.url
+      # results = server_connector.stop_session running_session, false, save
       runner.aggregate_result(results) if runner
 
-      results.is_new = is_new_session
-      results.url = session_results_url
+      # results.is_new = is_new_session
+      # results.url = session_results_url
+      save = results.new? && save_new_tests || !results.new? && failed && save_failed_tests
+      logger.info "Automatically save test? #{save}"
 
       logger.info results.to_s(verbose_results)
 
       if results.unresolved?
         if results.new?
           logger.error "--- New test ended. see details at #{session_results_url}"
-          error_message = "New test '#{session_start_info.scenario_id_or_name}' " \
-            "of '#{session_start_info.app_id_or_name}' " \
+          error_message = "New test '#{test_name}' " \
+            "of '#{app_name}' " \
             "Please approve the baseline at #{session_results_url} "
           raise Applitools::NewTestError.new error_message, results if throw_exception
         else
           logger.error "--- Differences are found. see details at #{session_results_url}"
-          error_message = "Test '#{session_start_info.scenario_id_or_name}' " \
-            "of '#{session_start_info.app_id_or_name}' " \
+          error_message = "Test '#{test_name}' " \
+            "of '#{app_name}' " \
             "detected differences! See details at #{session_results_url}"
           raise Applitools::DiffsFoundError.new error_message, results if throw_exception
         end
@@ -435,7 +468,7 @@ module Applitools
 
       if results.failed?
         logger.error "--- Failed test ended. see details at #{session_results_url}"
-        error_message = "Test '#{session_start_info.scenario_id_or_name}' of '#{session_start_info.app_id_or_name}' " \
+        error_message = "Test '#{test_name}' of '#{app_name}' " \
             "is failed! See details at #{session_results_url}"
         raise Applitools::TestFailedError.new error_message, results if throw_exception
         return results

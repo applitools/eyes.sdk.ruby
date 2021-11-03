@@ -7,6 +7,13 @@ require 'securerandom'
 module Applitools
   module Selenium
     class VisualGridEyes
+      # new open, with eyes-manager
+      include Applitools::UniversalEyesOpen
+      # all checks here
+      include Applitools::UniversalEyesChecks
+      # add extract_text, extract_text_regions, locate
+      include Applitools::UniversalNewApi
+
       include Applitools::Selenium::Concerns::SeleniumEyes
       USE_DEFAULT_MATCH_TIMEOUT = -1
       extend Forwardable
@@ -26,6 +33,10 @@ module Applitools
       def_delegators 'config', *Applitools::Selenium::Configuration.methods_to_delegate
       def_delegators 'config', *Applitools::EyesBaseConfiguration.methods_to_delegate
 
+      alias runner visual_grid_manager
+      attr_accessor :universal_eyes, :universal_driver
+      attr_accessor :debug_screenshots, :save_failed_tests, :scale_ratio, :disabled, :stitching_overlap, :compare_with_parent_branch
+
       def initialize(visual_grid_manager, server_url = nil)
         ensure_config
         @server_connector = Applitools::Connectivity::ServerConnector.new(server_url)
@@ -43,6 +54,7 @@ module Applitools
 
       def ensure_config
         self.config = Applitools::Selenium::Configuration.new
+        self.send_dom = true
       end
 
       def full_agent_id
@@ -56,51 +68,60 @@ module Applitools
       end
 
       def open(*args)
-        self.test_uuid = SecureRandom.uuid
+        # self.test_uuid = SecureRandom.uuid
         options = Applitools::Utils.extract_options!(args)
-        Applitools::ArgumentGuard.hash(options, 'options', [:driver])
-
-        config.app_name = options[:app_name] if options[:app_name]
-        config.test_name = options[:test_name] if options[:test_name]
-        config.agent_run_id = "#{config.test_name}--#{SecureRandom.hex(10)}"
-
-        if config.viewport_size.nil? || config.viewport_size && config.viewport_size.empty?
-          config.viewport_size = Applitools::RectangleSize.from_any_argument(options[:viewport_size]) if options[:viewport_size]
-        end
-
-        self.driver = Applitools::Selenium::SeleniumEyes.eyes_driver(options.delete(:driver), self)
-        self.current_url = driver.current_url
-
-        if viewport_size
-          set_viewport_size(viewport_size)
-        else
-          self.viewport_size = get_viewport_size
-        end
-
-        visual_grid_manager.open(self)
-        visual_grid_manager.add_batch(batch.id) do
-          server_connector.close_batch(batch.id)
-        end
-
-        logger.info('Getting all browsers info...')
-        browsers_info_list = config.browsers_info
-        logger.info('Creating test descriptors for each browser info...')
-        browsers_info_list.each(viewport_size) do |bi|
-          test = Applitools::Selenium::RunningTest.new(eyes_connector, bi, driver).tap do |t|
-            t.on_results_received do |results|
-              visual_grid_manager.aggregate_result(results)
-            end
-            t.test_uuid = test_uuid
-          end
-          test_list.push test
-        end
-        self.opened = true
-        driver
+        universal_open(options)
+        # Applitools::ArgumentGuard.hash(options, 'options', [:driver])
+        #
+        # config.app_name = options[:app_name] if options[:app_name]
+        # config.test_name = options[:test_name] if options[:test_name]
+        # config.agent_run_id = "#{config.test_name}--#{SecureRandom.hex(10)}"
+        #
+        # if config.viewport_size.nil? || config.viewport_size && config.viewport_size.empty?
+        #   config.viewport_size = Applitools::RectangleSize.from_any_argument(options[:viewport_size]) if options[:viewport_size]
+        # end
+        #
+        # self.driver = Applitools::Selenium::SeleniumEyes.eyes_driver(options.delete(:driver), self)
+        # self.current_url = driver.current_url
+        #
+        # if viewport_size
+        #   set_viewport_size(viewport_size)
+        # else
+        #   self.viewport_size = get_viewport_size
+        # end
+        #
+        # visual_grid_manager.open(self)
+        # visual_grid_manager.add_batch(batch.id) do
+        #   server_connector.close_batch(batch.id)
+        # end
+        #
+        # logger.info('Getting all browsers info...')
+        # browsers_info_list = config.browsers_info
+        # logger.info('Creating test descriptors for each browser info...')
+        # browsers_info_list.each(viewport_size) do |bi|
+        #   test = Applitools::Selenium::RunningTest.new(eyes_connector, bi, driver).tap do |t|
+        #     t.on_results_received do |results|
+        #       visual_grid_manager.aggregate_result(results)
+        #     end
+        #     t.test_uuid = test_uuid
+        #   end
+        #   test_list.push test
+        # end
+        # self.opened = true
+        # driver
       end
 
       def get_viewport_size(web_driver = driver)
         Applitools::ArgumentGuard.not_nil 'web_driver', web_driver
-        self.utils.extract_viewport_size(driver)
+        # self.utils.extract_viewport_size(driver)
+        driver_config_json = universal_driver_config(web_driver)
+
+        Applitools::EyesLogger.debug 'extract_viewport_size()'
+        viewport_size = runner.universal_client.core_get_viewport_size(driver_config_json)
+        result = Applitools::RectangleSize.new viewport_size[:width], viewport_size[:height]
+
+        Applitools::EyesLogger.debug "Viewport size is #{result}."
+        result
       end
 
       def eyes_connector
@@ -126,6 +147,8 @@ module Applitools
 
         render_task = nil
         target.default_full_page_for_vg
+
+        return universal_check(tag, target)
 
         target_to_check = target.finalize
         begin
@@ -296,21 +319,33 @@ module Applitools
       end
 
       def close(throw_exception = true)
-        return false if test_list.empty?
-        close_async
+        logger.info "close(#{throw_exception})"
+        logger.info 'Ending server session...'
 
-        until (states = test_list.map(&:state_name).uniq).count == 1 && states.first == :completed
-          sleep 0.5
-        end
-        self.opened = false
+        universal_results = universal_eyes.close # Array even for one test
+        raise Applitools::EyesError.new("Request failed: #{universal_results[:message]}") if server_error?(universal_results)
+        key_transformed_results = Applitools::Utils.deep_stringify_keys(universal_results)
+        results = key_transformed_results.map {|result| Applitools::TestResults.new(result) }
+        # results = results.first if results.size == 1
+        # session_results_url = results.url
+        all_results = results.compact
 
-        test_list.select { |t| t.pending_exceptions && !t.pending_exceptions.empty? }.each do |t|
-          t.pending_exceptions.each do |e|
-            raise e
-          end
-        end
 
-        all_results = test_list.map(&:test_result).compact
+        # return false if test_list.empty?
+        # close_async
+        #
+        # until (states = test_list.map(&:state_name).uniq).count == 1 && states.first == :completed
+        #   sleep 0.5
+        # end
+        # self.opened = false
+        #
+        # test_list.select { |t| t.pending_exceptions && !t.pending_exceptions.empty? }.each do |t|
+        #   t.pending_exceptions.each do |e|
+        #     raise e
+        #   end
+        # end
+        #
+        # all_results = test_list.map(&:test_result).compact
         failed_results = all_results.select { |r| !r.as_expected? }
 
         if throw_exception
@@ -321,16 +356,18 @@ module Applitools
           end
         end
 
-        failed_results.empty? ? all_results.first : failed_results
+        failed_results.empty? ? all_results.first : failed_results.first
       end
 
       def abort_async
         test_list.each(&:abort)
+        universal_sdk_abort
       end
 
       def abort_if_not_closed
         self.opened = false
         test_list.each(&:abort)
+        universal_sdk_abort
       end
 
       alias abort abort_if_not_closed
@@ -347,6 +384,8 @@ module Applitools
 
       # rubocop:disable Style/AccessorMethodName
       def set_viewport_size(value)
+        # require('pry')
+        # binding.pry
         self.utils.set_viewport_size driver, value
       rescue => e
         logger.error e.class.to_s
@@ -397,6 +436,14 @@ module Applitools
       def add_mouse_trigger(_mouse_action, _element); end
 
       def add_text_trigger(_control, _text); end
+
+      def disabled=(value)
+        @disabled = Applitools::Utils.boolean_value value
+      end
+
+      def disabled?
+        @disabled
+      end
 
       private :new_test_error_message, :diffs_found_error_message, :test_failed_error_message
 

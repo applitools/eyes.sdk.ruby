@@ -227,6 +227,22 @@ module Applitools::Selenium
       )
     end
 
+    def universal_driver_config
+      if respond_to?(:session_id)
+        {
+          serverUrl: server_url,
+          sessionId: session_id,
+          capabilities: capabilities.as_json
+        }
+      else
+        {
+          serverUrl: server_url,
+          sessionId: bridge.session_id,
+          capabilities: capabilities.as_json
+        }
+      end
+    end
+
     private
 
     attr_reader :cached_default_content_viewport_size
@@ -243,6 +259,10 @@ module Applitools::Selenium
 
     def driver
       @driver ||= __getobj__
+    end
+
+    def server_url
+      bridge.http.send(:server_url).to_s
     end
 
     def extract_args(args)

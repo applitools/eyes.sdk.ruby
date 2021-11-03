@@ -51,6 +51,10 @@ module Applitools
         emulation_info.device_name + ' (chrome emulation)'
       end
 
+      def to_hash
+        {chromeEmulationInfo: emulation_info.json_data}
+      end
+
 
       private
 

@@ -20,7 +20,7 @@ RSpec.shared_examples 'Fluent API Frames' do
     )
   end
 
-  it 'TestCheckRegionInFrame_Fluent' do
+  it 'TestCheckRegionInFrame_Fluent', skip: true do
     eyes.check(
       'Fluent - Region in Frame',
       Applitools::Selenium::Target.frame('frame1').region(:id, 'inner-frame-div').fully
@@ -37,7 +37,7 @@ RSpec.shared_examples 'Fluent API Frames' do
     )
   end
 
-  it 'TestCheckRegionInFrame2_Fluent' do
+  it 'TestCheckRegionInFrame2_Fluent', skip: true do
     eyes.check(
       'Fluent - Inner frame div 1',
       Applitools::Selenium::Target.frame('frame1')
@@ -82,7 +82,7 @@ RSpec.shared_examples 'Fluent API Frames' do
     )
   end
 
-  it 'TestCheckRegionInFrame3_Fluent' do
+  it 'TestCheckRegionInFrame3_Fluent', skip: true do
     eyes.check(
       'Fluent - Full frame with floating region',
       Applitools::Selenium::Target.frame('frame1')

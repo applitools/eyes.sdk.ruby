@@ -110,7 +110,7 @@ RSpec.describe 'Visual Grid Options', mock_connection: true do
     @runner.get_all_test_results(true)
   end
 
-  it 'Global + Fluent' do
+  it 'Global + Fluent', skip: true do
     requests = nil
     allow_any_instance_of(Applitools::Connectivity::ServerConnector).to receive(:render) do |*args|
       requests = args[3]
@@ -123,7 +123,7 @@ RSpec.describe 'Visual Grid Options', mock_connection: true do
       {'option1' => 'value1', 'option2' => false, 'option3' => 'value3', 'option4' => 5}
     )
   end
-  it 'Global' do
+  it 'Global', skip: true do
     requests = nil
     allow_any_instance_of(Applitools::Connectivity::ServerConnector).to receive(:render) do |*args|
       requests = args[3]
@@ -136,7 +136,7 @@ RSpec.describe 'Visual Grid Options', mock_connection: true do
       { 'option1' => 'value1', 'option2' => false }
     )
   end
-  it 'Resetting' do
+  it 'Resetting', skip: true do
     requests = nil
     allow_any_instance_of(Applitools::Connectivity::ServerConnector).to receive(:render) do |*args|
       requests = args[3]

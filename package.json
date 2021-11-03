@@ -33,10 +33,12 @@
     "parallel:eg": "cd coverage_tests && APPLITOOLS_BATCH_NAME='Ruby Coverage Tests' APPLITOOLS_BATCH_ID=$(uuidgen) bundle exec parallel_rspec -n 40 spec/coverage/generic -i -s 'Native'",
     "report:merge": "cd coverage_tests && junit-merge -d tmp -o coverage-test-report.xml",
     "docker:start": "docker-compose up -d",
-    "docker:stop": "docker-compose down"
+    "docker:stop": "docker-compose down",
+    "universal:debug": "eyes-universal --singleton --lazy"
   },
   "dependencies": {
-    "@applitools/sdk-coverage-tests": "^2.3.14",
+    "@applitools/eyes-universal": "0.1.5",
+    "@applitools/sdk-coverage-tests": "^2.3.15",
     "junit-merge": "^2.0.0",
     "@typescript-eslint/parser": "^2.14.0",
     "typescript": "^3.7.4"

@@ -84,6 +84,19 @@ module Applitools::Utils
     end
   end
 
+  def deep_stringify_keys(value)
+    case value
+      when Hash
+        value.each_with_object({}) do |(key, val), result|
+          result[key.to_s] = deep_stringify_keys(val)
+        end
+      when Array
+        value.map { |e| deep_stringify_keys(e) }
+      else
+        value
+    end
+  end
+
   private
 
   def convert_hash_keys(value, method)
