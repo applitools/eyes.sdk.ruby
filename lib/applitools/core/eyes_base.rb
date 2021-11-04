@@ -8,8 +8,8 @@ require 'zlib'
 
 require_relative 'universal_eyes_open'
 require_relative 'universal_eyes_checks'
-# require_relative 'universal_viewports'
 require_relative 'universal_new_api'
+require_relative '../universal_sdk/universal_client'
 
 require_relative 'match_level_setter'
 
@@ -39,6 +39,25 @@ module Applitools
 
     SCREENSHOT_AS_IS = Applitools::EyesScreenshot::COORDINATE_TYPES[:screenshot_as_is].freeze
     CONTEXT_RELATIVE = Applitools::EyesScreenshot::COORDINATE_TYPES[:context_relative].freeze
+
+    class << self
+      def set_viewport_size(driver, viewport_size)
+        Applitools::ArgumentGuard.not_nil(driver, 'Driver')
+        Applitools::ArgumentGuard.not_nil(viewport_size, 'viewport_size')
+        Applitools::ArgumentGuard.is_a?(viewport_size, 'viewport_size', Applitools::RectangleSize)
+        Applitools::EyesLogger.info "Set viewport size #{viewport_size}"
+        begin
+          driver_config_json = driver.universal_driver_config
+          required_size = Applitools::RectangleSize.from_any_argument viewport_size
+          @universal_client = Applitools::Connectivity::UniversalClient.new
+          @universal_client.core_set_viewport_size(driver_config_json, required_size.to_hash)
+        rescue => e
+          Applitools::EyesLogger.error e.class
+          Applitools::EyesLogger.error e.message
+          raise Applitools::EyesError.new 'Failed to set viewport size!'
+        end
+      end
+    end
 
     attr_accessor :config
     private :config, :config=

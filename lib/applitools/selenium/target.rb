@@ -49,25 +49,13 @@ module Applitools
         if args.empty?
           reset_ignore
         else
-          # requested_padding = get_requested_padding(args)
-          ignored_regions << case args.first
-            when Applitools::Region
-              args.first.to_hash
-            when Applitools::Selenium::Element, ::Selenium::WebDriver::Element
-              { elementId: args.first.ref }
-            when :uiautomator # ANDROID_UI_AUTOMATOR: '-android uiautomator'
-              {type: '-android uiautomator', selector: args[1]}
-            when :predicate # IOS_PREDICATE: '-ios predicate string',
-              {type: '-ios predicate string', selector: args[1]}
-            when :accessibility_id
-              {type: 'accessibility id', selector: args[1]}
-            when :class # Applitools::Selenium::Driver::FINDERS
-              {type: 'class name', selector: args[1]}
-            when :id
-              proc { |driver| driver.find_element(name_or_id: args[1]) }
-            else
-              {type: args.first.to_s, selector: args[1]}
+          value = convert_to_universal(args)
+          if value.nil?
+            # require('pry')
+            # binding.pry
+            value = {type: args[0], selector: args[1]}
           end
+          ignored_regions << value
         end
         self
       end
@@ -97,25 +85,13 @@ module Applitools
 
       def floating(*args)
         requested_padding = get_requested_padding(args)
-        first = args[0]
-        second = args[1]
-        value = case first
-          when Applitools::FloatingRegion, Applitools::Region
-            { region: first.to_hash }
-          when ::Selenium::WebDriver::Element, Applitools::Selenium::Element
-            { region: { elementId: first.ref } }
-          when Symbol
-            { region: { type: first, selector: second } }
+        value = convert_to_universal(args)
+        if value.nil?
+          # require('pry')
+          # binding.pry
+          value = {type: args[0], selector: args[1]}
         end
-        value = value.merge(requested_padding)
-        # interface FloatingRegion {
-        #   target: RegionCoordinates | Selector | number;
-        #   maxUp: number;
-        #   maxDown: number;
-        #   maxLeft: number;
-        #   maxRight: number;
-        # }
-
+        value = { region: value }.merge(requested_padding)
         floating_regions << value
         self
       end
@@ -234,38 +210,13 @@ module Applitools
       # @!parse def region(element, how, what); end;
 
       def region(*args)
-        first = args[0]
-        second = args[1]
-        self.region_to_check = case first
-          when String
-            proc { |driver| driver.find_element(name_or_id: first) }
-          when Applitools::Region
-            first.to_hash
-          when Applitools::Selenium::Element, ::Selenium::WebDriver::Element
-            { elementId: first.ref }
-          when :uiautomator # ANDROID_UI_AUTOMATOR: '-android uiautomator'
-            {type: '-android uiautomator', selector: second}
-          when :predicate # IOS_PREDICATE: '-ios predicate string'
-            {type: '-ios predicate string', selector: second}
-          when :accessibility_id
-            {type: 'accessibility id', selector: second}
-          when :class_name # Applitools::Selenium::Driver::FINDERS
-            {type: 'class name', selector: second}
-          when :id
-            proc { |driver| driver.find_element(name_or_id: second) }
-          when :tag_name
-            {type: 'tag name', selector: second}
-          when Hash
-            if first['selector'] && first['shadow']
-              {selector: first['selector'], shadow: first['shadow']}
-            elsif first['selector']
-              {selector: first['selector']}
-            else
-              {type: first.to_s, selector: second}
-            end
-          else
-            {type: first.to_s, selector: second}
+        value = convert_to_universal(args)
+        if value.nil?
+          # require('pry')
+          # binding.pry
+          value = {type: args[0], selector: args[1]}
         end
+        self.region_to_check = value
         self.coordinate_type = Applitools::EyesScreenshot::COORDINATE_TYPES[:context_relative]
         options[:timeout] = nil
         reset_ignore
@@ -442,6 +393,53 @@ module Applitools
           Applitools::PaddingBounds::PIXEL_PADDING
         end
       end
+
+
+
+      def is_element?(el)
+        el.is_a?(::Selenium::WebDriver::Element)
+      end
+
+      def is_region?(region)
+        region.is_a?(Applitools::FloatingRegion) || region.is_a?(Applitools::Region) || region.is_a?(Applitools::Selenium::Element)
+      end
+
+      def is_finder?(finders)
+        return false unless finders.is_a?(Array)
+        return false unless finders[1]
+        return true if [:uiautomator, :predicate, :accessibility_id].include?(finders[0].to_sym)
+        Applitools::Selenium::Driver::FINDERS.has_key?(finders[0].to_sym)
+      end
+
+      def convert_to_universal(args)
+        return args.first.to_hash if is_region?(args.first)
+        return { elementId: args.first.ref } if is_element?(args.first)
+        if is_finder?(args)
+          if Applitools::Selenium::Driver::FINDERS.has_key?(args[0])
+            return {type: Applitools::Selenium::Driver::FINDERS[args[0]], selector: args[1]}
+          end
+          case args[0]
+            when :uiautomator # ANDROID_UI_AUTOMATOR: '-android uiautomator'
+              return {type: '-android uiautomator', selector: args[1]}
+            when :predicate # IOS_PREDICATE: '-ios predicate string',
+              return {type: '-ios predicate string', selector: args[1]}
+            when :accessibility_id
+              return {type: 'accessibility id', selector: args[1]}
+          end
+        end
+        if args.first.is_a?(String)
+          return proc { |driver| driver.find_element(name_or_id: args.first) }
+        end
+        if args.first.is_a?(Hash) && args.first.has_key?('selector')
+          if args.first.has_key?('shadow')
+            return {selector: args.first['selector'], shadow: args.first['shadow']}
+          else
+            return {selector: args.first['selector']}
+          end
+        end
+        nil
+      end
+
     end
   end
 end

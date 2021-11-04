@@ -7,8 +7,8 @@ module Applitools
       new(type: CLASSIC)
     end
 
-    def self.vg
-      new(type: VG, concurrency: 1, legacy: false)
+    def self.vg(concurrent_open_sessions=1)
+      new(type: VG, concurrency: concurrent_open_sessions, legacy: false)
     end
 
     # export type EyesManagerConfig<TType extends 'vg' | 'classic' = 'vg' | 'classic'> = {

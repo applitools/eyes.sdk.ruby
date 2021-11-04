@@ -1,6 +1,5 @@
 # frozen_string_literal: false
 
-# require_relative '../universal_sdk/universal_client'
 
 module Applitools::Selenium
   # The main API gateway for the SDK
@@ -58,21 +57,7 @@ module Applitools::Selenium
       # @param [Applitools::Selenium::Driver] driver The driver instance.
       # @param [Hash] viewport_size The required browser's viewport size.
       def set_viewport_size(driver, viewport_size)
-        Applitools::ArgumentGuard.not_nil(driver, 'Driver')
-        Applitools::ArgumentGuard.not_nil(viewport_size, 'viewport_size')
-        Applitools::ArgumentGuard.is_a?(viewport_size, 'viewport_size', Applitools::RectangleSize)
-        # Applitools::EyesLogger.info "Set viewport size #{viewport_size}"
-        begin
-          Applitools::Utils::EyesSeleniumUtils.set_viewport_size eyes_driver(driver), viewport_size
-          # driver_config_json = driver.universal_driver_config
-          # required_size = Applitools::RectangleSize.from_any_argument viewport_size
-          # @universal_client = Applitools::Connectivity::UniversalClient.new
-          # @universal_client.core_set_viewport_size(driver_config_json, required_size.to_hash)
-        rescue => e
-          Applitools::EyesLogger.error e.class
-          Applitools::EyesLogger.error e.message
-          raise Applitools::EyesError.new 'Failed to set viewport size!'
-        end
+        super
       end
     end
 

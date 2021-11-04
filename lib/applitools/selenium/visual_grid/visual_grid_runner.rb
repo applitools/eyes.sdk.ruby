@@ -62,7 +62,7 @@ module Applitools
       end
 
       def universal_eyes_manager_config
-        Applitools::UniversalEyesManagerConfig.vg
+        Applitools::UniversalEyesManagerConfig.vg(@thread_pool.concurrency)
       end
 
       private

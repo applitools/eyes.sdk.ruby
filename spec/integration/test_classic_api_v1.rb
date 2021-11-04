@@ -16,7 +16,7 @@ RSpec.shared_examples 'Classic API' do
 
   it('TestCheckFrame') { eyes.check_frame(name_or_id: 'frame1', tag: 'frame1') }
 
-  it('TestCheckRegionInFrame', skip: true) do
+  it('TestCheckRegionInFrame') do
     eyes.check_region_in_frame(
       name_or_id: 'frame1',
       by: [:id, 'inner-frame-div'],
@@ -36,7 +36,7 @@ RSpec.shared_examples 'Classic API' do
     sleep 3
   end
 
-  it('TestCheckInnerFrame', skip: true) do
+  it('TestCheckInnerFrame') do
     eyes.hide_scrollbars = false
     driver.switch_to.default_content
     driver.switch_to.frame(driver.find_element(:name, 'frame1'))
