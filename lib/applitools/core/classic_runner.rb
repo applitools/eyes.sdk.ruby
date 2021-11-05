@@ -29,7 +29,10 @@ module Applitools
       ensure
         delete_all_batches
       end
-      all_test_results
+      return all_test_results unless all_test_results.empty?
+      all_universal_results = close_all_eyes
+      key_transformed_results = Applitools::Utils.deep_stringify_keys(all_universal_results)
+      key_transformed_results.map {|result| Applitools::TestResults.new(result) }
     end
 
     def rendering_info(connector)

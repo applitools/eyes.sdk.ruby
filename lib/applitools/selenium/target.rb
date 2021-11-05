@@ -324,7 +324,13 @@ module Applitools
       end
 
       def scroll_root_element(by, what = nil)
-        options[:scroll_root_element] = what ? { type: by.to_s, selector: what } : by
+        options[:scroll_root_element] = if is_element?(by)
+          { elementId: by.ref }
+        elsif what
+          { type: by.to_s, selector: what }
+        else
+          by
+        end
         self
       end
 
@@ -390,18 +396,18 @@ module Applitools
         elsif args.last.is_a?(Applitools::FloatingBounds)
           args.pop.to_hash
         else
-          Applitools::PaddingBounds::PIXEL_PADDING
+          {}
         end
       end
 
 
 
       def is_element?(el)
-        el.is_a?(::Selenium::WebDriver::Element)
+        el.is_a?(::Selenium::WebDriver::Element) || (el.is_a?(Applitools::Selenium::Element) && el.respond_to?(:ref))
       end
 
       def is_region?(region)
-        region.is_a?(Applitools::FloatingRegion) || region.is_a?(Applitools::Region) || region.is_a?(Applitools::Selenium::Element)
+        region.is_a?(Applitools::FloatingRegion) || region.is_a?(Applitools::Region) # || region.is_a?(Applitools::Selenium::Element)
       end
 
       def is_finder?(finders)
@@ -412,10 +418,11 @@ module Applitools
       end
 
       def convert_to_universal(args)
-        return args.first.to_hash if is_region?(args.first)
         return { elementId: args.first.ref } if is_element?(args.first)
+        return args.first.to_hash if is_region?(args.first)
         if is_finder?(args)
           if Applitools::Selenium::Driver::FINDERS.has_key?(args[0])
+            return args[1] if args[0] === :id
             return {type: Applitools::Selenium::Driver::FINDERS[args[0]], selector: args[1]}
           end
           case args[0]

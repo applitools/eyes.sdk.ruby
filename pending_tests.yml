@@ -53,8 +53,8 @@ UFG Fluent API:
 #  - TestCheckWindow_Fluent_VG
 #  - TestCheckFrameInFrame_Fully_Fluent2_VG
   #- TestCheckRegionInFrame3_Fluent_VG - FIXED
-  - TestCheckElementWithIgnoreRegionBySameElement_Fluent_VG
-  - TestCheckFullWindowWithMultipleIgnoreRegionsBySelector_Fluent_VG
+#  - TestCheckElementWithIgnoreRegionBySameElement_Fluent_VG
+#  - TestCheckFullWindowWithMultipleIgnoreRegionsBySelector_Fluent_VG
   #- TestCheckWindowWithIgnoreRegion_Fluent_VG - FIXED
   #- TestCheckWindowWithIgnoreBySelector_Fluent_VG - FIXED
   #- TestCheckWindowWithFloatingByRegion_Fluent_VG FIXED

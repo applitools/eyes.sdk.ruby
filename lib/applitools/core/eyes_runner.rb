@@ -23,5 +23,9 @@ module Applitools
       return universal_eyes_manager if universal_eyes_manager
       self.universal_eyes_manager = universal_client.make_manager(universal_eyes_manager_config.to_hash)
     end
+
+    def close_all_eyes
+      get_universal_eyes_manager.close_all_eyes
+    end
   end
 end

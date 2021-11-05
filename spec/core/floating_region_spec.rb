@@ -8,17 +8,17 @@ RSpec.describe Applitools::FloatingRegion do
   context 'to_hash' do
     let(:a_hash) { subject.to_hash }
     it 'main coordinates' do
-      expect(a_hash['Left']).to eq 10
-      expect(a_hash['Top']).to eq 10
-      expect(a_hash['Width']).to eq 20
-      expect(a_hash['Height']).to eq 30
+      expect(a_hash['left']).to eq 10
+      expect(a_hash['top']).to eq 10
+      expect(a_hash['width']).to eq 20
+      expect(a_hash['height']).to eq 30
     end
 
     it 'max offsets' do
-      expect(a_hash['MaxUpOffset']).to eq 50
-      expect(a_hash['MaxLeftOffset']).to eq 40
-      expect(a_hash['MaxRightOffset']).to eq 60
-      expect(a_hash['MaxDownOffset']).to eq 70
+      expect(a_hash['maxUpOffset']).to eq 50
+      expect(a_hash['maxLeftOffset']).to eq 40
+      expect(a_hash['maxRightOffset']).to eq 60
+      expect(a_hash['maxDownOffset']).to eq 70
     end
   end
 end
