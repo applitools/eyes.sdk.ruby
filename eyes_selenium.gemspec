@@ -25,5 +25,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'css_parser'
   spec.add_dependency 'crass'
   spec.add_dependency 'state_machine'
-  spec.add_dependency 'nokogiri'
+  spec.add_dependency 'nokogiri', '~>1.10.10'
 end

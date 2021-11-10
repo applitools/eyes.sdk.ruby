@@ -11,7 +11,7 @@ module Applitools
       def download(to)
         puts "[eyes-universal] Downloading Eyes universal server from #{full_url}"
         where = filepath(to)
-        File.write(where, URI.open(full_url).read)
+        open(full_url) {|cloud| File.write(where, cloud.read) }
         FileUtils.chmod('+x', where)
         puts "[eyes-universal] Download complete. Server placed in #{where}"
       end
