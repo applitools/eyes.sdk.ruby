@@ -35,7 +35,7 @@ module Applitools::Connectivity
       rescue Errno::ECONNREFUSED
         run
         confirm_is_up(ip, port)
-        msg = "Connect to #{server_libname}"
+        msg = "Connect to #{server_libname} : #{filename}"
       end
 
       Applitools::EyesLogger.logger.debug(msg) if ENV['APPLITOOLS_SHOW_LOGS']
@@ -71,16 +71,7 @@ module Applitools::Connectivity
     end
 
     def server_libname
-      case RUBY_PLATFORM
-        when /mswin|windows/i
-          'eyes_universal-win'
-        when /linux|arch/i
-          'eyes_universal'
-        when /darwin/i
-          'eyes_universal-osx'
-        else
-          raise 'Unsupported platform'
-      end
+      'eyes_universal'
     end
 
     def server_lib

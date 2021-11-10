@@ -14,8 +14,6 @@ Bundler::GemHelper.install_tasks name: 'eyes_calabash'
 Bundler::GemHelper.install_tasks name: 'eyes_capybara'
 Bundler::GemHelper.install_tasks name: 'eyes_appium'
 Bundler::GemHelper.install_tasks name: 'eyes_universal'
-Bundler::GemHelper.install_tasks name: 'eyes_universal-osx'
-Bundler::GemHelper.install_tasks name: 'eyes_universal-win'
 
 namespace :applitools do
   namespace :js do

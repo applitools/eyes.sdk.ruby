@@ -6,7 +6,8 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'applitools/version'
 
 module_files = `git ls-files lib/applitools/images`.split($RS) + `git ls-files lib/applitools/selenium`.split($RS) +
-  ['lib/eyes_images', 'lib/applitools/capybara', 'lib/eyes_selenium']
+  ['lib/eyes_images', 'lib/applitools/capybara', 'lib/eyes_selenium'] +
+  ['lib/applitools/universal_sdk/universal_server_downloader.rb']
 
 Gem::Specification.new do |spec|
   spec.name          = 'eyes_core'
@@ -38,6 +39,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'colorize'
   spec.add_dependency 'faye-websocket'
   spec.add_dependency 'eventmachine'
+  spec.add_dependency 'eyes_universal', "=#{Applitools::UNIVERSAL_VERSION}"
 
   spec.add_development_dependency 'bundler'
   spec.add_development_dependency 'rake'

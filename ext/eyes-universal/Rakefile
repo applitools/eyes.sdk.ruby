@@ -1,0 +1,12 @@
+require 'rubygems'
+require 'rake/clean'
+
+DOWNLOADER_PATH = File.expand_path('../../lib/applitools/universal_sdk/universal_server_downloader', File.dirname(__FILE__))
+require DOWNLOADER_PATH
+
+desc "Download universal server binaries"
+task :default => [:get_server]
+
+file "get_server" do
+  Applitools::UniversalServerDownloader.download(File.dirname(__FILE__))
+end
