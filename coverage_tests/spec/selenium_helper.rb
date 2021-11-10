@@ -10,7 +10,7 @@ RSpec.configure do |config|
     is_visual_grid = args[:is_visual_grid].nil? ? false : args[:is_visual_grid]
     branch_name = args[:branch_name].nil? ? 'master' : args[:branch_name]
     @runner = if is_visual_grid
-                Applitools::Selenium::VisualGridRunner.new(1)
+                Applitools::Selenium::VisualGridRunner.new(10)
               else
                 Applitools::ClassicRunner.new
               end

@@ -58,7 +58,8 @@ module Applitools
       end
 
       def init_or_renew_threads
-        (concurrency - @thread_group.list.count).times do
+        one_concurrency = 1 # Thread's moved to universal server
+        (one_concurrency - @thread_group.list.count).times do
           logger.debug 'starting new thread (task worker)'
           next_thread
         end
