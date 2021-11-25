@@ -15,7 +15,7 @@ RSpec.describe 'Android viewport test', appium: true do
 
   let(:button) { driver.find_element(:uiautomator, 'new UiSelector().textContains("Scrollview footer header activity")') }
 
-  it 'Appium_Android_CheckCaptureElementOverlay', pending: true do
+  it 'Appium_Android_CheckCaptureElementOverlay' do
     button.click
     eyes.check('Capture Element Overlay', Applitools::Appium::Target.window())
   end
