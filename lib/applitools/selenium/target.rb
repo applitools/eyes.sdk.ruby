@@ -50,11 +50,8 @@ module Applitools
           reset_ignore
         else
           value = convert_to_universal(args)
-          if value.nil?
-            # require('pry')
-            # binding.pry
-            value = {type: args[0], selector: args[1]}
-          end
+          value = { type: args[0], selector: args[1] } if value.nil?
+          # value = value[:selector] if value.is_a?(Hash) && (value[:type].to_s === 'id')
           ignored_regions << value
         end
         self
@@ -86,11 +83,8 @@ module Applitools
       def floating(*args)
         requested_padding = get_requested_padding(args)
         value = convert_to_universal(args)
-        if value.nil?
-          # require('pry')
-          # binding.pry
-          value = {type: args[0], selector: args[1]}
-        end
+        value = { type: args[0], selector: args[1] } if value.nil?
+        value = value[:selector] if value.is_a?(Hash) && (value[:type].to_s === 'id')
         value = { region: value }.merge(requested_padding)
         floating_regions << value
         self
@@ -211,11 +205,8 @@ module Applitools
 
       def region(*args)
         value = convert_to_universal(args)
-        if value.nil?
-          # require('pry')
-          # binding.pry
-          value = {type: args[0], selector: args[1]}
-        end
+        value = { type: args[0], selector: args[1] } if value.nil?
+        # value = value[:selector] if value.is_a?(Hash) && (value[:type].to_s === 'id')
         self.region_to_check = value
         self.coordinate_type = Applitools::EyesScreenshot::COORDINATE_TYPES[:context_relative]
         options[:timeout] = nil

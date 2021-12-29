@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "@applitools/eyes-universal": "0.2.3",
-    "@applitools/sdk-coverage-tests": "^2.3.15",
+    "@applitools/sdk-coverage-tests": "^2.3.17",
     "junit-merge": "^2.0.0",
     "@typescript-eslint/parser": "^2.14.0",
     "typescript": "^3.7.4"
