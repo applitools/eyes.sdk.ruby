@@ -422,7 +422,6 @@ module Applitools
         return args.first.to_hash if is_region?(args.first)
         if is_finder?(args)
           if Applitools::Selenium::Driver::FINDERS.has_key?(args[0])
-            return args[1] if args[0] === :id
             return {type: Applitools::Selenium::Driver::FINDERS[args[0]], selector: args[1]}
           end
           case args[0]

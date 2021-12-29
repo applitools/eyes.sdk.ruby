@@ -117,9 +117,13 @@ module Applitools
         ir.is_a?(Proc) ? normalize_element_selector(ir.call(eyes.driver)) : ir
       end
       # self.ignore_regions = target.ignored_regions
-      self.layout_regions = target.layout_regions
+      self.layout_regions = target.layout_regions.map do |lr|
+        lr.is_a?(Proc) ? normalize_element_selector(lr.call(eyes.driver)) : lr
+      end
 
       if target.region_to_check.is_a?(Hash)
+        self.region = target.region_to_check
+      elsif target.region_to_check.is_a?(String)
         self.region = target.region_to_check
       elsif target.region_to_check.is_a?(Proc)
         # require('pry')

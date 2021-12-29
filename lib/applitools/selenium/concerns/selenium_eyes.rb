@@ -50,12 +50,8 @@ module Applitools
           fully = args.select { |a| a.is_a?(TrueClass) || a.is_a?(FalseClass) }.first
           target = Applitools::Selenium::Target.window.tap do |t|
             t.timeout(match_timeout || USE_DEFAULT_MATCH_TIMEOUT)
-            if is_a?(Applitools::Selenium::VisualGridEyes)
-              t.fully(true)
-            else
-              t.fully(force_full_page_screenshot)
-            end
-            t.fully(fully) unless fully.nil?
+            fully = force_full_page_screenshot if fully.nil?
+            t.fully(fully)
           end
           check(tag, target)
         end
