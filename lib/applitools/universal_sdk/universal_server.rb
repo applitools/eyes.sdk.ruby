@@ -9,7 +9,7 @@ module Applitools::Connectivity
     extend self
 
     DEFAULT_SERVER_IP = '127.0.0.1'
-    DEFAULT_SERVER_PORT = 2107
+    DEFAULT_SERVER_PORT = 21077
 
     def run
       raise 'Universal server unrecognized' unless find_server_file?
