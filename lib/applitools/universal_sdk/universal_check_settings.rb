@@ -83,7 +83,9 @@ module Applitools
 
     def normalize_element_selector(element)
       if element.is_a?(::Selenium::WebDriver::Element) || element.is_a?(Applitools::Selenium::Element)
-        { elementId: element.ref }
+        ref = element.ref
+        ref = element.ref[1] if ref.is_a?(Array) && ref[0] === :element
+        return { elementId: ref }
       else
         element
       end

@@ -409,7 +409,11 @@ module Applitools
       end
 
       def convert_to_universal(args)
-        return { elementId: args.first.ref } if is_element?(args.first)
+        if is_element?(args.first)
+          ref = args.first.ref
+          ref = args.first.ref[1] if ref.is_a?(Array) && ref[0] === :element
+          return { elementId: ref }
+        end
         return args.first.to_hash if is_region?(args.first)
         if is_finder?(args)
           if Applitools::Selenium::Driver::FINDERS.has_key?(args[0])
