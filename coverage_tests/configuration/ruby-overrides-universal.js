@@ -1,13 +1,13 @@
 module.exports = {
     //New test error
     // CheckRegionBySelectorInFrameFullyOnFirefoxLegacy
-    'check region by selector in frame fully on firefox legacy': {skip:true},
+    // 'check region by selector in frame fully on firefox legacy': {skip:true},
 
     // Shadow dom JS errors
     // CheckRegionByElementWithinShadowDomWithVg
     'check region by element within shadow dom with vg': {skip: true},
     // CheckRegionBySelectorWithinShadowDomWithVg
-    'check region by selector within shadow dom with vg': {skip: true},
+    // 'check region by selector within shadow dom with vg': {skip: true},
 
     // Applitools::DiffsFoundError
     // CheckWindowFullyOnAndroidChromeEmulatorOnDesktopPage - to skip
