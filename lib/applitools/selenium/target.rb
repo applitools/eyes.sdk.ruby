@@ -316,7 +316,9 @@ module Applitools
 
       def scroll_root_element(by, what = nil)
         options[:scroll_root_element] = if is_element?(by)
-          { elementId: by.ref }
+          ref = by.ref
+          ref = by.ref[1] if ref.is_a?(Array) && ref[0] === :element
+          { elementId: ref }
         elsif what
           { type: by.to_s, selector: what }
         else
