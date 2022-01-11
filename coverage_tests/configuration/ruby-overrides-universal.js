@@ -1,7 +1,12 @@
 module.exports = {
-    //New test error
+    // selenium3 pass / 4 fail
     // CheckRegionBySelectorInFrameFullyOnFirefoxLegacy
-    // 'check region by selector in frame fully on firefox legacy': {skip:true},
+    'check region by selector in frame fully on firefox legacy': {skip:true},
+    // CheckWindowAfterManualScrollOnSafari11
+    'check window after manual scroll on safari 11': {skip:true},
+    // CheckWindowAfterManualScrollOnSafari12
+    // selenium-4 caps: {browserName: "safari", browserVersion: '12', platformName: 'macOS 10.13', :"sauce:username" => "...", :"sauce:accessKey" => "..." },
+    'check window after manual scroll on safari 12': {skip:true},
 
     // Shadow dom JS errors
     // CheckRegionByElementWithinShadowDomWithVg

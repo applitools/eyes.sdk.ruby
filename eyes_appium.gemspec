@@ -21,5 +21,5 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = %w(lib)
   spec.add_dependency 'eyes_selenium', "= #{Applitools::VERSION}"
-  spec.add_dependency 'appium_lib', '~>10.6.0'
+  spec.add_dependency 'appium_lib', '>= 10.6.0'
 end

@@ -34,13 +34,19 @@ RSpec.configure do |config|
     execution_grid = args[:executionGrid] ? true : false
     args = DEFAULT.merge(args)
     env = get_env(args)
+    cap_obj = Selenium::WebDriver::Remote::Capabilities.new(env[:capabilities])
+    if Selenium::WebDriver::VERSION.start_with?('3') # cap_obj.respond_to?(:'javascript_enabled?')
+      if !cap_obj.javascript_enabled? && env[:capabilities][:javascriptEnabled].nil?
+        cap_obj.javascript_enabled = true
+      end
+    end
     case env[:type]
     when 'chrome'
-      build_chrome(env[:capabilities], env[:url], execution_grid)
+      build_chrome(cap_obj, env[:url], execution_grid)
     when 'firefox'
-      build_firefox(env[:capabilities], env[:url])
+      build_firefox(cap_obj, env[:url])
     when 'sauce'
-      build_sauce(env[:capabilities], env[:url])
+      build_sauce(cap_obj, env[:url])
     else
       raise "Unsupported type of the capabilities used #{env[:type]}"
     end
@@ -119,6 +125,9 @@ RSpec.configure do |config|
     elsif use_docker
       build_remote(caps, url)
     else
+      unless Selenium::WebDriver::VERSION.start_with?('3')
+        Selenium::WebDriver.for :chrome, capabilities: caps
+      end
       Selenium::WebDriver.for :chrome, desired_capabilities: caps
     end
   end
@@ -127,11 +136,17 @@ RSpec.configure do |config|
     if use_docker
       build_remote(caps, url)
     else
+      unless Selenium::WebDriver::VERSION.start_with?('3')
+        return Selenium::WebDriver.for :firefox, capabilities: caps
+      end
       Selenium::WebDriver.for :firefox, desired_capabilities: caps
     end
   end
 
   def build_remote(caps, url)
+    unless Selenium::WebDriver::VERSION.start_with?('3')
+      return Selenium::WebDriver.for :remote, capabilities: caps, url: url
+    end
     Selenium::WebDriver.for :remote, desired_capabilities: caps, url: url
   end
 

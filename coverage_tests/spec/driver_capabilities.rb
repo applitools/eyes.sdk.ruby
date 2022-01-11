@@ -1,12 +1,22 @@
 # frozen_string_literal: true
 
+require 'selenium-webdriver'
+
 SAUCE_SERVER_URL = 'https://ondemand.saucelabs.com:443/wd/hub'
-SAUCE_CREDENTIALS = {
-  :'sauce:username' => ENV['SAUCE_USERNAME'],
-  :'sauce:accessKey' => ENV['SAUCE_ACCESS_KEY'],
+if Selenium::WebDriver::VERSION.start_with?('3')
+  SAUCE_CREDENTIALS = {
     username: ENV['SAUCE_USERNAME'],
     accessKey: ENV['SAUCE_ACCESS_KEY']
-}.freeze
+  }.freeze
+else
+  SAUCE_CREDENTIALS = {
+    :'sauce:username' => ENV['SAUCE_USERNAME'],
+    :'sauce:accessKey' => ENV['SAUCE_ACCESS_KEY'],
+    # ie/edge
+    username: ENV['SAUCE_USERNAME'],
+    accessKey: ENV['SAUCE_ACCESS_KEY']
+  }.freeze
+end
 BROWSER_OPTIONS_NAME = {
     'chrome' => 'goog:chromeOptions',
     'firefox' => 'moz:firefoxOptions'
