@@ -45,19 +45,6 @@ module Applitools::Connectivity
 
     private
 
-    def expected_binary_sha
-      case RUBY_PLATFORM
-        when /mswin|windows/i
-          '5523da8bc1d05bd64a799f926644dfd8d7d2843fbd758e7b91c07e72a17062ea'
-        when /linux|arch/i
-          'd61735957743c3ccae7f5c9ed78361cf8f3cc7d100e8fe9ffbb574a26a5c3da7'
-        when /darwin/i
-          '3e35225fc924ff9c288f8255415c65460315889f0275d91ddc6e3ada0594bce8'
-        else
-          raise 'Unsupported platform'
-      end
-    end
-
     def filename
       case RUBY_PLATFORM
         when /mswin|windows/i
@@ -86,7 +73,7 @@ module Applitools::Connectivity
     end
 
     def find_server_file?
-      File.exist?(filepath) && Digest::SHA256.file(filepath).to_s == expected_binary_sha && File.executable?(filepath)
+      File.exist?(filepath) && File.executable?(filepath)
     end
 
   end
