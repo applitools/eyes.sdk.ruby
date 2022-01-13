@@ -4,6 +4,8 @@ require 'securerandom'
 require 'applitools/utils/utils'
 require_relative 'helpers'
 
+PROCESS_DEFAULT_BATCH_ID = SecureRandom.uuid # Unique per-process
+
 module Applitools
   class BatchInfo
     extend Helpers
@@ -30,7 +32,7 @@ module Applitools
       if id
         self.id = id
       elsif self.id.nil? || self.id.empty?
-        self.id = SecureRandom.uuid
+        self.id = PROCESS_DEFAULT_BATCH_ID
       end
       self.properties = properties if properties
       self.notify_on_completion = 'true'.casecmp(env_notify_on_completion || '') == 0 ? true : false
