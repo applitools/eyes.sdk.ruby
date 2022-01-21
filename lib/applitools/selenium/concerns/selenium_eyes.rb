@@ -50,8 +50,8 @@ module Applitools
           fully = args.select { |a| a.is_a?(TrueClass) || a.is_a?(FalseClass) }.first
           target = Applitools::Selenium::Target.window.tap do |t|
             t.timeout(match_timeout || USE_DEFAULT_MATCH_TIMEOUT)
-            fully = force_full_page_screenshot if fully.nil?
-            t.fully(fully)
+            # fully = force_full_page_screenshot if fully.nil?
+            t.fully(fully) if !fully.nil?
           end
           check(tag, target)
         end

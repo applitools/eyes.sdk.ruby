@@ -37,11 +37,11 @@ module Applitools
       def expected_binary_sha
         case RUBY_PLATFORM
           when /mswin|windows/i
-            'fbc1a0bc95b2e36b9c1bfeef672bde610ff78bb78bb2b0590189bcd4baa93815'
+            'b5e8160b94389cd496cca79b55bf5d17e99b307e9413deccf29784d681daf648'
           when /linux|arch/i
-            'e909497411de02ab543d79fc9c2522fc8a5d568d1376aecc274253e793a80c3d'
+            'da34c88504571008ae3d0aee8ef97b793b4e20b0483c1c0d5be1142cc19c35ac'
           when /darwin/i
-            'ed5a650d8fedc4ec1ae7468874d7445f6d7b5185d224553ec2526deee35efb75'
+            '0aa411f97aa36ab4fedd7155ff99d40c372d481152c8faa15a5fbf8f3eb8e503'
           else
             raise 'Unsupported platform'
         end

@@ -294,19 +294,19 @@ module Applitools
       end
 
       def default_full_page_for_vg
-        if options[:stitch_content].nil?
-          case region_to_check
-          when nil
-            fully(true)
-          when Proc
-            begin
-              r = region_to_check.call
-              # fully(true) if r == Applitools::Region::EMPTY
-            rescue StandardError
-              fully(false)
-            end
-          end
-        end
+        # if options[:stitch_content].nil?
+        #   case region_to_check
+        #   when nil
+        #     fully(true)
+        #   when Proc
+        #     begin
+        #       r = region_to_check.call
+        #       # fully(true) if r == Applitools::Region::EMPTY
+        #     rescue StandardError
+        #       fully(false)
+        #     end
+        #   end
+        # end
         nil
       end
 

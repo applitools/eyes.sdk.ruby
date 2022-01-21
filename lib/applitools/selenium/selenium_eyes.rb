@@ -108,7 +108,7 @@ module Applitools::Selenium
       self.base_agent_id = "eyes.selenium.ruby/#{Applitools::VERSION}".freeze
       self.check_frame_or_element = false
       self.region_to_check = nil
-      self.force_full_page_screenshot = false
+      # self.force_full_page_screenshot = false
       self.dont_get_title = false
       self.device_pixel_ratio = UNKNOWN_DEVICE_PIXEL_RATIO
       self.stitch_mode = Applitools::STITCH_MODE[:scroll]
