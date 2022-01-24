@@ -22,6 +22,7 @@ before_script:
   - export DOCKER_TOKEN=$(curl "https://auth.docker.io/token?service=registry.docker.io&scope=repository:ratelimitpreview/test:pull" | jq -r .token)
   - "export DOCKER_RATE_LIMIT=$(curl --head -H \"Authorization: Bearer $DOCKER_TOKEN\" https://registry-1.docker.io/v2/ratelimitpreview/test/manifests/latest 2>&1 | grep RateLimit)"
   - echo $DOCKER_RATE_LIMIT
+  - npm run universal:debug
   - if [[ ($TRAVIS_TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+$) || ($TRAVIS_TAG =~ ^RELEASE_CANDIDATE) ]]; then
       export TEST_REPORT_SANDBOX=False;
       export SDK_VERSION=$(echo $TRAVIS_TAG | sed 's/[^.0-9]*//g');
