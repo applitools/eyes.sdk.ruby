@@ -3,7 +3,8 @@ module.exports = {
     emitter: "https://raw.githubusercontent.com/applitools/sdk.coverage.tests/universal-sdk/ruby/initialize.js",
     overrides: [
         "https://raw.githubusercontent.com/applitools/sdk.coverage.tests/universal-sdk/js/overrides.js",
-        "https://raw.githubusercontent.com/applitools/sdk.coverage.tests/universal-sdk/eg.overrides.js"
+        "https://raw.githubusercontent.com/applitools/sdk.coverage.tests/universal-sdk/eg.overrides.js",
+        "./configuration/ruby-overrides-universal",
     ],
     template: "https://raw.githubusercontent.com/applitools/sdk.coverage.tests/universal-sdk/ruby/template.hbs",
     tests: 'https://raw.githubusercontent.com/applitools/sdk.coverage.tests/universal-sdk/coverage-tests.js',
