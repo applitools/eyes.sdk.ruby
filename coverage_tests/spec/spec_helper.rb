@@ -23,6 +23,9 @@ RSpec.configure do |config|
     url.query = URI.encode_www_form(new_query_ar)
     asd = Net::HTTP.get(url)
     Oj.load(asd)
+  rescue => e
+    puts e.message
+    puts asd
   end
 
   def get_nodes_by_attribute(node, attr)
