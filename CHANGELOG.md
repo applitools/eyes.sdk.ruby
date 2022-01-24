@@ -1,3 +1,6 @@
+## [4.0.0] - 2022-01-24
+### Changed
+- Library is now based on Universal SDK
 ## [3.18.4] - 2021-08-31
 ### Fixed
 - Fix Appium runner option [Trello 2697](https://trello.com/c/F6dLF1VF)
