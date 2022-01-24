@@ -27,7 +27,7 @@ module Applitools
       private
 
       def base_url
-        'https://github.com/applitools/eyes.sdk.javascript1/releases/download/%40applitools/eyes-universal%401.0.2/'
+        'https://github.com/applitools/eyes.sdk.javascript1/releases/download/%40applitools/eyes-universal%401.0.6/'
       end
 
       def full_url
