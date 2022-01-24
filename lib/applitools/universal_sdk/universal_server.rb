@@ -12,11 +12,8 @@ module Applitools::Connectivity
     DEFAULT_SERVER_PORT = 21077
 
     def run
-      puts find_server_file?
-      puts filepath
       raise 'Universal server unrecognized' unless find_server_file?
       pid = spawn(filepath, '--singleton --lazy', [:out, :err] => ["log", 'w'])
-      puts pid
       Process.detach(pid)
     end
 
