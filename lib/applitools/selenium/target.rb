@@ -51,7 +51,7 @@ module Applitools
         else
           value = convert_to_universal(args)
           value = { type: args[0], selector: args[1] } if value.nil?
-          # value = value[:selector] if value.is_a?(Hash) && (value[:type].to_s === 'id')
+          value = value[:selector] if value.is_a?(Hash) && (value[:type].to_s === 'id')
           ignored_regions << value
         end
         self
@@ -206,7 +206,7 @@ module Applitools
       def region(*args)
         value = convert_to_universal(args)
         value = { type: args[0], selector: args[1] } if value.nil?
-        # value = value[:selector] if value.is_a?(Hash) && (value[:type].to_s === 'id')
+        value = value[:selector] if value.is_a?(Hash) && (value[:type].to_s === 'id')
         self.region_to_check = value
         self.coordinate_type = Applitools::EyesScreenshot::COORDINATE_TYPES[:context_relative]
         options[:timeout] = nil

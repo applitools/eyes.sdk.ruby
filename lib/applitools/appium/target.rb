@@ -2,7 +2,31 @@
 
 module Applitools
   module Appium
-    Target = Applitools::Selenium::Target
+    class Target < Applitools::Selenium::Target
+
+      def ignore(*args)
+        if args.empty?
+          reset_ignore
+        else
+          value = convert_to_universal(args)
+          value = { type: args[0], selector: args[1] } if value.nil?
+          # value = value[:selector] if value.is_a?(Hash) && (value[:type].to_s === 'id') && !is_a?(Applitools::Appium::Target)
+          ignored_regions << value
+        end
+        self
+      end
+
+      def region(*args)
+        value = convert_to_universal(args)
+        value = { type: args[0], selector: args[1] } if value.nil?
+        # value = value[:selector] if value.is_a?(Hash) && (value[:type].to_s === 'id') && !is_a?(Applitools::Appium::Target)
+        self.region_to_check = value
+        self.coordinate_type = Applitools::EyesScreenshot::COORDINATE_TYPES[:context_relative]
+        options[:timeout] = nil
+        reset_ignore
+        reset_floating
+        self
+      end
     # class Target
     #   include Applitools::FluentInterface
     #   attr_accessor :region_to_check, :options, :ignored_regions, :floating_regions, :layout_regions, :content_regions, :strict_regions, :accessibility_regions
@@ -204,6 +228,6 @@ module Applitools
     #     end
     #   end
     #
-    # end
+    end
   end
 end
