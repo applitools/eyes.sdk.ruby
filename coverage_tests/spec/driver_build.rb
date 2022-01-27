@@ -7,6 +7,10 @@ DEFAULT = {
     headless: true
 }.freeze
 
+def deep_copy(o)
+  Marshal.load(Marshal.dump(o))
+end
+
 def get_env(args = {})
   env = {
     url: CHROME_SERVER_URL,
@@ -19,9 +23,11 @@ def get_env(args = {})
   preset = DEVICES[args[:device]].clone || BROWSERS[args[:browser]].clone
   raise 'There were no preset ready for the used env' if preset.nil?
   env[:url] = preset[:url] unless preset[:url].nil?
-  caps = args[:legacy] ? preset[:capabilities][:legacy] : preset[:capabilities][:w3c] || preset[:capabilities]
+  useLegacy = Selenium::WebDriver::VERSION.start_with?('3') && args[:legacy]
+  pre_caps = useLegacy ? preset[:capabilities][:legacy] : preset[:capabilities][:w3c] || preset[:capabilities]
+  caps = deep_copy(pre_caps)
   if preset[:type] == 'sauce'
-    if args[:legacy] || args[:device]
+    if useLegacy
       env[:capabilities].merge!(preset[:options]) unless preset[:options].nil?
     else
       env[:capabilities]['sauce:options'] = preset[:options]

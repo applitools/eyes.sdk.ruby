@@ -6,7 +6,7 @@ module.exports = {
     'check window after manual scroll on safari 11': {skip:true},
     // CheckWindowAfterManualScrollOnSafari12
     // selenium-4 caps: {browserName: "safari", browserVersion: '12', platformName: 'macOS 10.13', :"sauce:username" => "...", :"sauce:accessKey" => "..." },
-    'check window after manual scroll on safari 12': {skip:true},
+    // 'check window after manual scroll on safari 12': {skip:true},
 
     // Shadow dom JS errors
     // CheckRegionByElementWithinShadowDomWithVg
