@@ -3,20 +3,10 @@
 require 'selenium-webdriver'
 
 SAUCE_SERVER_URL = 'https://ondemand.saucelabs.com:443/wd/hub'
-if Selenium::WebDriver::VERSION.start_with?('3')
-  SAUCE_CREDENTIALS = {
+SAUCE_CREDENTIALS = {
     username: ENV['SAUCE_USERNAME'],
     accessKey: ENV['SAUCE_ACCESS_KEY']
-  }.freeze
-else
-  SAUCE_CREDENTIALS = {
-    :'sauce:username' => ENV['SAUCE_USERNAME'],
-    :'sauce:accessKey' => ENV['SAUCE_ACCESS_KEY'],
-    # ie/edge
-    username: ENV['SAUCE_USERNAME'],
-    accessKey: ENV['SAUCE_ACCESS_KEY']
-  }.freeze
-end
+}.freeze
 BROWSER_OPTIONS_NAME = {
     'chrome' => 'goog:chromeOptions',
     'firefox' => 'moz:firefoxOptions'
@@ -36,7 +26,8 @@ DEVICES = {
             platformVersion: '6.0',
             clearSystemFiles: true,
             noReset: true
-        }.merge(SAUCE_CREDENTIALS)
+        },
+        options: {}.merge(SAUCE_CREDENTIALS)
     },
     'Pixel 3a XL' => {
         type: 'sauce',
@@ -47,7 +38,8 @@ DEVICES = {
             platformName: 'Android',
             platformVersion: '10.0',
             deviceOrientation: 'portrait'
-        }.merge(SAUCE_CREDENTIALS)
+        },
+        options: {}.merge(SAUCE_CREDENTIALS)
     },
     'Pixel 3 XL' => {
         capabilities: {
@@ -56,7 +48,8 @@ DEVICES = {
             platformName: 'Android',
             platformVersion: '10.0',
             deviceOrientation: 'portrait'
-        }.merge(SAUCE_CREDENTIALS),
+        },
+        options: {}.merge(SAUCE_CREDENTIALS),
         url: SAUCE_SERVER_URL,
         sauce: true,
         type: 'sauce'
@@ -73,7 +66,8 @@ DEVICES = {
             deviceName: 'Samsung Galaxy S8 FHD GoogleAPI Emulator',
             automationName: 'uiautomator2',
             newCommandTimeout: 600
-        }.merge(SAUCE_CREDENTIALS)
+        },
+        options: {}.merge(SAUCE_CREDENTIALS)
     },
     'iPhone 5S' => {
         type: 'sauce',
@@ -83,7 +77,8 @@ DEVICES = {
             deviceName: 'iPhone 5s Simulator',
             platformVersion: '12.4',
             platformName: 'iOS'
-        }.merge(SAUCE_CREDENTIALS)
+        },
+        options: {}.merge(SAUCE_CREDENTIALS)
     },
     'iPhone 11 Pro' => {
         type: 'sauce',
@@ -93,7 +88,8 @@ DEVICES = {
             deviceName: 'iPhone 11 Pro Simulator',
             platformVersion: '13.4',
             platformName: 'iOS'
-        }.merge(SAUCE_CREDENTIALS)
+        },
+        options: {}.merge(SAUCE_CREDENTIALS)
     },
     'iPhone XS' => {
         type: 'sauce',
@@ -103,7 +99,8 @@ DEVICES = {
             platformName: 'iOS',
             platformVersion: '13.0',
             deviceName: 'iPhone XS Simulator'
-        }.merge(SAUCE_CREDENTIALS)
+        },
+        options: {}.merge(SAUCE_CREDENTIALS)
     },
     'iPad Air' => {
         type: 'sauce',
@@ -113,7 +110,8 @@ DEVICES = {
             deviceName: 'iPad Air Simulator',
             platformVersion: '12.4',
             platformName: 'iOS'
-        }.merge(SAUCE_CREDENTIALS)
+        },
+        options: {}.merge(SAUCE_CREDENTIALS)
     },
     'Android 8.0 Chrome Emulator' => {
         type: 'chrome',
@@ -199,12 +197,12 @@ BROWSERS = {
             legacy: {
                 browserName: 'safari',
                 version: '12.1',
-                platform: 'macOS 10.13'
+                platform: 'macOS 10.13',
+                seleniumVersion: '3.4.0'
             }
         },
         options: {
             name: 'Safari 12',
-            seleniumVersion: '3.4.0'
         }.merge(SAUCE_CREDENTIALS)
     },
     'firefox-48' => {
