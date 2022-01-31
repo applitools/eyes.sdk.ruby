@@ -4,7 +4,6 @@ addons:
 language: ruby
 rvm:
   - 2.4.5
-  - 2.6.0
 gemfile:
   - GemfileTravis
 services:
@@ -37,6 +36,9 @@ before_script:
 jobs:
   include:
     - stage: "Unit Tests"
+      rvm:
+        - 2.4.5
+        - 2.6.0
       name: "Unit Tests"
       script: bundle exec rake travis:unit_tests
     - stage: "Visual tests"
