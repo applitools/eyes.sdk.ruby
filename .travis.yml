@@ -33,22 +33,28 @@ before_script:
         exit 1;
       fi
     fi
+
+stages:
+  - Unit Tests
+  - Visual tests
+  - Appium
+  - Ruby Coverage tests
+  - Report all test results
+  - Build
+
 jobs:
   include:
     - stage: "Unit Tests"
-      rvm:
-        - 2.4.5
-        - 2.6.0
-      name: "Unit Tests"
+      rvm: 2.4.5
+      script: bundle exec rake travis:unit_tests
+    - stage: "Unit Tests"
+      rvm: 2.6.0
       script: bundle exec rake travis:unit_tests
     - stage: "Visual tests"
       script: bundle exec rake travis:vg_tests
-      name: "Visual Grid"
     - stage: "Appium"
       script: bundle exec rake travis:appium_tests
-      name: "eyes_appium tests"
     - stage: "Ruby Coverage tests"
-      name: "Ruby Coverage tests"
       script:
         - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
         - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
