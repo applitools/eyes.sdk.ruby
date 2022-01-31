@@ -51,10 +51,25 @@ jobs:
       rvm: 2.6.0
       script: bundle exec rake travis:unit_tests
     - stage: "Visual tests"
+      rvm: 2.4.5
+      script: bundle exec rake travis:vg_tests
+    - stage: "Visual tests"
+      rvm: 2.6.0
       script: bundle exec rake travis:vg_tests
     - stage: "Appium"
+      rvm: 2.4.5
+      script: bundle exec rake travis:appium_tests
+    - stage: "Appium"
+      rvm: 2.6.0
       script: bundle exec rake travis:appium_tests
     - stage: "Ruby Coverage tests"
+      rvm: 2.4.5
+      script:
+        - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
+        - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
+        - yarn ruby:prod
+    - stage: "Ruby Coverage tests"
+      rvm: 2.6.0
       script:
         - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
         - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
