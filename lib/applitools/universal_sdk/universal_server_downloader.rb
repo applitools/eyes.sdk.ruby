@@ -11,7 +11,7 @@ module Applitools
       def download(to)
         puts "[eyes-universal] Downloading Eyes universal server from #{full_url}"
         where = filepath(to)
-        open(full_url) {|cloud| File.write(where, cloud.read) }
+        full_url.open {|cloud| File.write(where, cloud.read) }
         if Digest::SHA256.file(where).to_s == expected_binary_sha
           FileUtils.chmod('+x', where)
           puts "[eyes-universal] Download complete. Server placed in #{where}"
@@ -27,7 +27,7 @@ module Applitools
       private
 
       def base_url
-        'https://github.com/applitools/eyes.sdk.javascript1/releases/download/%40applitools/eyes-universal%401.0.6/'
+        'https://github.com/applitools/eyes.sdk.javascript1/releases/download/%40applitools/eyes-universal%401.0.7/'
       end
 
       def full_url
@@ -37,11 +37,11 @@ module Applitools
       def expected_binary_sha
         case RUBY_PLATFORM
           when /mswin|windows/i
-            'b5e8160b94389cd496cca79b55bf5d17e99b307e9413deccf29784d681daf648'
+            '3617fd158d5bb2ac6434f752509030813470c5ab4530a797f587f9195a652b97'
           when /linux|arch/i
-            'da34c88504571008ae3d0aee8ef97b793b4e20b0483c1c0d5be1142cc19c35ac'
+            '75640df201c9d5445e1ebcdf111e3d00e04a172a080072b68b332ce4cb5e2570'
           when /darwin/i
-            '0aa411f97aa36ab4fedd7155ff99d40c372d481152c8faa15a5fbf8f3eb8e503'
+            '53fc9ebd30e442f9ba9ed110f8ac6d3cdf55f1c524d242a3570c5526f3da8114'
           else
             raise 'Unsupported platform'
         end

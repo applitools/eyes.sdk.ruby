@@ -1,3 +1,6 @@
+## [4.0.1] - 2022-02-08
+### Updated
+- Update version of Universal SDK to 1.0.7
 ## [4.0.0] - 2022-01-24
 ### Changed
 - Library is now based on Universal SDK
