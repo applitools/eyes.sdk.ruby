@@ -4,6 +4,7 @@ require 'selenium-webdriver'
 
 SAUCE_SERVER_URL = 'https://ondemand.saucelabs.com:443/wd/hub'
 SAUCE_CREDENTIALS = {
+    tags: 'ruby-universal-sdk',
     username: ENV['SAUCE_USERNAME'],
     accessKey: ENV['SAUCE_ACCESS_KEY']
 }.freeze
