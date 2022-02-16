@@ -27,7 +27,7 @@ module Applitools
       private
 
       def base_url
-        'https://github.com/applitools/eyes.sdk.javascript1/releases/download/%40applitools/eyes-universal%401.0.7/'
+        'https://github.com/applitools/eyes.sdk.javascript1/releases/download/%40applitools/eyes-universal%401.0.9/'
       end
 
       def full_url
@@ -35,19 +35,21 @@ module Applitools
       end
 
       def expected_binary_sha
+        return '8eb9d98d14480ae9ec5e2ca18b9c6e1b4e3a5427cdd6dfe5cb61cf1f53562b20' if Gem.win_platform?
         case RUBY_PLATFORM
           when /mswin|windows/i
-            '3617fd158d5bb2ac6434f752509030813470c5ab4530a797f587f9195a652b97'
+            '8eb9d98d14480ae9ec5e2ca18b9c6e1b4e3a5427cdd6dfe5cb61cf1f53562b20'
           when /linux|arch/i
-            '75640df201c9d5445e1ebcdf111e3d00e04a172a080072b68b332ce4cb5e2570'
+            'c89d850c984ed39142974391809e645c18e8037259f9cc4f09937d73315c3c94'
           when /darwin/i
-            '53fc9ebd30e442f9ba9ed110f8ac6d3cdf55f1c524d242a3570c5526f3da8114'
+            '2bf73d118f81b33379fa5527ed8fb5508966d88299315121b44f47570923f8e8'
           else
             raise 'Unsupported platform'
         end
       end
 
       def filename
+        return 'eyes-universal-win.exe' if Gem.win_platform?
         case RUBY_PLATFORM
           when /mswin|windows/i
             'eyes-universal-win.exe'
