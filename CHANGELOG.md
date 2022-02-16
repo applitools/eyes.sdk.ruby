@@ -1,7 +1,9 @@
-## [vNext]
+## [4.0.1] - 2022-02-08
 ### Updated
 - Update version of Universal SDK to 1.0.9
-## [4.0.1] - 2022-02-08
+### Fixed
+- Fix installing issues with latest ruby version and installing on windows
+## [4.0.1] - 2022-02-08 - unreleased
 ### Updated
 - Update version of Universal SDK to 1.0.7
 ## [4.0.0] - 2022-01-24
