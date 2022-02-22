@@ -24,6 +24,7 @@ def get_env(args = {})
   raise 'There were no preset ready for the used env' if preset.nil?
   env[:url] = preset[:url] unless preset[:url].nil?
   useLegacy = Selenium::WebDriver::VERSION.start_with?('3') && args[:legacy]
+  mobileWeb = !args[:device].nil? && !args[:browser].nil?
   pre_caps = useLegacy ? preset[:capabilities][:legacy] : preset[:capabilities][:w3c] || preset[:capabilities]
   caps = deep_copy(pre_caps)
   if preset[:type] == 'sauce'
@@ -39,7 +40,16 @@ def get_env(args = {})
       browser_options[:args].push('headless')
     end
   end
+  if mobileWeb
+    if useLegacy
+      caps[:browserName] = args[:browser]
+    else
+      caps[:browser_name] = args[:browser]
+      caps[:browserName] = ''
+    end
+  end
   env[:type] = preset[:type]
   env[:capabilities].merge!(caps)
+  print env
   env
 end
