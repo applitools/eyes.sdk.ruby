@@ -1,6 +1,6 @@
 # frozen_string_literal: false
 
 module Applitools
-  VERSION = '4.0.2'.freeze
-  UNIVERSAL_VERSION = '1.0.9'.freeze
+  VERSION = '4.0.3.a'.freeze
+  UNIVERSAL_VERSION = '2.2.8'.freeze
 end

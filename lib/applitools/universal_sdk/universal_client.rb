@@ -20,7 +20,7 @@ module Applitools::Connectivity
     CORE_DELETE_TEST = 'Core.deleteTest'
 
     EYES_MANAGER_MAKE_EYES = 'EyesManager.openEyes'
-    EYES_MANAGER_CLOSE_ALL_EYES = 'EyesManager.closeAllEyes'
+    EYES_MANAGER_CLOSE_ALL_EYES = 'EyesManager.closeManager'
     EYES_CHECK = 'Eyes.check'
     EYES_LOCATE = 'Eyes.locate'
     EYES_EXTRACT_TEXT_REGIONS = 'Eyes.extractTextRegions'
