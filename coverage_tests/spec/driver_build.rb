@@ -59,6 +59,5 @@ def get_env(args = {})
   end
   env[:type] = preset[:type]
   env[:capabilities].merge!(caps)
-  print env
   env
 end

@@ -11,18 +11,22 @@ module Applitools
     #     layoutBreakpoints?: boolean | number[]
     #     visualGridOptions?: {[key: string]: any}
     #     hooks?: {beforeCaptureScreenshot: string}
+    #     pageId?: string
     #     renderId?: string
     #     variationGroupId?: string
     #     timeout?: number
+    #     waitBeforeCapture?: number
     #   }
     json_fields :name,
       :disableBrowserFetching,
       :layoutBreakpoints,
       :visualGridOptions,
       :hooks,
+      :pageId,
       :renderId,
       :variationGroupId,
-      :timeout
+      :timeout,
+      :waitBeforeCapture
 
     # export type MatchSettings<TRegion> = {
     #   exact?: {
@@ -139,6 +143,8 @@ module Applitools
       self.strict_regions = target.strict_regions
       self.timeout = target.options[:timeout]
       self.variation_group_id = target.options[:variation_group_id]
+      self.wait_before_capture = target.options[:wait_before_capture]
+      self.page_id = target.options[:page_id]
 
       self.scroll_root_element = target.options[:scroll_root_element] || eyes.scroll_root_element
       self.layout_breakpoints = target.options[:layout_breakpoints] || eyes.layout_breakpoints

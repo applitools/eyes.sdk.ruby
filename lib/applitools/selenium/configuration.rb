@@ -26,6 +26,7 @@ module Applitools
 
       boolean_field :force_full_page_screenshot
       int_field :wait_before_screenshots
+      int_field :wait_before_capture
       enum_field :stitch_mode, Applitools::Selenium::StitchModes.enum_values
       boolean_field :hide_scrollbars
       boolean_field :hide_caret
@@ -82,6 +83,14 @@ module Applitools
         raise Applitools::EyesIllegalArgument, 'Wrong device name!' unless Devices.enum_values.include? device_name
         emu = Applitools::Selenium::ChromeEmulationInfo.new(device_name, orientation)
         add_browser emu
+      end
+
+      def add_mobile_device(mobile_device_info)
+        add_mobile_devices(mobile_device_info)
+      end
+
+      def add_mobile_devices(mobile_device_infos)
+        add_browsers(mobile_device_infos)
       end
 
       def viewport_size

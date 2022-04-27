@@ -332,6 +332,18 @@ module Applitools
         self
       end
 
+      def wait_before_capture(value)
+        Applitools::ArgumentGuard.not_nil(value, 'wait_before_capture')
+        options[:wait_before_capture] = value
+        self
+      end
+
+      def page_id(value)
+        Applitools::ArgumentGuard.not_nil(value, 'page_id')
+        options[:page_id] = value
+        self
+      end
+
       private
 
       def reset_for_fullscreen

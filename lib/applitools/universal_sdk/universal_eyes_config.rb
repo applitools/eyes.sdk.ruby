@@ -97,6 +97,7 @@ module Applitools
     #   cut?: ImageCropRect | ImageCropRegion
     #   rotation?: ImageRotation
     #   scaleRatio?: number
+    #   waitBeforeCapture?: number
     # }
     json_fields :waitBeforeScreenshots,
       :stitchMode,
@@ -106,7 +107,8 @@ module Applitools
       :scrollRootElement,
       :cut,
       :rotation,
-      :scaleRatio
+      :scaleRatio,
+      :waitBeforeCapture
 
     # export type EyesUFGConfig = {
     #   concurrentSessions?: number
@@ -125,7 +127,7 @@ module Applitools
     FROM_ORIGINAL_EYES = [:api_key, :app_name, :batch, :browsers_info, :concurrent_sessions, :debug_screenshots,
       :force_full_page_screenshot, :hide_caret, :hide_scrollbars, :host_app, :host_os, :match_timeout, :proxy,
       :save_failed_tests, :save_new_tests, :scale_ratio, :send_dom, :server_url, :stitch_mode, :test_name,
-      :viewport_size, :visual_grid_options, :wait_before_screenshots] + [
+      :viewport_size, :visual_grid_options, :wait_before_screenshots, :wait_before_capture] + [
       :disabled?, # disabled? => is_disabled
       :stitching_overlap, # SeleniumEyes.stitching_overlap => stitch_overlap
       :dont_fetch_resources # dont_fetch_resources => disable_browser_fetching
