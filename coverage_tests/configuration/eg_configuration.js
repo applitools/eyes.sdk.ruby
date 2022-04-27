@@ -4,7 +4,7 @@ module.exports = {
     overrides: [
         "https://raw.githubusercontent.com/applitools/sdk.coverage.tests/universal-sdk/js/overrides.js",
         "https://raw.githubusercontent.com/applitools/sdk.coverage.tests/universal-sdk/eg.overrides.js",
-        "./configuration/ruby-overrides-universal",
+        "https://raw.githubusercontent.com/applitools/sdk.coverage.tests/universal-sdk/ruby/overrides.js",
     ],
     template: "https://raw.githubusercontent.com/applitools/sdk.coverage.tests/universal-sdk/ruby/template.hbs",
     tests: 'https://raw.githubusercontent.com/applitools/sdk.coverage.tests/universal-sdk/coverage-tests.js',
