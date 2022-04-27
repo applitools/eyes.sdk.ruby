@@ -38,3 +38,4 @@ debug_screenshots
 **/spec/coverage/generic
 coverage-test-report.xml
 coverage-test-metadata.json
+/coverage_tests/configuration/local.js
