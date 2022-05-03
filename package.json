@@ -18,7 +18,7 @@
     "ruby:prod": "yarn && yarn test:prod",
     "ruby:ci": "yarn && bundle install && yarn ruby",
     "test": "yarn generate && yarn parallel:local && yarn report:merge && yarn report:sandbox",
-    "test:prod": "[ \"TRAVIS_EVENT_TYPE\" = \"cron\" ] && yarn generate:noskip || yarn generate:eg && yarn parallel:eg && yarn report:merge && yarn report",
+    "test:prod": "[ \"TRAVIS_EVENT_TYPE\" = \"cron\" ] && yarn generate:noskip || yarn generate && yarn parallel:local && yarn report:merge && yarn report",
     "generate": "cd coverage_tests && coverage-tests generate ./configuration --pascalizeTests",
     "generate:local": "cd coverage_tests && coverage-tests generate ./configuration/local.js --pascalizeTests",
     "generate:eg": "cd coverage_tests && coverage-tests generate ./configuration/eg_configuration.js --pascalizeTests",
