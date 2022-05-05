@@ -52,9 +52,9 @@ def get_env(args = {})
 
   if set_orientation
     if use_legacy
-      env[:capabilities][:orientation] = args[:orientation]
+      env[:capabilities][:deviceOrientation] = args[:orientation]
     else
-      env[:capabilities]['appium:orientation'] = args[:orientation]
+      env[:capabilities]['sauce:options'][:deviceOrientation] = args[:orientation]
     end
   end
   env[:type] = preset[:type]
