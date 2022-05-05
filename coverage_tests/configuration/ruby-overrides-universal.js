@@ -3,14 +3,14 @@ module.exports = {
     // CheckRegionBySelectorInFrameFullyOnFirefoxLegacy
     // 'check region by selector in frame fully on firefox legacy': {skip:true},
     // CheckWindowAfterManualScrollOnSafari11
-    'check window after manual scroll on safari 11': {skip:true},
+    // 'check window after manual scroll on safari 11': {skip:true},
     // CheckWindowAfterManualScrollOnSafari12
     // selenium-4 caps: {browserName: "safari", browserVersion: '12', platformName: 'macOS 10.13', :"sauce:username" => "...", :"sauce:accessKey" => "..." },
     // 'check window after manual scroll on safari 12': {skip:true},
 
     // Shadow dom JS errors
     // CheckRegionByElementWithinShadowDomWithVg
-    'check region by element within shadow dom with vg': {skip: true},
+    // 'check region by element within shadow dom with vg': {skip: true},
     // CheckRegionBySelectorWithinShadowDomWithVg
     // 'check region by selector within shadow dom with vg': {skip: true},
 
@@ -25,19 +25,19 @@ module.exports = {
     // 'check region in frame hidden under top bar fully with scroll stitching': {skip: true},
 
     // ShouldHandleCheckOfStaleElementIfSelectorIsPreserved
-    'should handle check of stale element if selector is preserved': {skip: true},
+    // 'should handle check of stale element if selector is preserved': {skip: true},
     // ShouldHandleCheckOfStaleElementInFrameIfSelectorIsPreserved
-    'should handle check of stale element in frame if selector is preserved': {skip: true},
+    // 'should handle check of stale element in frame if selector is preserved': {skip: true},
 
     // CheckWindowOnMobileWebAndroid
-    'check window on mobile web android': {skip: true},
+    // 'check window on mobile web android': {skip: true},
 
     // ShouldBeEmptyIfPageDelayedBy1500
     'should be empty if page delayed by 1500': {skip: true},
     // AppiumIOSCheckFullyWindowWithScrollAndPageCoverage_Native
-    'appium iOS check fully window with scroll and pageCoverage': {skip: true},
+    // 'appium iOS check fully window with scroll and pageCoverage': {skip: true},
     // AppiumIOSCheckWindowRegionWithScrollAndPageCoverage_Native
-    'appium iOS check window region with scroll and pageCoverage': {skip: true},
+    // 'appium iOS check window region with scroll and pageCoverage': {skip: true},
 
     // AppiumAndroidLandscapeModeCheckRegionOnAndroid10
     'appium android landscape mode check region on android 10': {skip: true},
@@ -52,7 +52,7 @@ module.exports = {
     // pass on py
 
     // CheckWindowOnMobileWebIos
-    'check window on mobile web ios': {skip: true},
+    // 'check window on mobile web ios': {skip: true},
 
     // need fix in TG
 
@@ -60,13 +60,13 @@ module.exports = {
     'should send agentRunId': {skip: true},
 
     // ShouldWaitBeforeCaptureWithBreakpointsInCheck
-    'should waitBeforeCapture with breakpoints in check': {skip: true},
+    // 'should waitBeforeCapture with breakpoints in check': {skip: true},
     // ShouldWaitBeforeCaptureWithBreakpointsInOpen
-    'should waitBeforeCapture with breakpoints in open': {skip: true},
+    // 'should waitBeforeCapture with breakpoints in open': {skip: true},
     // PageCoverageDataIsCorrect
-    'pageCoverage data is correct': {skip: true},
+    // 'pageCoverage data is correct': {skip: true},
     // PageCoverageDataIsCorrectWithVg
-    'pageCoverage data is correct with vg': {skip: true},
+    // 'pageCoverage data is correct with vg': {skip: true},
 
     // ShouldAbortUnclosedTests
     'should abort unclosed tests': {skip: true},
@@ -81,24 +81,24 @@ module.exports = {
     'should return browserInfo in getAllTestResults': {skip: true},
 
     // CheckRegionsByCoordinatesInFrameWithCssStitching
-    'check regions by coordinates in frame with css stitching': {skip: true},
+    // 'check regions by coordinates in frame with css stitching': {skip: true},
     // CheckRegionsByCoordinatesInOverflowedFrameWithScrollStitching
-    'check regions by coordinates in overflowed frame with scroll stitching': {skip: true},
+    // 'check regions by coordinates in overflowed frame with scroll stitching': {skip: true},
     // CheckRegionsByCoordinatesInFrameWithScrollStitching
-    'check regions by coordinates in frame with scroll stitching': {skip: true},
+    // 'check regions by coordinates in frame with scroll stitching': {skip: true},
     // CheckRegionsByCoordinatesInOverflowedFrameWithVg
-    'check regions by coordinates in overflowed frame with vg': {skip: true},
+    // 'check regions by coordinates in overflowed frame with vg': {skip: true},
     // CheckRegionsByCoordinatesInFrameWithVg
-    'check regions by coordinates in frame with vg': {skip: true},
+    // 'check regions by coordinates in frame with vg': {skip: true},
     // CheckRegionsByCoordinatesInOverflowedFrameWithCssStitching
-    'check regions by coordinates in overflowed frame with css stitching': {skip: true},
+    // 'check regions by coordinates in overflowed frame with css stitching': {skip: true},
 
     // AppiumIOSNavBarCheckRegion_Native
-    'appium iOS nav bar check region': {skip: true},
+    // 'appium iOS nav bar check region': {skip: true},
     // ShouldExtractTextRegionsFromImage
-    'should extract text regions from image': {skip: true},
+    // 'should extract text regions from image': {skip: true},
     // ShouldExtractTextFromRegionsWithoutAHint
-    'should extract text from regions without a hint': {skip: true},
+    // 'should extract text from regions without a hint': {skip: true},
     // ShouldAbortAfterClose
     'should abort after close': {skip: true},
 }
