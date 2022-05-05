@@ -19,7 +19,6 @@ def get_env(args = {})
       }
   }
   env[:capabilities].merge!(args[:capabilities]) unless args[:capabilities].nil?
-  env[:capabilities][:app] = args[:app] unless args[:app].nil?
   preset = DEVICES[args[:device]].clone || BROWSERS[args[:browser]].clone
   raise 'There were no preset ready for the used env' if preset.nil?
   env[:url] = preset[:url] unless preset[:url].nil?
@@ -28,6 +27,13 @@ def get_env(args = {})
   mobile_web = !args[:device].nil? && !args[:browser].nil?
   pre_caps = use_legacy ? preset[:capabilities][:legacy] : preset[:capabilities][:w3c] || preset[:capabilities]
   caps = deep_copy(pre_caps)
+  unless args[:app].nil?
+    if use_legacy
+      env[:capabilities][:app] = args[:app]
+    else
+      env[:capabilities]['appium:app'] = args[:app]
+    end
+  end
   if preset[:type] == 'sauce'
     if use_legacy
       env[:capabilities].merge!(preset[:options]) unless preset[:options].nil?
