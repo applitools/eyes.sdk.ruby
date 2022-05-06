@@ -18,6 +18,7 @@ before_script:
   - export APPLITOOLS_BATCH_ID=$(java UUIDFromString $TRAVIS_COMMIT$TRAVIS_RUBY_VERSION)
   - echo $APPLITOOLS_BATCH_ID
   - export APPLITOOLS_DONT_CLOSE_BATCHES=true
+  - export APPLITOOLS_SHOW_LOGS=true
   - echo $TRAVIS_TAG
   - export DOCKER_TOKEN=$(curl "https://auth.docker.io/token?service=registry.docker.io&scope=repository:ratelimitpreview/test:pull" | jq -r .token)
   - "export DOCKER_RATE_LIMIT=$(curl --head -H \"Authorization: Bearer $DOCKER_TOKEN\" https://registry-1.docker.io/v2/ratelimitpreview/test/manifests/latest 2>&1 | grep RateLimit)"
