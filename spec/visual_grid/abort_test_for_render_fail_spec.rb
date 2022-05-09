@@ -21,6 +21,7 @@ RSpec.describe 'Render Fail' do
     eyes.check('step 1', Applitools::Selenium::Target.window.before_render_screenshot_hook('fail me!'))
     eyes.close_async
     results = runner.get_all_test_results(false)
-    expect(results.empty?).to be_truthy
+    # expect(results.empty?).to be_truthy
+    expect(results.empty?).to be_falsey
   end
 end

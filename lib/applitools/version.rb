@@ -2,5 +2,5 @@
 
 module Applitools
   VERSION = '4.0.3.a'.freeze
-  UNIVERSAL_VERSION = '2.5.0'.freeze
+  UNIVERSAL_VERSION = '2.5.4'.freeze
 end
