@@ -13,7 +13,7 @@ module Applitools::Connectivity
 
     def run
       raise 'Universal server unrecognized' unless find_server_file?
-      puts filepath
+      puts `#{filepath} --version`
       pid = spawn(filepath, '--singleton --lazy', [:out, :err] => ["log", 'w'])
       Process.detach(pid)
     end
