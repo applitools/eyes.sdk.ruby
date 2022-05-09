@@ -28,7 +28,7 @@ RSpec.describe 'Abort Async' do
     @runner.get_all_test_results(false)
   end
 
-  it 'simple test', pending: true do
+  it 'simple test', skip: true do
     driver.get('https://applitools.com')
     eyes.check('proba', Applitools::Selenium::Target.window)
     raise Applitools::EyesError.new 'Error message'
