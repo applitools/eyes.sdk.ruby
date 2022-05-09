@@ -60,6 +60,7 @@ RSpec.configure do |config|
     end
     @eyes.test_name = args[:baseline_name] if args.key? :baseline_name
     @eyes.app_name = args[:app_name] if args.key? :app_name
+    @eyes.wait_before_capture = args[:wait_before_capture] if args.key? :wait_before_capture
     if args.key? :browsers_info
       browser_info = Applitools::Selenium::BrowsersInfo.new
       args[:browsers_info].each { |browser| browser_info.add(parse_browser_info(browser)) }

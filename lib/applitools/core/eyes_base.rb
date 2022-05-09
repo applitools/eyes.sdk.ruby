@@ -456,7 +456,8 @@ module Applitools
       # binding.pry
       key_transformed_results = Applitools::Utils.deep_stringify_keys(universal_results)
       results = key_transformed_results.map {|result| Applitools::TestResults.new(result) }
-      results = results.first if results.size == 1
+      results = results.first if results.size >= 1
+
       session_results_url = results.url
       # results = server_connector.stop_session running_session, false, save
       runner.aggregate_result(results) if runner

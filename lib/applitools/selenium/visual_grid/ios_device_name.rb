@@ -19,6 +19,8 @@ module IosDeviceName
   IPad_7 = 'iPad (7th generation)'
   IPad_9 = 'iPad (9th generation)'
   IPad_Air_2 = 'iPad Air (2nd generation)'
+  IPhone_8_Plus = 'iPhone 8 Plus'
+  IPhone_SE = 'iPhone SE (1st generation)'
 
   def enum_values
     [
@@ -40,7 +42,9 @@ module IosDeviceName
       IPad_Pro_3,
       IPad_7,
       IPad_9,
-      IPad_Air_2
+      IPad_Air_2,
+      IPhone_8_Plus,
+      IPhone_SE
     ]
   end
 end

@@ -1,7 +1,17 @@
 ## [vNext]
 ### Updated
+- Update version of Universal SDK to 2.2.8
+### Added
+- added api: wait_before_capture, page_id
+- api for native ufg: add_mobile_device, add_mobile_devices
+- new ios devices
+- AndroidDeviceName and AndroidDeviceInfo
+## [4.0.2] - 2022-02-08
+### Updated
 - Update version of Universal SDK to 1.0.9
-## [4.0.1] - 2022-02-08
+### Fixed
+- Fix installing issues with latest ruby version and installing on windows
+## [4.0.1] - 2022-02-08 - unreleased
 ### Updated
 - Update version of Universal SDK to 1.0.7
 ## [4.0.0] - 2022-01-24

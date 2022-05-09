@@ -21,34 +21,59 @@ DEVICES = {
         type: 'sauce',
         url: SAUCE_SERVER_URL,
         capabilities: {
-            browserName: '',
-            deviceName: 'Android Emulator',
-            platformName: 'Android',
-            platformVersion: '6.0',
+            w3c: {
+                browser_name: '',
+                platform_name: 'Android',
+                'appium:deviceName': 'Android Emulator',
+                'appium:platformVersion': '6.0',
+            },
+            legacy: {
+                browserName: '',
+                platformName: 'Android',
+                deviceName: 'Android Emulator',
+                platformVersion: '6.0',
+            }
+        },
+        options: {
             clearSystemFiles: true,
             noReset: true
-        },
-        options: {}.merge(SAUCE_CREDENTIALS)
+        }.merge(SAUCE_CREDENTIALS)
     },
     'Pixel 3a XL' => {
         type: 'sauce',
         url: SAUCE_SERVER_URL,
         capabilities: {
-            browserName: '',
-            deviceName: 'Google Pixel 3a XL GoogleAPI Emulator',
-            platformName: 'Android',
-            platformVersion: '10.0',
-            deviceOrientation: 'portrait'
+            w3c: {
+                browser_name: '',
+                platform_name: 'Android',
+                'appium:platformVersion': '10.0',
+                'appium:deviceName': 'Google Pixel 3a XL GoogleAPI Emulator',
+            },
+            legacy: {
+                browserName: '',
+                deviceName: 'Google Pixel 3a XL GoogleAPI Emulator',
+                platformName: 'Android',
+                platformVersion: '10.0',
+            },
         },
-        options: {}.merge(SAUCE_CREDENTIALS)
+        options: {
+            appiumVersion: '1.20.2'
+        }.merge(SAUCE_CREDENTIALS)
     },
     'Pixel 3 XL' => {
         capabilities: {
-            browserName: '',
-            deviceName: 'Google Pixel 3 XL GoogleAPI Emulator',
-            platformName: 'Android',
-            platformVersion: '10.0',
-            deviceOrientation: 'portrait'
+            w3c: {
+                browser_name: '',
+                platform_name: 'Android',
+                'appium:platformVersion': '10.0',
+                'appium:deviceName': 'Google Pixel 3 XL GoogleAPI Emulator',
+            },
+            legacy: {
+                browserName: '',
+                deviceName: 'Google Pixel 3 XL GoogleAPI Emulator',
+                platformName: 'Android',
+                platformVersion: '10.0',
+            },
         },
         options: {}.merge(SAUCE_CREDENTIALS),
         url: SAUCE_SERVER_URL,
@@ -59,25 +84,43 @@ DEVICES = {
         type: 'sauce',
         url: SAUCE_SERVER_URL,
         capabilities: {
-            browserName: '',
-            name: 'Android Demo',
-            platformName: 'Android',
-            platformVersion: '7.0',
-            appiumVersion: '1.9.1',
-            deviceName: 'Samsung Galaxy S8 FHD GoogleAPI Emulator',
-            automationName: 'uiautomator2',
-            newCommandTimeout: 600
+            w3c: {
+                browser_name: '',
+                platform_name: 'Android',
+                'appium:platformVersion': '7.0',
+                'appium:deviceName': 'Samsung Galaxy S8 FHD GoogleAPI Emulator',
+                'appium:automationName': 'uiautomator2',
+            },
+            legacy: {
+                browserName: '',
+                platformName: 'Android',
+                platformVersion: '7.0',
+                deviceName: 'Samsung Galaxy S8 FHD GoogleAPI Emulator',
+                automationName: 'uiautomator2',
+            }
         },
-        options: {}.merge(SAUCE_CREDENTIALS)
+        options: {
+            commandTimeout: 600,
+            name: 'Android Demo',
+            appiumVersion: '1.9.1',
+        }.merge(SAUCE_CREDENTIALS)
     },
     'iPhone 5S' => {
         type: 'sauce',
         url: SAUCE_SERVER_URL,
         capabilities: {
-            browserName: '',
-            deviceName: 'iPhone 5s Simulator',
-            platformVersion: '12.4',
-            platformName: 'iOS'
+            w3c: {
+                browser_name: '',
+                platform_name: 'iOS',
+                'appium:deviceName': 'iPhone 5s Simulator',
+                'appium:platformVersion': '12.4',
+            },
+            legacy: {
+                browserName: '',
+                platformName: 'iOS',
+                deviceName: 'iPhone 5s Simulator',
+                platformVersion: '12.4',
+            }
         },
         options: {}.merge(SAUCE_CREDENTIALS)
     },
@@ -85,10 +128,18 @@ DEVICES = {
         type: 'sauce',
         url: SAUCE_SERVER_URL,
         capabilities: {
-            browserName: '',
-            deviceName: 'iPhone 11 Pro Simulator',
-            platformVersion: '13.4',
-            platformName: 'iOS'
+            w3c: {
+                browser_name: '',
+                platform_name: 'iOS',
+                'appium:deviceName': 'iPhone 11 Pro Simulator',
+                'appium:platformVersion': '13.4',
+            },
+            legacy: {
+                browserName: '',
+                platformName: 'iOS',
+                deviceName: 'iPhone 11 Pro Simulator',
+                platformVersion: '13.4',
+            }
         },
         options: {}.merge(SAUCE_CREDENTIALS)
     },
@@ -96,10 +147,19 @@ DEVICES = {
         type: 'sauce',
         url: SAUCE_SERVER_URL,
         capabilities: {
-            browserName: '',
-            platformName: 'iOS',
-            platformVersion: '13.0',
-            deviceName: 'iPhone XS Simulator'
+            w3c: {
+                browser_name: '',
+                platform_name: 'iOS',
+                'appium:platformVersion': '13.0',
+                'appium:deviceName': 'iPhone XS Simulator'
+            },
+            legacy: {
+                browserName: '',
+                platformName: 'iOS',
+                platformVersion: '13.0',
+                appiumVersion: '1.19.2',
+                deviceName: 'iPhone XS Simulator'
+            }
         },
         options: {}.merge(SAUCE_CREDENTIALS)
     },
@@ -107,10 +167,18 @@ DEVICES = {
         type: 'sauce',
         url: SAUCE_SERVER_URL,
         capabilities: {
-            browserName: '',
-            deviceName: 'iPad Air Simulator',
-            platformVersion: '12.4',
-            platformName: 'iOS'
+            w3c: {
+                browserName: '',
+                platformName: 'iOS',
+                'appium:deviceName': 'iPad Air Simulator',
+                'appium:platformVersion': '12.4',
+            },
+            legacy: {
+                browserName: '',
+                deviceName: 'iPad Air Simulator',
+                platformVersion: '12.4',
+                platformName: 'iOS'
+            }
         },
         options: {}.merge(SAUCE_CREDENTIALS)
     },

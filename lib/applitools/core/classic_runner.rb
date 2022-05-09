@@ -31,8 +31,7 @@ module Applitools
       end
       return all_test_results unless all_test_results.empty?
       all_universal_results = close_all_eyes
-      key_transformed_results = Applitools::Utils.deep_stringify_keys(all_universal_results)
-      key_transformed_results.map {|result| Applitools::TestResults.new(result) }
+      Applitools::TestResultSummary.new(all_universal_results).old_style_results_array
     end
 
     def rendering_info(connector)
