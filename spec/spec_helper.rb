@@ -13,6 +13,10 @@ require 'test_utils/selenium_workaround'
 Dir['./spec/support/**/*.rb'].sort.each { |f| require f }
 
 RSpec.configure do |config|
+
+  # Use the specified formatter
+  config.formatter = :documentation
+
   config.before mock_connection: true do
     allow_any_instance_of(Applitools::Connectivity::ServerConnector).to receive(:start_session) do
       Applitools::Session.new('dummy_id', 'dummy_url')
