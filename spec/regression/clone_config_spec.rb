@@ -18,7 +18,7 @@ RSpec.shared_examples 'clone configuration' do
     conf = eyes.configuration
     original_configuration.config_keys.each do |k|
       # rubocop:disable Lint/UnifiedInteger
-      unless [NilClass, TrueClass, FalseClass, Integer, Fixnum, Float, Symbol].include? conf.send(k).class
+      unless [NilClass, TrueClass, FalseClass, Integer, Float, Symbol].include? conf.send(k).class
         expect(conf.send(k).object_id).to_not eq(original_configuration.send(k).object_id)
       end
       # rubocop:enable Lint/UnifiedInteger
