@@ -2,7 +2,7 @@
 
 require 'selenium-webdriver'
 
-SAUCE_SERVER_URL = 'https://ondemand.saucelabs.com:443/wd/hub'
+SAUCE_SERVER_URL = 'https://ondemand.us-west-1.saucelabs.com/wd/hub'
 SAUCE_CREDENTIALS = {
     username: ENV['SAUCE_USERNAME'],
     accessKey: ENV['SAUCE_ACCESS_KEY']
