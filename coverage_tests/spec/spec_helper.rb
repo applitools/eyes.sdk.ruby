@@ -2,6 +2,8 @@
 require_relative '../../lib/test_utils/obtain_actual_app_output'
 require 'driver_build'
 RSpec.configure do |config|
+  config.formatter = :documentation
+
   include Applitools::TestUtils::ObtainActualAppOutput
   config.expect_with :rspec do |expectations|
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true
