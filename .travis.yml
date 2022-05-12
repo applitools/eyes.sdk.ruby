@@ -42,6 +42,7 @@ jobs:
         - ls /tmp
         - ls /tmp/applitools-logs
         - cat /tmp/applitools-logs/*.log
+        - sleep 5
 #    - stage: "Visual tests"
 #      script: bundle exec rake travis:vg_tests
 #      name: "Visual Grid"
