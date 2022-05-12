@@ -50,6 +50,8 @@ jobs:
         - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
         - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
         - yarn ruby:prod
+        - cat /tmp/applitools-logs/*.log
+        - sleep 5
     - stage: "Report all test results"
       if: branch = master AND type = cron
       name: "Report all test results"
