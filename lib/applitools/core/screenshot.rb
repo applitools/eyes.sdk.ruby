@@ -5,7 +5,7 @@ module Applitools
   class Screenshot < Delegator
     class << self
       def from_region(region)
-        self::Image.new(::ChunkyPNG::Image.new(region.width, region.height))
+        # self::Image.new(::ChunkyPNG::Image.new(region.width, region.height))
       end
 
       def from_datastream(datastream)
@@ -18,7 +18,7 @@ module Applitools
 
       def from_any_image(image)
         return from_region(image) if image.is_a? Applitools::Region
-        return from_image(image) if image.is_a? ::ChunkyPNG::Image
+        # return from_image(image) if image.is_a? ::ChunkyPNG::Image
         return image if image.is_a?(Image) | image.is_a?(Datastream)
         from_datastream(image)
       end
@@ -60,12 +60,12 @@ module Applitools
             "Expected image to be Datastream or String, but got #{image.class}"
           )
         end
-        @datastream = ::ChunkyPNG::Datastream.from_string image
+        # @datastream = ::ChunkyPNG::Datastream.from_string image
       end
 
       def update!(image)
         Applitools::ArgumentGuard.not_nil(image, 'image')
-        Applitools::ArgumentGuard.is_a?(image, 'image', ::ChunkyPNG::Image)
+        # Applitools::ArgumentGuard.is_a?(image, 'image', ::ChunkyPNG::Image)
         @datastream = image.to_datastream
         self
       end
@@ -90,7 +90,7 @@ module Applitools
       end
 
       def restore
-        ::ChunkyPNG::Image.from_datastream @datastream
+        # ::ChunkyPNG::Image.from_datastream @datastream
       end
 
       def sha256
@@ -103,13 +103,13 @@ module Applitools
 
       def initialize(image)
         Applitools::ArgumentGuard.not_nil(image, 'image')
-        Applitools::ArgumentGuard.is_a?(image, 'image', ::ChunkyPNG::Image)
+        # Applitools::ArgumentGuard.is_a?(image, 'image', ::ChunkyPNG::Image)
         @image = image
       end
 
       def update!(image)
         Applitools::ArgumentGuard.not_nil(image, 'image')
-        Applitools::ArgumentGuard.is_a?(image, 'image', ::ChunkyPNG::Image)
+        # Applitools::ArgumentGuard.is_a?(image, 'image', ::ChunkyPNG::Image)
         @image = image
       end
 

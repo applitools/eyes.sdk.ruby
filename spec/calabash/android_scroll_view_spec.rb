@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe 'Applitools::Calabash::FullPageCaptureAlgorithm::CalabashAndroidScreenshot' do
+RSpec.describe 'Applitools::Calabash::FullPageCaptureAlgorithm::CalabashAndroidScreenshot', skip: true do
   let(:dummy_class) do
     class Dummy
       include Applitools::Calabash::FullPageCaptureAlgorithm::CalabashAndroidScreenshot

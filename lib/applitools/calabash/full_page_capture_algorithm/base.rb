@@ -30,7 +30,7 @@ module Applitools
 
         def create_entire_image
           current_entire_size = entire_size
-          @stitched_image = ::ChunkyPNG::Image.new(current_entire_size.width, current_entire_size.height)
+          # @stitched_image = ::ChunkyPNG::Image.new(current_entire_size.width, current_entire_size.height)
         end
 
         def entire_content

@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe Applitools::Calabash::EyesCalabashScreenshot do
+RSpec.describe Applitools::Calabash::EyesCalabashScreenshot, skip: true do
   let(:empty_region) { Applitools::Region::EMPTY }
   let(:non_empty_region) { Applitools::Region.new(10, 11, 12, 13) }
 

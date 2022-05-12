@@ -15,16 +15,16 @@ module Applitools::Utils
     # Creates an image object from the PNG bytes.
     # @param [String] png_bytes A binary string of the PNG bytes of the image.
     # @return [ChunkyPNG::Canvas] An image object.
-    def png_image_from_bytes(png_bytes)
-      ChunkyPNG::Image.from_blob(png_bytes)
-    end
+    # def png_image_from_bytes(png_bytes)
+    #   ChunkyPNG::Image.from_blob(png_bytes)
+    # end
 
     # Creates an image instance from a base64 representation of its PNG encoding.
     # @param [String] png_bytes The Base64 representation of a PNG image.
     # @return [ChunkyPNG::Canvas] An image object.
-    def png_image_from_base64(png_bytes)
-      png_image_from_bytes(Base64.decode64(png_bytes))
-    end
+    # def png_image_from_base64(png_bytes)
+    #   png_image_from_bytes(Base64.decode64(png_bytes))
+    # end
 
     # Get the raw PNG bytes of an image.
     # @param [ChunkyPNG::Canvas] image The image object for which to get the PNG bytes.
@@ -99,7 +99,7 @@ module Applitools::Utils
       Applitools::ArgumentGuard.not_nil(new_width, 'new_width')
       Applitools::ArgumentGuard.not_nil(new_height, 'new_height')
       Applitools::ArgumentGuard.not_nil(image, 'image')
-      Applitools::ArgumentGuard.is_a?(image, 'image', ::ChunkyPNG::Image)
+      # Applitools::ArgumentGuard.is_a?(image, 'image', ::ChunkyPNG::Image)
 
       raise Applitools::EyesIllegalArgument.new "Invalid width: #{new_width}" if new_width <= 0
       raise Applitools::EyesIllegalArgument.new "Invalid height: #{new_height}" if new_height <= 0

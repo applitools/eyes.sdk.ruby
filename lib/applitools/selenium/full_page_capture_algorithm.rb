@@ -112,7 +112,7 @@ module Applitools::Selenium
 
       logger.info "Creating stitchedImage container. Size: #{entire_size}"
 
-      stitched_image = ::ChunkyPNG::Image.new(entire_size.width, entire_size.height)
+      # stitched_image = ::ChunkyPNG::Image.new(entire_size.width, entire_size.height)
       logger.info 'Done! Adding initial screenshot..'
       logger.info "Initial part:(0,0) [#{image.width} x #{image.height}]"
 

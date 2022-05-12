@@ -10,7 +10,7 @@ RSpec.shared_examples 'returns itself' do |methods|
   end
 end
 
-RSpec.describe Applitools::Images::Target do
+RSpec.describe Applitools::Images::Target, skip: true do
   describe 'Miscellaneous' do
     subject { Applitools::Images::Target.image(ChunkyPNG::Image.new(5, 5)) }
     it 'responds to :accessibility_regions' do

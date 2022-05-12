@@ -29,8 +29,8 @@ Gem::Specification.new do |spec|
 
   spec.metadata['yard.run'] = 'yri' # use "yard" to build full HTML docs.
 
-  spec.add_dependency 'oily_png', '~> 1.2'
-  spec.add_dependency 'chunky_png', '= 1.3.6'
+  # spec.add_dependency 'oily_png', '~> 1.2'
+  # spec.add_dependency 'chunky_png', '= 1.3.6'
   spec.add_dependency 'faraday'
   spec.add_dependency 'faraday_middleware'
   spec.add_dependency 'faraday-cookie_jar'

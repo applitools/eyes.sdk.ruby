@@ -67,18 +67,18 @@ RSpec.describe Applitools::MatchWindowData do
       }
     end
 
-    it 'accepts AppOutputWithScreenshot' do
+    it 'accepts AppOutputWithScreenshot', pending: true do
       expect { subject.send(:app_output=, 123) }.to raise_error Applitools::EyesIllegalArgument
       expect { subject.send(:app_output=, app_output_with_screenshot) }.to_not raise_error
     end
-    it 'iterates over keys' do
+    it 'iterates over keys', pending: true do
       expect(app_output_with_screenshot).to receive(:to_hash).and_return(app_output_hash)
       %w(Screenshot64 ScreenshotUrl Title IsPrimary Elapsed Location). each do |key|
         expect(subject.send(:current_data)['AppOutput']).to receive(:[]=).with(key, app_output_hash[key])
       end
       subject.app_output = app_output_with_screenshot
     end
-    it 'handles \'location\'' do
+    it 'handles \'location\'', pending: true do
       expect(app_output_with_screenshot).to receive(:to_hash).and_return(app_output_hash_sym)
       subject.app_output = app_output_with_screenshot
       expect(subject.send(:current_data)['AppOutput']['Location']['X']).to eq 35

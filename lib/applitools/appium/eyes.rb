@@ -84,8 +84,8 @@ class Applitools::Appium::Eyes < Applitools::Selenium::SeleniumEyes
         self.screenshot = screenshot_class.new(
           Applitools::Screenshot.from_image(
             case scaled_image
-            when ChunkyPNG::Image
-              scaled_image
+            # when ChunkyPNG::Image
+            #   scaled_image
             when Applitools::Screenshot::Datastream
               scaled_image.image
             else

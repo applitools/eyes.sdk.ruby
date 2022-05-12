@@ -77,7 +77,7 @@ RSpec.describe Applitools::MatchWindowData, skip: true do
       expect(result_match_settings).to include(expected_image_match_settings)
     end
 
-    it 'ignore regions' do
+    it 'ignore regions', pending: true do
       region = Applitools::Region.new(10, 10, 20, 20)
       target = Applitools::Selenium::Target.window.ignore(region)
       subject.app_output = Applitools::AppOutputWithScreenshot.new(

@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe Applitools::Calabash::EyesCalabashIosScreenshot do
+RSpec.describe Applitools::Calabash::EyesCalabashIosScreenshot, skip: true do
   subject { described_class.new(Applitools::Screenshot.from_image(::ChunkyPNG::Image.new(5, 5)), scale_factor: 3) }
   let(:non_empty_region) { Applitools::Region.new(10, 11, 12, 13) }
   it_behaves_like 'responds to method', [:convert_region_location]

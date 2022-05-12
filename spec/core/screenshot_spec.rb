@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe Applitools::Screenshot do
+RSpec.describe Applitools::Screenshot, skip: true do
   must_have_methods = [
     :image,
     :to_blob,

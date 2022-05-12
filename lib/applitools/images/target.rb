@@ -6,7 +6,7 @@ module Applitools::Images
     class << self
       def path(path)
         raise Applitools::EyesIllegalArgument unless File.exist?(path)
-        new Applitools::Screenshot.from_image(ChunkyPNG::Image.from_file(path))
+        # new Applitools::Screenshot.from_image(ChunkyPNG::Image.from_file(path))
       end
 
       def blob(blob_image)
@@ -17,7 +17,7 @@ module Applitools::Images
 
       def image(image)
         Applitools::ArgumentGuard.not_nil image, 'image'
-        Applitools::ArgumentGuard.is_a? image, 'image', ChunkyPNG::Image
+        # Applitools::ArgumentGuard.is_a? image, 'image', ChunkyPNG::Image
         new Applitools::Screenshot.from_image(image)
       end
 
@@ -31,13 +31,13 @@ module Applitools::Images
         case screenshot
         when Applitools::Screenshot
           screenshot(screenshot)
-        when ChunkyPNG::Image
-          image(screenshot)
+        # when ChunkyPNG::Image
+        #   image(screenshot)
         when String
           begin
             blob(screenshot)
-          rescue ChunkyPNG::SignatureMismatch
-            path(screenshot)
+          # rescue ChunkyPNG::SignatureMismatch
+          #   path(screenshot)
           end
         else
           raise Applitools::EyesIllegalArgument.new "Passed screenshot is not image type (#{screenshot.class})"

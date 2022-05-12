@@ -234,11 +234,11 @@ module Applitools::Images
 
     def get_image_from_options(options)
       image = if options[:image].nil? || !options[:image].is_a?(Applitools::Screenshot)
-                if options[:image].is_a? ChunkyPNG::Image
-                  Applitools::Screenshot.from_image options[:image]
-                elsif !options[:image_path].nil? && !options[:image_path].empty?
-                  Applitools::Screenshot.from_datastream ChunkyPNG::Datastream.from_file(options[:image_path]).to_s
-                elsif !options[:image_bytes].nil? && !options[:image_bytes].empty?
+                # if options[:image].is_a? ChunkyPNG::Image
+                #   Applitools::Screenshot.from_image options[:image]
+                # if !options[:image_path].nil? && !options[:image_path].empty?
+                #   Applitools::Screenshot.from_datastream ChunkyPNG::Datastream.from_file(options[:image_path]).to_s
+                if !options[:image_bytes].nil? && !options[:image_bytes].empty?
                   Applitools::Screenshot.from_datastream options[:image_bytes]
                 end
               else

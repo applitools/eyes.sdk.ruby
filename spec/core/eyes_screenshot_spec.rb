@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe Applitools::EyesScreenshot do
+RSpec.describe Applitools::EyesScreenshot, skip: true do
   describe 'initializer' do
     it 'checks if screenshot is passed' do
       expect { Applitools::EyesScreenshot.new(:not_a_screennshot) }.to raise_error(
