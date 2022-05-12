@@ -7,12 +7,12 @@ require_relative 'lib/eyes_consts'
 CLOBBER.include ['pkg', Applitools::JS_PATH]
 
 require 'bundler/gem_helper'
-Bundler::GemHelper.install_tasks name: 'eyes_core'
-Bundler::GemHelper.install_tasks name: 'eyes_images'
-Bundler::GemHelper.install_tasks name: 'eyes_selenium'
-Bundler::GemHelper.install_tasks name: 'eyes_calabash'
-Bundler::GemHelper.install_tasks name: 'eyes_capybara'
-Bundler::GemHelper.install_tasks name: 'eyes_appium'
+# Bundler::GemHelper.install_tasks name: 'eyes_core'
+# Bundler::GemHelper.install_tasks name: 'eyes_images'
+# Bundler::GemHelper.install_tasks name: 'eyes_selenium'
+# Bundler::GemHelper.install_tasks name: 'eyes_calabash'
+# Bundler::GemHelper.install_tasks name: 'eyes_capybara'
+# Bundler::GemHelper.install_tasks name: 'eyes_appium'
 Bundler::GemHelper.install_tasks name: 'eyes_universal'
 
 namespace :applitools do
