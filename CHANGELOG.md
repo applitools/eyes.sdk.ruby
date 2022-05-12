@@ -1,11 +1,15 @@
 ## [vNext]
 ### Updated
-- Update version of Universal SDK to 2.2.8
+- Update version of Universal SDK to 2.5.7
 ### Added
 - added api: wait_before_capture, page_id
 - api for native ufg: add_mobile_device, add_mobile_devices
 - new ios devices
 - AndroidDeviceName and AndroidDeviceInfo
+### Fixed
+- Fix installing universal server issues on windows
+## Removed
+- png processing lib dependecies
 ## [4.0.2] - 2022-02-08
 ### Updated
 - Update version of Universal SDK to 1.0.9
