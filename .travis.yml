@@ -37,19 +37,23 @@ jobs:
   include:
     - stage: "Unit Tests"
       name: "Unit Tests"
-      script: bundle exec rake travis:unit_tests
-    - stage: "Visual tests"
-      script: bundle exec rake travis:vg_tests
-      name: "Visual Grid"
-    - stage: "Appium"
-      script: bundle exec rake travis:appium_tests
-      name: "eyes_appium tests"
-    - stage: "Ruby Coverage tests"
-      name: "Ruby Coverage tests"
       script:
-        - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
-        - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
-        - yarn ruby:prod
+        - bundle exec rake travis:unit_tests
+        - ls /tmp
+        - ls /tmp/applitools-logs
+        - cat /tmp/applitools-logs/*.log
+#    - stage: "Visual tests"
+#      script: bundle exec rake travis:vg_tests
+#      name: "Visual Grid"
+#    - stage: "Appium"
+#      script: bundle exec rake travis:appium_tests
+#      name: "eyes_appium tests"
+#    - stage: "Ruby Coverage tests"
+#      name: "Ruby Coverage tests"
+#      script:
+#        - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
+#        - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
+#        - yarn ruby:prod
     - stage: "Report all test results"
       if: branch = master AND type = cron
       name: "Report all test results"
