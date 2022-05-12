@@ -8,6 +8,7 @@
 - AndroidDeviceName and AndroidDeviceInfo
 ### Fixed
 - Fix installing universal server issues on windows
+- fix getting connection info for universal server on ci
 ## Removed
 - png processing lib dependecies
 ## [4.0.2] - 2022-02-08

@@ -34,11 +34,19 @@ if defined? Selenium::WebDriver::Driver
 
     def universal_driver_config
       hidden_server_url = bridge.http.send(:server_url).to_s
-      {
-        serverUrl: hidden_server_url,
-        sessionId: session_id,
-        capabilities: capabilities.as_json
-      }
+      if respond_to?(:session_id)
+        {
+          serverUrl: hidden_server_url,
+          sessionId: session_id,
+          capabilities: capabilities.as_json
+        }
+      else
+        {
+          serverUrl: hidden_server_url,
+          sessionId: bridge.session_id,
+          capabilities: capabilities.as_json
+        }
+      end
     end
   end
 end
