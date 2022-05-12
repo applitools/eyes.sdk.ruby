@@ -11,7 +11,7 @@ module Applitools
       def download(to)
         puts "[eyes-universal] Downloading Eyes universal server from #{full_url}"
         where = filepath(to)
-        full_url.open {|cloud| File.write(where, cloud.read) }
+        full_url.open {|cloud| File.binwrite(where, cloud.read) }
         if Digest::SHA256.file(where).to_s == expected_binary_sha
           FileUtils.chmod('+x', where)
           puts "[eyes-universal] Download complete. Server placed in #{where}"
