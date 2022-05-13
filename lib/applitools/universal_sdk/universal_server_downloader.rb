@@ -37,7 +37,7 @@ module Applitools
       def expected_binary_sha
         return '59a50389a2dc2ca9b22f0ae625e273107b2f6275f1b9d70bb65127994d672599' if Gem.win_platform?
         case RUBY_PLATFORM
-          when /mswin|windows/i
+          when /mswin|windows|mingw/i
             '59a50389a2dc2ca9b22f0ae625e273107b2f6275f1b9d70bb65127994d672599'
           when /linux|arch/i
             'b056b26fef5084e6543df47a66cdf5c331e9c7ff538239f305ffade4af5207ab'
@@ -51,7 +51,7 @@ module Applitools
       def filename
         return 'eyes-universal-win.exe' if Gem.win_platform?
         case RUBY_PLATFORM
-          when /mswin|windows/i
+          when /mswin|windows|mingw/i
             'eyes-universal-win.exe'
           when /linux|arch/i
             'eyes-universal-linux'
