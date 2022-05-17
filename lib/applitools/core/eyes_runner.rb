@@ -28,22 +28,22 @@ module Applitools
       get_universal_eyes_manager.close_all_eyes
     end
 
-    def close_batch(batch_id)
-      if 'true'.casecmp(ENV['APPLITOOLS_DONT_CLOSE_BATCHES'] || '') == 0
-        return Applitools::EyesLogger.info(
-          'APPLITOOLS_DONT_CLOSE_BATCHES environment variable set to true. Doing nothing.'
-        ) && false
-      end
-      Applitools::ArgumentGuard.not_nil(batch_id, 'batch_id')
-      Applitools::EyesLogger.info("Close batch called with #{batch_id}")
-
-      close_batches_result = universal_client.core_close_batches(batch_id)
-      if close_batches_result.is_a?(Hash) && close_batches_result[:message] && close_batches_result[:stack]
-        Applitools::EyesLogger.logger.debug "Eyes close Batch: #{close_batches_result[:message]}"
-        Applitools::EyesLogger.logger.debug "Stack for #{Applitools::Connectivity::UniversalClient::CORE_CLOSE_BATCHES} : #{close_batches_result[:stack]}"
-      else
-        Applitools::EyesLogger.info "delete batch is done with #{close_batches_result}"
-      end
-    end
+    # def close_batch(batch_id)
+    #   if 'true'.casecmp(ENV['APPLITOOLS_DONT_CLOSE_BATCHES'] || '') == 0
+    #     return Applitools::EyesLogger.info(
+    #       'APPLITOOLS_DONT_CLOSE_BATCHES environment variable set to true. Doing nothing.'
+    #     ) && false
+    #   end
+    #   Applitools::ArgumentGuard.not_nil(batch_id, 'batch_id')
+    #   Applitools::EyesLogger.info("Close batch called with #{batch_id}")
+    #
+    #   close_batches_result = universal_client.core_close_batches(batch_id)
+    #   if close_batches_result.is_a?(Hash) && close_batches_result[:message] && close_batches_result[:stack]
+    #     Applitools::EyesLogger.logger.debug "Eyes close Batch: #{close_batches_result[:message]}"
+    #     Applitools::EyesLogger.logger.debug "Stack for #{Applitools::Connectivity::UniversalClient::CORE_CLOSE_BATCHES} : #{close_batches_result[:stack]}"
+    #   else
+    #     Applitools::EyesLogger.info "delete batch is done with #{close_batches_result}"
+    #   end
+    # end
   end
 end

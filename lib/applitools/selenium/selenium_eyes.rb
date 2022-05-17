@@ -154,7 +154,7 @@ module Applitools::Selenium
     # @return [Applitools::Selenium::Driver] A wrapped web driver which enables Eyes
     #   trigger recording and frame handling
     def open(options = {})
-      runner.add_batch(batch.id) { runner.close_batch(batch.id) } if runner
+      # runner.add_batch(batch.id) { runner.close_batch(batch.id) } if runner
       universal_open(options)
       # original_driver = options.delete(:driver)
       # options[:viewport_size] = Applitools::RectangleSize.from_any_argument options[:viewport_size] if
