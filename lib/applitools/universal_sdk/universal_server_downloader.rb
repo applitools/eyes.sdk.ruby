@@ -27,7 +27,7 @@ module Applitools
       private
 
       def base_url
-        'https://github.com/applitools/eyes.sdk.javascript1/releases/download/%40applitools/eyes-universal%402.5.7/'
+        'https://github.com/applitools/eyes.sdk.javascript1/releases/download/%40applitools/eyes-universal%402.5.10/'
       end
 
       def full_url
@@ -35,14 +35,14 @@ module Applitools
       end
 
       def expected_binary_sha
-        return '59a50389a2dc2ca9b22f0ae625e273107b2f6275f1b9d70bb65127994d672599' if Gem.win_platform?
+        return '160470a4c7190d54b43fe5b8fe90ca2071198566a91cb4b453cefaa28b50d1bc' if Gem.win_platform?
         case RUBY_PLATFORM
           when /mswin|windows|mingw/i
-            '59a50389a2dc2ca9b22f0ae625e273107b2f6275f1b9d70bb65127994d672599'
+            '160470a4c7190d54b43fe5b8fe90ca2071198566a91cb4b453cefaa28b50d1bc'
           when /linux|arch/i
-            'b056b26fef5084e6543df47a66cdf5c331e9c7ff538239f305ffade4af5207ab'
+            'e359eefc93ac4283576a941752facd3ddd514572ab10e8c72be95bf2926dd70c'
           when /darwin/i
-            'fef31b99bfe1312281b75d8eb78f5f41e8075c0bfa4b686a3bbbe50bbf19c91f'
+            '565c6596e6668cf92556a61d6797bde8c99e1d4d8df466f73572658c61f1dfdf'
           else
             raise 'Unsupported platform'
         end
