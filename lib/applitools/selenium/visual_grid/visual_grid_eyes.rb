@@ -68,6 +68,7 @@ module Applitools
       end
 
       def open(*args)
+        visual_grid_manager.add_batch(batch.id) { visual_grid_manager.close_batch(batch.id) }
         # self.test_uuid = SecureRandom.uuid
         options = Applitools::Utils.extract_options!(args)
         universal_open(options)

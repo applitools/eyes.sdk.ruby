@@ -93,8 +93,15 @@ module Applitools::Connectivity
       await(->(cb) { @socket.request(CORE_SET_VIEWPORT_SIZE, {driver: driver, size: size}, cb) })
     end
 
-    def core_close_batches(close_batch_settings)
+    def core_close_batches(close_batch_settings=nil)
       # batchIds, serverUrl?, apiKey?, proxy?
+      unless close_batch_settings.is_a?(Hash)
+        batch_ids = [@open_config[:batch][:id]]
+        batch_ids = [close_batch_settings] if close_batch_settings.is_a?(String)
+        batch_ids = close_batch_settings if close_batch_settings.is_a?(Array)
+        optional = [:serverUrl, :apiKey, :proxy].map {|k| [k, @open_config[k]] }.to_h
+        close_batch_settings = { settings: ({ batchIds: batch_ids }.merge(optional).compact) }
+      end
       await(->(cb) { @socket.request(CORE_CLOSE_BATCHES, close_batch_settings, cb) })
     end
 
