@@ -38,7 +38,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'oj'
   spec.add_dependency 'colorize'
   spec.add_dependency 'faye-websocket'
-  spec.add_dependency 'eventmachine'
+  spec.add_dependency 'eventmachine', '= 1.0.9.1'
   spec.add_dependency 'eyes_universal', "~> #{Applitools::UNIVERSAL_VERSION}"
 
   spec.add_development_dependency 'bundler'
