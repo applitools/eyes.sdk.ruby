@@ -1,6 +1,6 @@
 ## [vNext]
 ### Updated
-- Update version of Universal SDK to 2.5.10
+- Update version of Universal SDK to 2.5.11
 ### Fixed
 - Fix for default notify_on_completion value(moved to universal server)
 ## [4.0.4] - 2022-05-13
