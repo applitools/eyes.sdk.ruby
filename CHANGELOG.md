@@ -2,7 +2,7 @@
 ### Updated
 - Update version of Universal SDK to 2.5.10
 ### Fixed
-- Fix for batch closing & notifications [Trello 2816](https://trello.com/c/F9TWXEoY/)
+- Fix for default notify_on_completion value(moved to universal server)
 ## [4.0.4] - 2022-05-13
 ### Fixed
 - Fix for mingw

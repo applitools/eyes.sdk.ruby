@@ -35,7 +35,7 @@ module Applitools
         self.id = PROCESS_DEFAULT_BATCH_ID
       end
       self.properties = properties if properties
-      unless notify_on_completion.nil?
+      unless env_notify_on_completion.nil?
         self.notify_on_completion = 'true'.casecmp(env_notify_on_completion || '') == 0 ? true : false
       end
     end
