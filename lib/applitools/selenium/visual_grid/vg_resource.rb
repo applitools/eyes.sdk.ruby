@@ -2,7 +2,7 @@
 
 require 'base64'
 require 'digest'
-require 'nokogiri'
+# require 'nokogiri'
 
 module Applitools
   module Selenium
@@ -58,11 +58,12 @@ module Applitools
 
       def lookup_for_svg_resources
         return unless %r{^image/svg\+xml} =~ content_type && handle_discovered_resources_block
-        attrs = Nokogiri::XML(content)
-                        .xpath("//@*[namespace-uri(.) = 'http://www.w3.org/1999/xlink'] | //@href")
-                        .select { |a| a.name == 'href' }
-                        .map(&:value)
-                        .select { |a| /^(?!#).*/.match(a) }
+        attrs = []
+        # attrs = Nokogiri::XML(content)
+        #                 .xpath("//@*[namespace-uri(.) = 'http://www.w3.org/1999/xlink'] | //@href")
+        #                 .select { |a| a.name == 'href' }
+        #                 .map(&:value)
+        #                 .select { |a| /^(?!#).*/.match(a) }
         handle_discovered_resources_block.call(attrs, url)
       end
 

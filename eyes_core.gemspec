@@ -35,7 +35,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'faraday_middleware'
   spec.add_dependency 'faraday-cookie_jar'
 
-  spec.add_dependency 'oj'
+  spec.add_dependency 'oj', '= 3.13.10'
   spec.add_dependency 'colorize'
   spec.add_dependency 'faye-websocket'
   spec.add_dependency 'eventmachine', '= 1.0.9.1'
