@@ -1,3 +1,8 @@
+## [4.0.7] - 2022-05-19
+### Updated
+- Update version of Universal SDK to 2.5.14
+### Fixed
+- fix win issues
 ## [4.0.6] - 2022-05-19
 ### Updated
 - Update version of Universal SDK to 2.5.13
