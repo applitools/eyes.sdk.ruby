@@ -1,3 +1,6 @@
+## [4.0.5.1] - 2022-05-18
+### Fixed
+- Fix wrong gem yank
 ## [4.0.5] - 2022-05-18
 ### Updated
 - Update version of Universal SDK to 2.5.11
