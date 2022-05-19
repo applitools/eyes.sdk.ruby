@@ -1,6 +1,8 @@
 ## [vNext]
 ### Updated
 - Update version of Universal SDK to 2.5.13
+### Fixed
+- eventmachine and nokogiri gem on win issues
 ## [4.0.5] - 2022-05-18
 ### Updated
 - Update version of Universal SDK to 2.5.11
