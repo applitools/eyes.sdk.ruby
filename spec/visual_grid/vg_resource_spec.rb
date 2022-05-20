@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 require 'spec_helper'
 
-RSpec.describe 'vg_resource' do
+RSpec.describe 'vg_resource', skip: true do
   let(:content) { |example| File.read(example.description) }
 
   it 'spec/fixtures/applitools_logo_combined.svg' do
