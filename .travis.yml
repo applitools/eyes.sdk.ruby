@@ -79,7 +79,12 @@ jobs:
       script:
         - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
         - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
-        - yarn ruby:prod
+        - yarn
+        - yarn generate
+        - yarn parallel:local
+      after_script:
+        - yarn report:merge
+        - yarn report
     - stage: "Report all test results"
       if: branch = master AND type = cron
       name: "Report all test results"
