@@ -51,6 +51,10 @@ jobs:
         - choco uninstall ruby
         - choco install ruby --version=2.4.10.100
         - RefreshEnv.cmd
+        - ridk install 2 3
+        - which ruby
+        - ls C:/tools/ruby24
+        - echo $PATH
         - ruby -v
         - gem install builder
         - BUILD_ONLY=true rake clobber clean build
