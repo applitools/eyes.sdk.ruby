@@ -50,7 +50,8 @@ jobs:
       script:
         - choco uninstall ruby
         - choco install ruby --version=2.4.10.100
-        - refreshenv
+        - RefreshEnv.cmd
+        - call RefreshEnv.cmd
         - ruby -v
         - gem install builder
         - BUILD_ONLY=true rake clobber clean build
