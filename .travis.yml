@@ -54,10 +54,10 @@ jobs:
 #        - ls C:/tools/ruby27/bin  ruby.exe
       script:
         - echo $PATH
-        - choco install ruby --version=2.4.10.100
+        - choco install ruby --version=2.4.10.100 --package-parameters="'/NoPath'"
         - RefreshEnv.cmd
         - echo $PATH
-        - SET PATH=%/c/tools/ruby24/bin%/bin
+        - export PATH=$PATH:"/c/tools/ruby24/bin"
         - echo $PATH
 #        - ridk install 2 3
         - which ruby
