@@ -57,11 +57,19 @@ jobs:
         - which ridk
         - choco install msys2
         - gem install bundler builder
-        - ls C:/tools/ruby24/bin
-        - bundle -v
+        - gem list bundler
+        - echo $PATH
+#        - ls C:/tools/ruby24/bin
+        - C:/tools/ruby24/bin/bundle
+        - C:/tools/ruby24/bin/bundle.bat
+        - C:/tools/ruby24/bin/bundler
+        - C:/tools/ruby24/bin/bundler.bat
+        - which bundle
+        - which bundler
+        - bundle.bat -v
         - BUILD_ONLY=true rake clobber clean build
         - cd pkg; mkdir gems; mv ./*.gem ./gems; gem generate_index; cd ..
-        - bundle exec rake travis:version_test
+#        - bundle exec rake travis:version_test
 #    - stage: "Version Checks"
 #      name: "Version 2.4 Checks"
 #      script: bundle exec rake travis:version_test
