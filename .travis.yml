@@ -56,6 +56,7 @@ jobs:
 #        - ruby -v
 #        - gem -v
       script:
+        - gem install bundler
         - gem query -d bundler
 #        - gem update --system
 #        - gem query -d bundler
