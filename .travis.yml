@@ -13,9 +13,9 @@ before_install:
   - BUILD_ONLY=true rake clobber clean build
   - cd pkg; mkdir gems; mv ./*.gem ./gems; gem generate_index; cd ..
 before_script:
-  - choco install nvm
-  - nvm install 14.15.0
-  - nvm use 14.15.0
+#  - choco install -y --force nodejs-lts
+#  - nvm install 14.15.0
+#  - nvm use 14.15.0
   - export APPLITOOLS_BATCH_ID=$(java UUIDFromString $TRAVIS_COMMIT$TRAVIS_RUBY_VERSION)
   - echo $APPLITOOLS_BATCH_ID
   - export APPLITOOLS_DONT_CLOSE_BATCHES=true
@@ -38,6 +38,11 @@ jobs:
   include:
     - stage: "Version Checks"
       name: "Version 2.4 Checks"
+      script: bundle exec rake travis:version_test
+      rvm:
+        - 2.4
+    - stage: "Version win Checks"
+      name: "Version 2.4 win Checks"
       os: windows
       language: bash
       script:
