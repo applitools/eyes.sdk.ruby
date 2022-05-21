@@ -52,13 +52,16 @@ jobs:
         - RefreshEnv.cmd
         - export PATH=$PATH:"/c/tools/ruby24/bin"
         - gem install bundler
-#        - echo $PATH
+        #        - echo $PATH
 #        - which ruby /c/tools/ruby24/bin/ruby
 #        - ruby -v
 #        - gem -v
       script:
 #        - gem query -d bundler
         - gem update --system
+        - echo $BUNDLE_GEMFILE
+        - export BUNDLE_GEMFILE=$PWD/GemfileTravis
+        - echo $BUNDLE_GEMFILE
 #        - gem query -d bundler
 #        - gem install builder
 #        - which ruby
@@ -69,13 +72,13 @@ jobs:
 #        - ls C:/tools/ruby24
 #        - ls C:/tools/ruby24/bin
 #        - C:/tools/ruby24/bin/bundle -v
-        - C:/tools/ruby24/bin/bundle install --gemfile=GemfileTravis
 #        - C:/tools/ruby27/bin/bundle.bat -v
 #        - C:/tools/ruby27/bin/bundler -v
 #        - C:/tools/ruby27/bin/bundler.bat -v
-#        - BUILD_ONLY=true rake clobber clean build
-#        - cd pkg; mkdir gems; mv ./*.gem ./gems; gem generate_index; cd ..
-#        - C:/tools/ruby24/bin/bundle exec rake travis:version_test
+        - BUILD_ONLY=true rake clobber clean build
+        - cd pkg; mkdir gems; mv ./*.gem ./gems; gem generate_index; cd ..
+        - C:/tools/ruby24/bin/bundle install --gemfile=GemfileTravis
+        - C:/tools/ruby24/bin/bundle exec rake travis:version_test
 #    - stage: "Version Checks"
 #      name: "Version 2.4 Checks"
 #      script: bundle exec rake travis:version_test
