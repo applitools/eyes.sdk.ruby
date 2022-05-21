@@ -48,6 +48,7 @@ jobs:
       before_install:
         - choco uninstall ruby
         - choco install msys2 --params "/NoUpdate"
+        - choco install make
         - choco install ruby --version=2.4.10.100 --package-parameters="'/NoPath'"
         - RefreshEnv.cmd
         - export PATH=$PATH:"/c/tools/ruby24/bin"
@@ -59,9 +60,13 @@ jobs:
       script:
 #        - gem query -d bundler
         - gem update --system
-        - echo $BUNDLE_GEMFILE
+#        - echo $BUNDLE_GEMFILE
         - export BUNDLE_GEMFILE=$PWD/GemfileTravis
-        - echo $BUNDLE_GEMFILE
+        - gem install 'oj' -v '3.13.10'
+        - gem install 'oj' -v '3.13.11'
+        - gem install 'oj' -v '3.13.12'
+        - gem install 'oj' -v '3.13.13'
+#        - echo $BUNDLE_GEMFILE
 #        - gem query -d bundler
 #        - gem install builder
 #        - which ruby
