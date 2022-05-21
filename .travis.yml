@@ -56,8 +56,10 @@ jobs:
         - ruby -v
         - gem -v
       script:
-        - gem install builder
-        - gem info bundler
+        - gem help
+        - gem update --system
+        - gem help
+#        - gem install builder
         - which ruby
         - which gem
         - which bundle
@@ -65,10 +67,10 @@ jobs:
         - ls C:/tools/ruby27/bin
         - ls C:/tools/ruby24
         - ls C:/tools/ruby24/bin
-        - C:/tools/ruby27/bin/bundle -v
-        - C:/tools/ruby27/bin/bundle.bat -v
-        - C:/tools/ruby27/bin/bundler -v
-        - C:/tools/ruby27/bin/bundler.bat -v
+#        - C:/tools/ruby27/bin/bundle -v
+#        - C:/tools/ruby27/bin/bundle.bat -v
+#        - C:/tools/ruby27/bin/bundler -v
+#        - C:/tools/ruby27/bin/bundler.bat -v
 #        - BUILD_ONLY=true rake clobber clean build
 #        - cd pkg; mkdir gems; mv ./*.gem ./gems; gem generate_index; cd ..
 #        - C:/tools/ruby24/bin/bundle exec rake travis:version_test
