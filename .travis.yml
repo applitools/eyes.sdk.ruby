@@ -54,7 +54,9 @@ jobs:
         - ruby -v
       script:
         - ridk install 2 3
-        - gem install builder
+        - gem install bundler builder
+        - ls C:/tools/ruby24/bin
+        - bundler -v
         - BUILD_ONLY=true rake clobber clean build
         - cd pkg; mkdir gems; mv ./*.gem ./gems; gem generate_index; cd ..
         - bundle exec rake travis:version_test
