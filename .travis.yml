@@ -13,6 +13,7 @@ before_install:
   - BUILD_ONLY=true rake clobber clean build
   - cd pkg; mkdir gems; mv ./*.gem ./gems; gem generate_index; cd ..
 before_script:
+  - choco install nvm
   - nvm install 14.15.0
   - nvm use 14.15.0
   - export APPLITOOLS_BATCH_ID=$(java UUIDFromString $TRAVIS_COMMIT$TRAVIS_RUBY_VERSION)
