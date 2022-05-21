@@ -48,7 +48,7 @@ jobs:
       before_install:
         - choco uninstall ruby
         - choco install msys2 --params "/NoUpdate"
-        - choco install make
+        - choco install mingw
         - choco install ruby --version=2.4.10.100 --package-parameters="'/NoPath'"
         - RefreshEnv.cmd
         - export PATH=$PATH:"/c/tools/ruby24/bin"
