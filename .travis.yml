@@ -49,7 +49,10 @@ jobs:
         - ruby -v
       script:
         - choco install ruby --version=2.4.10.100 --allow-downgrade
-        - cat C:\ProgramData\chocolatey\logs\chocolatey.log
+        - cat C:/ProgramData/chocolatey/logs/chocolatey.log
+        - ruby -v
+        - choco install ruby --version=2.4.10.100 --force
+        - cat C:/ProgramData/chocolatey/logs/chocolatey.log
         - ruby -v
         - gem install builder
         - BUILD_ONLY=true rake clobber clean build
