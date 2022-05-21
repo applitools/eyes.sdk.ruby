@@ -55,8 +55,15 @@ jobs:
 #        - which ruby /c/tools/ruby24/bin/ruby
         - ruby -v
         - gem -v
+        - ls C:/tools/ruby*
+        - ls C:/tools/ruby27/bin
+        - ls C:/tools/ruby24
+        - ls C:/tools/ruby24/bin
       script:
         - gem install builder
+        - which ruby
+        - which gem
+        - which bundle
         - C:/tools/ruby24/bin/bundle -v
         - C:/tools/ruby24/bin/bundle.bat -v
         - C:/tools/ruby24/bin/bundler -v
