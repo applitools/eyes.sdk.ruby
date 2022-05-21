@@ -46,17 +46,18 @@ jobs:
       os: windows
       language: bash
       before_install:
-        - ruby -v
-        - which ruby
-        - echo $PATH
-        - ls C:/tools/ruby27
-        - ls C:/tools/ruby27/bin
-      script:
         - choco uninstall ruby
         - RefreshEnv.cmd
+#        - ruby -v
+#        - which ruby /c/tools/ruby27/bin/ruby
+#        - echo $PATH /bin:/usr/bin:/c/tools/ruby27/bin:
+#        - ls C:/tools/ruby27/bin  ruby.exe
+      script:
         - echo $PATH
         - choco install ruby --version=2.4.10.100
         - RefreshEnv.cmd
+        - echo $PATH
+        - SET PATH=%/c/tools/ruby24/bin%/bin
         - echo $PATH
 #        - ridk install 2 3
         - which ruby
