@@ -51,13 +51,13 @@ jobs:
         - choco install ruby --version=2.4.10.100 --package-parameters="'/NoPath'"
         - RefreshEnv.cmd
         - export PATH=$PATH:"/c/tools/ruby24/bin"
+        - gem install bundler
 #        - echo $PATH
 #        - which ruby /c/tools/ruby24/bin/ruby
 #        - ruby -v
 #        - gem -v
       script:
-        - gem install bundler
-        - gem query -d bundler
+#        - gem query -d bundler
 #        - gem update --system
 #        - gem query -d bundler
 #        - gem install builder
@@ -65,11 +65,11 @@ jobs:
 #        - which gem
 #        - which bundle
 #        - ls C:/tools/ruby*
-        - ls C:/tools/ruby27/bin
+#        - ls C:/tools/ruby27/bin
 #        - ls C:/tools/ruby24
-        - ls C:/tools/ruby24/bin
-        - C:/tools/ruby24/bin/bundle -v
-        - C:/tools/ruby27/bin/bundle -v
+#        - ls C:/tools/ruby24/bin
+#        - C:/tools/ruby24/bin/bundle -v
+        - C:/tools/ruby24/bin/bundle install
 #        - C:/tools/ruby27/bin/bundle.bat -v
 #        - C:/tools/ruby27/bin/bundler -v
 #        - C:/tools/ruby27/bin/bundler.bat -v
