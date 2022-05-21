@@ -49,7 +49,7 @@ jobs:
         - ruby -v
       script:
         - choco uninstall ruby
-        - choco install ruby --version=2.4.10.100
+        - choco install ruby --version=2.4.10.100 --package-parameters="'/NoPath ""/InstallDir:C:\tools\ruby27\bin""'"
         - RefreshEnv.cmd
         - ridk install 2 3
         - which ruby
