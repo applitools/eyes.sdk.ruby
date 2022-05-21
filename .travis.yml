@@ -38,9 +38,10 @@ jobs:
     - stage: "Version Checks"
       name: "Version 2.4 Checks"
       os: windows
-      script: bundle exec rake travis:version_test
-      rvm:
-        - 2.4
+      language: bash
+      script:
+        - choco install ruby --version=2.4.10.100
+        - bundle exec rake travis:version_test
 #    - stage: "Version Checks"
 #      name: "Version 2.4 Checks"
 #      script: bundle exec rake travis:version_test
