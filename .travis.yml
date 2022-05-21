@@ -50,16 +50,20 @@ jobs:
         - choco install ruby --version=2.4.10.100 --package-parameters="'/NoPath'"
         - RefreshEnv.cmd
         - export PATH="/c/tools/ruby24/bin":$PATH
+        - echo $PATH
 #        - which ruby /c/tools/ruby24/bin/ruby
         - ruby -v
         - gem -v
       script:
         - choco install msys2 --params "/NoUpdate"
         - gem install builder
-        - C:/tools/ruby24/bin/bundle
-        - BUILD_ONLY=true rake clobber clean build
-        - cd pkg; mkdir gems; mv ./*.gem ./gems; gem generate_index; cd ..
-        - C:/tools/ruby24/bin/bundle exec rake travis:version_test
+        - C:/tools/ruby24/bin/bundle -v
+        - C:/tools/ruby24/bin/bundle.bat -v
+        - C:/tools/ruby24/bin/bundler -v
+        - C:/tools/ruby24/bin/bundler.bat -v
+#        - BUILD_ONLY=true rake clobber clean build
+#        - cd pkg; mkdir gems; mv ./*.gem ./gems; gem generate_index; cd ..
+#        - C:/tools/ruby24/bin/bundle exec rake travis:version_test
 #    - stage: "Version Checks"
 #      name: "Version 2.4 Checks"
 #      script: bundle exec rake travis:version_test
