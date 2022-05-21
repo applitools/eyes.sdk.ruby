@@ -18,17 +18,17 @@ module Applitools
       end
 
       # JS_FILES_PATH = File.join(Applitools::JS_PATH, '@applitools', 'dom-snapshot', 'dist')
-      PROCESS_PAGE_AND_POLL_RB = <<"SCRIPT"
-module Applitools
-  module Selenium
-    module Scripts
-      PROCESS_PAGE_AND_POLL = <<'END'
-#{get_script_by_file_name('processPageAndSerializePoll')}
-END
-    end
-  end
-end
-SCRIPT
+#       PROCESS_PAGE_AND_POLL_RB = <<"SCRIPT"
+# module Applitools
+#   module Selenium
+#     module Scripts
+#       PROCESS_PAGE_AND_POLL = <<'END'
+# #{get_script_by_file_name('processPageAndSerializePoll')}
+# END
+#     end
+#   end
+# end
+# SCRIPT
     end
   end
 end
