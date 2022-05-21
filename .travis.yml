@@ -48,7 +48,9 @@ jobs:
       before_install:
         - ruby -v
       script:
-        - choco install ruby --version=2.4.10.100 --force
+        - ruby -v
+        - choco uninstall ruby
+        - choco install ruby --version=2.4.10.100
         - ruby -v
         - gem install builder
         - BUILD_ONLY=true rake clobber clean build
