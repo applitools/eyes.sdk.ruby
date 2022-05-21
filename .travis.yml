@@ -58,7 +58,7 @@ jobs:
 #        - gem -v
       script:
 #        - gem query -d bundler
-#        - gem update --system
+        - gem update --system
 #        - gem query -d bundler
 #        - gem install builder
 #        - which ruby
@@ -76,6 +76,8 @@ jobs:
 #        - BUILD_ONLY=true rake clobber clean build
 #        - cd pkg; mkdir gems; mv ./*.gem ./gems; gem generate_index; cd ..
 #        - C:/tools/ruby24/bin/bundle exec rake travis:version_test
+        - ls
+        - cat Gemfile
 #    - stage: "Version Checks"
 #      name: "Version 2.4 Checks"
 #      script: bundle exec rake travis:version_test
