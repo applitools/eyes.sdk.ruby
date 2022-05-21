@@ -47,25 +47,17 @@ jobs:
       language: bash
       before_install:
         - choco uninstall ruby
-        - RefreshEnv.cmd
-#        - ruby -v
-#        - which ruby /c/tools/ruby27/bin/ruby
-#        - echo $PATH /bin:/usr/bin:/c/tools/ruby27/bin:
-#        - ls C:/tools/ruby27/bin  ruby.exe
-      script:
-        - echo $PATH
         - choco install ruby --version=2.4.10.100 --package-parameters="'/NoPath'"
         - RefreshEnv.cmd
-        - echo $PATH
         - export PATH=$PATH:"/c/tools/ruby24/bin"
-        - echo $PATH
-#        - ridk install 2 3
-        - which ruby
+#        - which ruby /c/tools/ruby24/bin/ruby
         - ruby -v
-#        - gem install builder
-#        - BUILD_ONLY=true rake clobber clean build
-#        - cd pkg; mkdir gems; mv ./*.gem ./gems; gem generate_index; cd ..
-#        - bundle exec rake travis:version_test
+      script:
+        - ridk install 2 3
+        - gem install builder
+        - BUILD_ONLY=true rake clobber clean build
+        - cd pkg; mkdir gems; mv ./*.gem ./gems; gem generate_index; cd ..
+        - bundle exec rake travis:version_test
 #    - stage: "Version Checks"
 #      name: "Version 2.4 Checks"
 #      script: bundle exec rake travis:version_test
