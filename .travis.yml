@@ -35,50 +35,80 @@ before_script:
     fi
 jobs:
   include:
-    - stage: "Unit Tests"
-      name: "Unit Tests"
-      script: bundle exec rake travis:unit_tests
-    - stage: "Visual tests"
-      script: bundle exec rake travis:vg_tests
-      name: "Visual Grid"
-    - stage: "Appium"
-      script: bundle exec rake travis:appium_tests
-      name: "eyes_appium tests"
-    - stage: "Ruby Coverage tests"
-      name: "Ruby Coverage tests"
-      script:
-        - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
-        - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
-        - yarn ruby:prod
-    - stage: "Report all test results"
-      if: branch = master AND type = cron
-      name: "Report all test results"
-      script:
-        - echo "v$SDK_VERSION $CHANGELOG"
-        - echo $TMP_CHANGELOG
-        - COMMITTER_EMAIL="$(git log -1 $TRAVIS_COMMIT --pretty="%cE")"
-        - if [[ ("$ALLOWED_RELEASE_COMMITERS" =~ .*"$COMMITTER_EMAIL".*) && $TMP_CHANGELOG ]]; then
-            echo "REPORTING...";
-            TEST_COVERAGE_GAP=$(cat testCoverageGap.txt);
-            bash ./all_tests_report.sh "$SDK" "$COMMITER_EMAIL";
-            echo "REPORTED SUCCESSFULLY";
-          else
-            echo "REPORT FAILED";
-            exit 1;
-          fi
-    - stage: "Build"
-      if: tag =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ AND fork == false
-      name: "Release event"
-      script:
-        - echo "v$SDK_VERSION $CHANGELOG"
-        - echo $TMP_CHANGELOG
-        - COMMITTER_EMAIL="$(git log -1 $TRAVIS_COMMIT --pretty="%cE")"
-        - if [[ ("$ALLOWED_RELEASE_COMMITERS" =~ .*"$COMMITTER_EMAIL".*) && $TMP_CHANGELOG ]]; then
-            echo "DEPLOY";
-            TEST_COVERAGE_GAP=$(cat testCoverageGap.txt);
-            bash ./sendMail.sh "$SDK" "$TRAVIS_TAG" "$CHANGELOG" "$TEST_COVERAGE_GAP";
-            echo "DEPLOY SUCCESSFUL";
-          else
-            echo "DEPLOYMENT FAILED";
-            exit 1;
-          fi
+    - stage: "Version Checks"
+      name: "Version 2.4 Checks"
+      script: bundle exec rake travis:version_test
+      rvm:
+        - 2.4
+    - stage: "Version Checks"
+      name: "Version 2.5 Checks"
+      script: bundle exec rake travis:version_test
+      rvm:
+        - 2.5
+    - stage: "Version Checks"
+      name: "Version 2.6 Checks"
+      script: bundle exec rake travis:version_test
+      rvm:
+        - 2.6
+    - stage: "Version Checks"
+      name: "Version 2.7 Checks"
+      script: bundle exec rake travis:version_test
+      rvm:
+        - 2.7
+    - stage: "Version Checks"
+      name: "Version 3.0 Checks"
+      script: bundle exec rake travis:version_test
+      rvm:
+        - 3.0
+    - stage: "Version Checks"
+      name: "Version 3.1 Checks"
+      script: bundle exec rake travis:version_test
+      rvm:
+        - 3.1
+#    - stage: "Unit Tests"
+#      name: "Unit Tests"
+#      script: bundle exec rake travis:unit_tests
+#    - stage: "Visual tests"
+#      script: bundle exec rake travis:vg_tests
+#      name: "Visual Grid"
+#    - stage: "Appium"
+#      script: bundle exec rake travis:appium_tests
+#      name: "eyes_appium tests"
+#    - stage: "Ruby Coverage tests"
+#      name: "Ruby Coverage tests"
+#      script:
+#        - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
+#        - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
+#        - yarn ruby:prod
+#    - stage: "Report all test results"
+#      if: branch = master AND type = cron
+#      name: "Report all test results"
+#      script:
+#        - echo "v$SDK_VERSION $CHANGELOG"
+#        - echo $TMP_CHANGELOG
+#        - COMMITTER_EMAIL="$(git log -1 $TRAVIS_COMMIT --pretty="%cE")"
+#        - if [[ ("$ALLOWED_RELEASE_COMMITERS" =~ .*"$COMMITTER_EMAIL".*) && $TMP_CHANGELOG ]]; then
+#            echo "REPORTING...";
+#            TEST_COVERAGE_GAP=$(cat testCoverageGap.txt);
+#            bash ./all_tests_report.sh "$SDK" "$COMMITER_EMAIL";
+#            echo "REPORTED SUCCESSFULLY";
+#          else
+#            echo "REPORT FAILED";
+#            exit 1;
+#          fi
+#    - stage: "Build"
+#      if: tag =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ AND fork == false
+#      name: "Release event"
+#      script:
+#        - echo "v$SDK_VERSION $CHANGELOG"
+#        - echo $TMP_CHANGELOG
+#        - COMMITTER_EMAIL="$(git log -1 $TRAVIS_COMMIT --pretty="%cE")"
+#        - if [[ ("$ALLOWED_RELEASE_COMMITERS" =~ .*"$COMMITTER_EMAIL".*) && $TMP_CHANGELOG ]]; then
+#            echo "DEPLOY";
+#            TEST_COVERAGE_GAP=$(cat testCoverageGap.txt);
+#            bash ./sendMail.sh "$SDK" "$TRAVIS_TAG" "$CHANGELOG" "$TEST_COVERAGE_GAP";
+#            echo "DEPLOY SUCCESSFUL";
+#          else
+#            echo "DEPLOYMENT FAILED";
+#            exit 1;
+#          fi

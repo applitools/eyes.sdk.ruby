@@ -89,6 +89,10 @@ unless ENV['BUILD_ONLY'] && !ENV['BUILD_ONLY'].empty?
     sh('bundle exec parallel_rspec -n 1 -- --tag appium -- spec/appium/*_spec.rb')
   end
 
+  task :version_test => [:set_batch_info, :check] do
+    sh('bundle exec parallel_rspec -n 1 -- -- spec/version/*_spec.rb')
+  end
+
   namespace :unit_tests do
     RSpec::Core::RakeTask.new(:core) do |t|
       t.pattern = 'spec/core'
@@ -126,6 +130,7 @@ unless ENV['BUILD_ONLY'] && !ENV['BUILD_ONLY'].empty?
     task :vg_tests => :travis_vg
     task :selenium_tests => :travis_selenium
     task :appium_tests => :appium_tests
+    task :version_test => :version_test
   end
 
   # case ENV['END_TO_END_TESTS']
