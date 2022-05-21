@@ -18,19 +18,21 @@ Bundler::GemHelper.install_tasks name: 'eyes_universal'
 namespace :applitools do
   namespace :js do
     task :install_node_modules do
-      return if Gem.win_platform?
+      unless Gem.win_platform?
       Dir.chdir('lib/applitools/selenium/scripts') do
         sh "yarn install"
       end
       require_relative 'lib/applitools/selenium/scripts/templates'
+      end
     end
 
     task :process_page_and_poll do
-      return if Gem.win_platform?
+      unless Gem.win_platform?
       Dir.chdir(Applitools::SCRIPT_TEMPLATES_PATH) do
         output = File.open('process_page_and_poll.rb', 'w')
         output.write(Applitools::Selenium::ScriptTemplates::PROCESS_PAGE_AND_POLL_RB)
         output.close
+      end
       end
     end
 
