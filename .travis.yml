@@ -56,9 +56,9 @@ jobs:
 #        - ruby -v
 #        - gem -v
       script:
-        - gem help commands
-        - gem update --system
-        - gem help commands
+        - gem query -d bundler
+#        - gem update --system
+#        - gem query -d bundler
 #        - gem install builder
 #        - which ruby
 #        - which gem
