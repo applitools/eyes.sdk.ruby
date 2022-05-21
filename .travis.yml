@@ -53,21 +53,22 @@ jobs:
         - export PATH=$PATH:"/c/tools/ruby24/bin"
 #        - echo $PATH
 #        - which ruby /c/tools/ruby24/bin/ruby
-        - ruby -v
-        - gem -v
+#        - ruby -v
+#        - gem -v
       script:
-        - gem help
+        - gem help commands
         - gem update --system
-        - gem help
+        - gem help commands
 #        - gem install builder
-        - which ruby
-        - which gem
-        - which bundle
-        - ls C:/tools/ruby*
+#        - which ruby
+#        - which gem
+#        - which bundle
+#        - ls C:/tools/ruby*
         - ls C:/tools/ruby27/bin
-        - ls C:/tools/ruby24
+#        - ls C:/tools/ruby24
         - ls C:/tools/ruby24/bin
-#        - C:/tools/ruby27/bin/bundle -v
+        - C:/tools/ruby24/bin/bundle -v
+        - C:/tools/ruby27/bin/bundle -v
 #        - C:/tools/ruby27/bin/bundle.bat -v
 #        - C:/tools/ruby27/bin/bundler -v
 #        - C:/tools/ruby27/bin/bundler.bat -v
