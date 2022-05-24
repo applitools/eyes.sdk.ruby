@@ -32,6 +32,8 @@ RSpec.configure do |config|
   end
 
   def build_driver(args = {})
+    skip('Firefox 48 can only be accessed in legacy Selenium') if LEGACY_SELENIUM && args[:browser] === 'firefox-48'
+    skip('Legacy Safari 11 driver is not functional in Selenium 4') if LEGACY_SELENIUM && args[:browser] === 'safari-11'
     execution_grid = args[:executionGrid] ? true : false
     args = DEFAULT.merge(args)
     env = get_env(args)
