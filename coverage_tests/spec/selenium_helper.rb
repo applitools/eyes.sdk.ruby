@@ -3,6 +3,7 @@ require 'spec_helper'
 require 'eyes_selenium'
 require 'logger'
 
+LEGACY_SELENIUM = Selenium::WebDriver::VERSION.start_with?('3')
 
 RSpec.configure do |config|
 
@@ -35,10 +36,8 @@ RSpec.configure do |config|
     args = DEFAULT.merge(args)
     env = get_env(args)
     cap_obj = Selenium::WebDriver::Remote::Capabilities.new(env[:capabilities])
-    if Selenium::WebDriver::VERSION.start_with?('3') # cap_obj.respond_to?(:'javascript_enabled?')
-      if !cap_obj.javascript_enabled? && env[:capabilities][:javascriptEnabled].nil?
-        cap_obj.javascript_enabled = true
-      end
+    if LEGACY_SELENIUM && !cap_obj.javascript_enabled? && env[:capabilities][:javascriptEnabled].nil?
+      cap_obj.javascript_enabled = true
     end
     case env[:type]
     when 'chrome'
@@ -125,30 +124,29 @@ RSpec.configure do |config|
       build_remote(caps, ENV['EXECUTION_GRID_URL'])
     elsif use_docker
       build_remote(caps, url)
-    else
-      unless Selenium::WebDriver::VERSION.start_with?('3')
-        Selenium::WebDriver.for :chrome, capabilities: caps
-      end
+    elsif LEGACY_SELENIUM
       Selenium::WebDriver.for :chrome, desired_capabilities: caps
+    else
+      Selenium::WebDriver.for :chrome, capabilities: caps
     end
   end
 
   def build_firefox(caps, url)
     if use_docker
       build_remote(caps, url)
-    else
-      unless Selenium::WebDriver::VERSION.start_with?('3')
-        return Selenium::WebDriver.for :firefox, capabilities: caps
-      end
+    elsif LEGACY_SELENIUM
       Selenium::WebDriver.for :firefox, desired_capabilities: caps
+    else
+      Selenium::WebDriver.for :firefox, capabilities: caps
     end
   end
 
   def build_remote(caps, url)
-    unless Selenium::WebDriver::VERSION.start_with?('3')
-      return Selenium::WebDriver.for :remote, capabilities: caps, url: url
+    if LEGACY_SELENIUM
+      Selenium::WebDriver.for :remote, desired_capabilities: caps, url: url
+    else
+      Selenium::WebDriver.for :remote, capabilities: caps, url: url
     end
-    Selenium::WebDriver.for :remote, desired_capabilities: caps, url: url
   end
 
   alias build_sauce build_remote

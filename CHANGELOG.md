@@ -1,13 +1,11 @@
 ## [vNext]
 ### Updated
 - Update version of Universal SDK to 2.5.17
-## [vNext]
-### Updated
-- Update version of Universal SDK to 2.5.14
 ### Fixed
 - Fix closing batches with closeManager
 ## Removed
 - removed nokogiri frozen version
+- remove old&unused js(now processed by universal server)
 ## [4.0.5.1] - 2022-05-18
 ### Fixed
 - Fix wrong gem yank
