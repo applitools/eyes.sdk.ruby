@@ -1,5 +1,8 @@
 ## [vNext]
 ### Updated
+- Update version of Universal SDK to 2.5.17
+## [vNext]
+### Updated
 - Update version of Universal SDK to 2.5.14
 ### Fixed
 - Fix closing batches with closeManager

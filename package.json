@@ -37,7 +37,7 @@
     "universal:debug": "eyes-universal --version; eyes-universal --singleton --lazy"
   },
   "dependencies": {
-    "@applitools/eyes-universal": "2.5.14",
+    "@applitools/eyes-universal": "2.5.17",
     "@applitools/sdk-coverage-tests": "^2.3.17",
     "junit-merge": "^2.0.0",
     "@typescript-eslint/parser": "^2.14.0",
