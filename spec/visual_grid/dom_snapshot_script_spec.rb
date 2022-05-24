@@ -3,7 +3,7 @@
 require 'eyes_selenium'
 require 'openssl'
 
-RSpec.describe Applitools::Selenium::DomSnapshotScript do
+RSpec.describe Applitools::Selenium::DomSnapshotScript, skip: true do
   let(:web_driver) { Selenium::WebDriver.for :chrome }
   let(:runner) { Applitools::Selenium::VisualGridRunner.new(1) }
   let(:eyes) { Applitools::Selenium::Eyes.new(runner: runner) }

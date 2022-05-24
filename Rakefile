@@ -15,27 +15,27 @@ Bundler::GemHelper.install_tasks name: 'eyes_capybara'
 Bundler::GemHelper.install_tasks name: 'eyes_appium'
 Bundler::GemHelper.install_tasks name: 'eyes_universal'
 
-namespace :applitools do
-  namespace :js do
-    task :install_node_modules do
-      Dir.chdir('lib/applitools/selenium/scripts') do
-        sh "yarn install"
-      end
-      require_relative 'lib/applitools/selenium/scripts/templates'
-    end
-
-    task :process_page_and_poll do
-      Dir.chdir(Applitools::SCRIPT_TEMPLATES_PATH) do
-        output = File.open('process_page_and_poll.rb', 'w')
-        output.write(Applitools::Selenium::ScriptTemplates::PROCESS_PAGE_AND_POLL_RB)
-        output.close
-      end
-    end
-
-    task :scripts => [:install_node_modules, :process_page_and_poll]
-  end
-end
-task :build => 'applitools:js:scripts'
+# namespace :applitools do
+#   namespace :js do
+#     task :install_node_modules do
+#       Dir.chdir('lib/applitools/selenium/scripts') do
+#         sh "yarn install"
+#       end
+#       require_relative 'lib/applitools/selenium/scripts/templates'
+#     end
+#
+#     task :process_page_and_poll do
+#       Dir.chdir(Applitools::SCRIPT_TEMPLATES_PATH) do
+#         output = File.open('process_page_and_poll.rb', 'w')
+#         output.write(Applitools::Selenium::ScriptTemplates::PROCESS_PAGE_AND_POLL_RB)
+#         output.close
+#       end
+#     end
+#
+#     task :scripts => [:install_node_modules, :process_page_and_poll]
+#   end
+# end
+# task :build => 'applitools:js:scripts'
 
 unless ENV['BUILD_ONLY'] && !ENV['BUILD_ONLY'].empty?
   require 'rspec/core/rake_task'
@@ -89,6 +89,10 @@ unless ENV['BUILD_ONLY'] && !ENV['BUILD_ONLY'].empty?
     sh('bundle exec parallel_rspec -n 1 -- --tag appium -- spec/appium/*_spec.rb')
   end
 
+  task :version_test => [:set_batch_info, :check] do
+    sh('bundle exec parallel_rspec -n 1 -- -- spec/version/*_spec.rb')
+  end
+
   namespace :unit_tests do
     RSpec::Core::RakeTask.new(:core) do |t|
       t.pattern = 'spec/core'
@@ -126,6 +130,7 @@ unless ENV['BUILD_ONLY'] && !ENV['BUILD_ONLY'].empty?
     task :vg_tests => :travis_vg
     task :selenium_tests => :travis_selenium
     task :appium_tests => :appium_tests
+    task :version_test => :version_test
   end
 
   # case ENV['END_TO_END_TESTS']

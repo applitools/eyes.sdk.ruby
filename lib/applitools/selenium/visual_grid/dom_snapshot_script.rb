@@ -48,7 +48,8 @@ module Applitools
         end
 
         def process_page_script
-          Applitools::Selenium::Scripts::PROCESS_PAGE_AND_POLL
+          ''
+          # Applitools::Selenium::Scripts::PROCESS_PAGE_AND_POLL
         end
 
         def script_options
