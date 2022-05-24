@@ -35,6 +35,36 @@ before_script:
     fi
 jobs:
   include:
+    - stage: "Version Checks"
+      name: "Version 2.4 Checks"
+      script: bundle exec rake travis:version_test
+      rvm:
+        - 2.4
+    - stage: "Version Checks"
+      name: "Version 2.5 Checks"
+      script: bundle exec rake travis:version_test
+      rvm:
+        - 2.5
+    - stage: "Version Checks"
+      name: "Version 2.6 Checks"
+      script: bundle exec rake travis:version_test
+      rvm:
+        - 2.6
+    - stage: "Version Checks"
+      name: "Version 2.7 Checks"
+      script: bundle exec rake travis:version_test
+      rvm:
+        - 2.7
+    - stage: "Version Checks"
+      name: "Version 3.0 Checks"
+      script: bundle exec rake travis:version_test
+      rvm:
+        - 3.0
+    - stage: "Version Checks"
+      name: "Version 3.1 Checks"
+      script: bundle exec rake travis:version_test
+      rvm:
+        - 3.1
     - stage: "Unit Tests"
       name: "Unit Tests"
       script: bundle exec rake travis:unit_tests
