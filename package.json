@@ -29,12 +29,13 @@
     "run": "cd coverage_tests && APPLITOOLS_BATCH_NAME='Ruby Coverage Tests' APPLITOOLS_BATCH_ID=$(uuidgen) bundle exec rspec spec/coverage/generic",
     "run:debug": "cd coverage_tests && APPLITOOLS_BATCH_NAME='Ruby Coverage Tests' APPLITOOLS_BATCH_ID=$(uuidgen) APPLITOOLS_SHOW_LOGS='true' bundle exec rspec spec/coverage/generic",
     "run:parallel": "if [ -z \"$EXECUTION_GRID_URL\" ]; then yarn parallel:local; else yarn parallel:eg; fi",
-    "parallel:local": "cd coverage_tests && APPLITOOLS_BATCH_NAME='Ruby Coverage Tests' APPLITOOLS_BATCH_ID=$(uuidgen) bundle exec parallel_rspec -n 4 spec/coverage/generic --isolate-n 2 -s 'Native'",
+    "parallel:local": "cd coverage_tests && APPLITOOLS_BATCH_NAME='Ruby Coverage Tests' APPLITOOLS_BATCH_ID=$(uuidgen) bundle exec parallel_rspec -n 8 spec/coverage/generic --isolate-n 4 -s 'Native'",
     "parallel:eg": "cd coverage_tests && APPLITOOLS_BATCH_NAME='Ruby Coverage Tests' APPLITOOLS_BATCH_ID=$(uuidgen) bundle exec parallel_rspec -n 40 spec/coverage/generic --isolate-n 2 -s 'Native'",
     "report:merge": "cd coverage_tests && junit-merge -d tmp -o coverage-test-report.xml",
     "docker:start": "docker-compose up -d",
     "docker:stop": "docker-compose down",
-    "universal:debug": "eyes-universal --version; eyes-universal --singleton --lazy"
+    "universal:debug": "eyes-universal --version; eyes-universal --singleton --lazy",
+    "universal:eg": "eyes-universal eg-client --port 8080"
   },
   "dependencies": {
     "@applitools/eyes-universal": "2.5.17",

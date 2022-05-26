@@ -1,2 +1,1 @@
---format progress
 --format RspecJunitFormatter --out tmp/rspec<%= ENV["TEST_ENV_NUMBER"] %>.xml
