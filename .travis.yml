@@ -44,6 +44,7 @@ jobs:
     - stage: "Version win Checks"
       name: "Version 2.4 win Checks"
       os: windows
+      jdk: oraclejdk8
       language: bash
       before_install:
 #        - choco uninstall ruby
