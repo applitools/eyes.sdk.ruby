@@ -1,0 +1,91 @@
+name: Ruby
+
+on:
+  workflow_dispatch:
+  push:
+
+
+permissions:
+  contents: read
+
+jobs:
+  dist-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '2.6'
+      - name: Build gems
+        env:
+          BUILD_ONLY: true
+        run: |
+            gem install builder
+            rake clobber clean build
+            cd pkg; mkdir gems; mv ./*.gem ./gems; gem generate_index; cd ..
+      - name: Store gems
+        uses: actions/upload-artifact@v3
+        with:
+          name: gems
+          if-no-files-found: error
+          path: "./pkg/*"
+      - name: Install node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Generate platform tests
+        run: |
+          npm install
+          npm run generate:platform
+      - name: Store platform tests
+        uses: actions/upload-artifact@v3
+        with:
+          name: tests
+          if-no-files-found: error
+          path: "./coverage_tests/spec/**/*"
+
+
+
+  test:
+    needs: dist-build
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        ruby-version: ['2.6', '2.7', '3.0', '3.1']
+    env:
+      APPLITOOLS_API_KEY: ${{ secrets.APPLITOOLS_API_KEY }}
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby-version }}
+          bundler-cache: true
+      - name: Load gems
+        uses: actions/download-artifact@v3
+        with:
+          name: gems
+          path: "./pkg/"
+#      - name: Check gems
+#        run: |
+#          ls pkg
+#          ls pkg\gems
+      - name: Load tests
+        uses: actions/download-artifact@v3
+        with:
+          name: tests
+          path: "./coverage_tests/spec/"
+#      - name: Check tests
+#        run: |
+#          ls coverage_tests
+#          ls coverage_tests/spec
+#          ls coverage_tests/spec/coverage/generic
+      - name: Run tests
+        env:
+          BUNDLE_GEMFILE: ${{ github.workspace }}/GemfileGithub
+        run: |
+            bundle install
+            bundle exec rake github:platform_test
+          

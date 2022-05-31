@@ -60,7 +60,7 @@ unless ENV['BUILD_ONLY'] && !ENV['BUILD_ONLY'].empty?
 
   task :set_batch_info do
     string = ENV['TRAVIS_COMMIT'] ? ENV['TRAVIS_COMMIT'] + ENV['TRAVIS_RUBY_VERSION'] : SecureRandom.hex
-    batch_id = `(java UUIDFromString #{string})`
+    batch_id = `java UUIDFromString #{string}`
     # next if ENV['APPLITOOLS_BATCH_ID'] && !ENV['APPLITOOLS_BATCH_ID'].empty?
     ENV['APPLITOOLS_BATCH_ID'] = batch_id unless ENV['APPLITOOLS_BATCH_ID'] && !ENV['APPLITOOLS_BATCH_ID'].empty?
     ENV['APPLITOOLS_BATCH_NAME'] = "Eyes Ruby SDK(#{RUBY_VERSION})"
@@ -131,6 +131,21 @@ unless ENV['BUILD_ONLY'] && !ENV['BUILD_ONLY'].empty?
     task :selenium_tests => :travis_selenium
     task :appium_tests => :appium_tests
     task :version_test => :version_test
+  end
+
+  namespace 'github' do
+    task :set_batch_info do
+      batch_id = SecureRandom.uuid
+      # next if ENV['APPLITOOLS_BATCH_ID'] && !ENV['APPLITOOLS_BATCH_ID'].empty?
+      ENV['APPLITOOLS_DONT_CLOSE_BATCHES'] = 'true'
+      ENV['APPLITOOLS_BATCH_ID'] = batch_id unless ENV['APPLITOOLS_BATCH_ID'] && !ENV['APPLITOOLS_BATCH_ID'].empty?
+      ENV['APPLITOOLS_BATCH_NAME'] = "Eyes Ruby SDK(#{RUBY_VERSION} | #{RUBY_PLATFORM})"
+    end
+
+    task :platform_test => [:set_batch_info, :check] do
+      Dir.chdir("coverage_tests")
+      sh('bundle exec parallel_rspec -n 1 spec/coverage/generic')
+    end
   end
 
   # case ENV['END_TO_END_TESTS']
