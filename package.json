@@ -34,7 +34,8 @@
     "report:merge": "cd coverage_tests && junit-merge -d tmp -o coverage-test-report.xml",
     "docker:start": "docker-compose up -d",
     "docker:stop": "docker-compose down",
-    "universal:debug": "eyes-universal --version; eyes-universal --singleton --lazy"
+    "universal:debug": "eyes-universal --version; eyes-universal --singleton --lazy",
+    "universal:eg": "eyes-universal eg-client --port 8080"
   },
   "dependencies": {
     "@applitools/eyes-universal": "2.5.17",
