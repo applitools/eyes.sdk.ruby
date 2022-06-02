@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
-require 'open-uri'
-require 'digest'
-require 'fileutils'
-
 module Applitools::Connectivity
   module UniversalServer
     extend self

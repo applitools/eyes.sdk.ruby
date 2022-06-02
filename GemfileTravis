@@ -9,7 +9,7 @@ gem 'rspec_junit_formatter'
 
 source "file://#{ENV['PWD']}/pkg" do
   gem 'eyes_selenium'
-  gem 'eyes_images'
+  #gem 'eyes_images'
   #gem 'eyes_calabash'
   gem 'eyes_core'
   gem 'eyes_capybara'

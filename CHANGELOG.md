@@ -1,6 +1,8 @@
 ## [vNext]
 ### Updated
 - Update version of Universal SDK to 2.5.19
+### Fixed
+- fix ruby-3.1 installation collision
 ## [4.0.5.2] - 2022-05-24
 ### Updated
 - Update version of Universal SDK to 2.5.17
