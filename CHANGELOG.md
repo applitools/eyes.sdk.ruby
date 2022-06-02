@@ -1,4 +1,4 @@
-## [vNext]
+## [4.0.5.3] - 2022-06-02
 ### Updated
 - Update version of Universal SDK to 2.5.19
 ### Fixed
