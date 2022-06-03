@@ -101,4 +101,5 @@ module.exports = {
     // 'should extract text from regions without a hint': {skip: true},
     // ShouldAbortAfterClose
     'should abort after close': {skip: true},
+    // ShouldSendCorrectIgnoreRegionIfPageScrolledBeforeCheckWithCssStitching update with server version
 }
