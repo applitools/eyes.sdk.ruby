@@ -1,0 +1,22 @@
+# frozen_string_literal: true
+
+source 'https://rubygems.org'
+
+gem 'rspec'
+gem 'webdrivers'
+gem 'parallel_tests'
+gem 'rspec_junit_formatter'
+gem 'ffi'
+gem 'rubocop', '<= 0.46.0'
+gem 'rake'
+gem 'capybara', '~> 3.32'
+gem 'eventmachine', '1.2.7', git: 'https://github.com/eventmachine/eventmachine.git', tag: 'v1.2.7'
+
+source "file://#{ENV['GITHUB_WORKSPACE'].gsub(/\\/, '/')}/pkg" do
+  gem 'eyes_selenium'
+  gem 'eyes_core'
+  gem 'eyes_capybara'
+  gem 'eyes_appium'
+  gem 'eyes_universal'
+end
+
