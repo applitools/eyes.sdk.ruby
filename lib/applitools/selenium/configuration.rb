@@ -8,7 +8,7 @@ module Applitools
     class Configuration < Applitools::EyesBaseConfiguration
       DEFAULT_CONFIG = proc do
         {
-          force_full_page_screenshot: false,
+          # force_full_page_screenshot: false,
           wait_before_screenshots: 0.1,
           # stitch_mode: Applitools::Selenium::StitchModes::CSS,
           hide_scrollbars: true,
