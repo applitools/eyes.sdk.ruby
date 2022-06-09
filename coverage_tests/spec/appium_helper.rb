@@ -12,7 +12,6 @@ RSpec.configure do |config|
       conf.branch_name = branch_name
       conf.parent_branch_name = 'master'
       conf.save_new_tests = false
-      conf.force_full_page_screenshot = false
     end
     puts ENV['APPLITOOLS_SHOW_LOGS']
     eyes.log_handler = Logger.new(STDOUT) if ENV.key?('APPLITOOLS_SHOW_LOGS')
@@ -33,6 +32,7 @@ RSpec.configure do |config|
     @eyes.branch_name = args[:branch_name] if args.key? :branch_name
     @eyes.hide_scrollbars = args[:hide_scrollbars] if args.key? :hide_scrollbars
     @eyes.disabled = args[:is_disabled] if args.key? :is_disabled
+    @eyes.force_full_page_screenshot = args[:force_full_page_screenshot] if args.key? :force_full_page_screenshot
     if args.key? :default_match_settings
       if args[:default_match_settings].key? 'accessibilitySettings'
         default_match_settings = Applitools::ImageMatchSettings.new

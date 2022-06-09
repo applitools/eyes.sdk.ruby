@@ -22,7 +22,6 @@ RSpec.configure do |config|
       conf.branch_name = branch_name
       conf.parent_branch_name = 'master'
       conf.save_new_tests = false
-      conf.force_full_page_screenshot = false
       conf.hide_caret = true
     end
     eyes.match_timeout = 0 unless is_visual_grid
@@ -73,6 +72,7 @@ RSpec.configure do |config|
     @eyes.branch_name = args[:branch_name] if args.key? :branch_name
     @eyes.hide_scrollbars = args[:hide_scrollbars] if args.key? :hide_scrollbars
     @eyes.disabled = args[:is_disabled] if args.key? :is_disabled
+    @eyes.force_full_page_screenshot = args[:force_full_page_screenshot] if args.key? :force_full_page_screenshot
     if args.key? :default_match_settings
       if args[:default_match_settings].key? 'accessibilitySettings'
         default_match_settings = Applitools::ImageMatchSettings.new
