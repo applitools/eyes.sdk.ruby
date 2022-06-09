@@ -46,6 +46,8 @@ module Applitools::Connectivity
       case RUBY_PLATFORM
         when /mswin|windows|mingw/i
           'eyes-universal-win.exe'
+        when /musl/i
+          'eyes-universal-alpine'
         when /linux|arch/i
           'eyes-universal-linux'
         when /darwin/i
