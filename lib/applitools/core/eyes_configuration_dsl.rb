@@ -21,6 +21,7 @@ module Applitools
       define_method(field_name) do
         return send("custom_getter_for_#{field_name}", config_hash[field_name.to_sym]) if
             respond_to?("custom_getter_for_#{field_name}")
+        return nil if config_hash[field_name.to_sym].nil?
         return true if config_hash[field_name.to_sym]
         false
       end
