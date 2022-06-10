@@ -1,6 +1,8 @@
-## [vNext]
+## [4.0.5.4] - 2022-06-10
 ### Updated
 - Update version of Universal SDK to 2.7.1
+### Fixed
+- Fix default boolean field transition to server(like full page screenshot)
 ## [4.0.5.3] - 2022-06-02
 ### Updated
 - Update version of Universal SDK to 2.5.19
