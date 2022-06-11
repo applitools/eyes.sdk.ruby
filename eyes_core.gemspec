@@ -37,8 +37,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'oj'
   spec.add_dependency 'colorize'
-  spec.add_dependency 'faye-websocket'
-  spec.add_dependency 'eventmachine'
+  spec.add_dependency 'websocket-driver'
   spec.add_dependency 'sorted_set'
   spec.add_dependency 'eyes_universal', "~> #{Applitools::UNIVERSAL_VERSION}"
 

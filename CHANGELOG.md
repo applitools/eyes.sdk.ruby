@@ -1,6 +1,8 @@
 ## [vNext]
 ### Updated
 - Update version of Universal SDK to 2.7.2
+## Removed
+- removed eventmachine from eyes_core
 ## [4.0.5.4] - 2022-06-10
 ### Updated
 - Update version of Universal SDK to 2.7.1

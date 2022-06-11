@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'eventmachine'
-
 # require_relative 'universal_client_socket'
 # require_relative 'universal_eyes_manager'
 
@@ -29,9 +27,8 @@ module Applitools::Connectivity
     EYES_ABORT = 'Eyes.abort'
 
 
-    def initialize(queue = EM::Queue.new)
+    def initialize
       @socket = Applitools::Connectivity::UniversalClientSocket.new
-      @queue = queue
       prepare_socket
       # store on open for next check calls
       @open_config = nil
@@ -120,17 +117,13 @@ module Applitools::Connectivity
     end
 
     def connect_and_configure_socket(uri)
-      Thread.new do
-        EM.run do
-          @socket.connect(uri)
-          @socket.emit(SESSION_INIT, {
-            name: :rb,
-            version: ::Applitools::VERSION,
-            protocol: :webdriver,
-            cwd: Dir.pwd
-          })
-        end
-      end
+      @socket.connect(uri)
+      @socket.emit(SESSION_INIT, {
+        name: :rb,
+        version: ::Applitools::VERSION,
+        protocol: :webdriver,
+        cwd: Dir.pwd
+      })
     end
 
     def await(function)
@@ -138,8 +131,7 @@ module Applitools::Connectivity
       cb = ->(result) {
         resolved = result
       }
-      @queue.push(function)
-      @queue.pop {|fn| fn.call(cb)}
+      function.call(cb)
       sleep 1 until !!resolved
       resolved
     end

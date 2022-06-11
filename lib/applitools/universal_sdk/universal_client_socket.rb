@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-require 'faye/websocket'
 require 'json'
 require 'securerandom'
 require 'colorize'
+require 'websocket/driver'
+require 'uri'
 
 module Applitools::Connectivity
   class UniversalClientSocket
@@ -14,26 +15,44 @@ module Applitools::Connectivity
       @queue = []
     end
 
-    def connect(uri, ws = ::Faye::WebSocket::Client.new(uri))
-      @socket = ws
+    attr_reader :url
 
-      queue.each {|command| command.call}
-      queue.clear
+    def write(data)
+      @socket.write(data)
+    end
 
-      ws.on :message do |event|
+
+    def connect(url)
+      @url = url
+      @uri = URI.parse(url)
+      @socket = TCPSocket.new(@uri.host, @uri.port)
+
+      @dead = false
+      @driver = WebSocket::Driver.client(self)
+
+      @driver.on :message do |event|
         message = JSON.parse(event.data, {:symbolize_names => true})
         params = [message[:payload], message[:key]]
         find_and_execute_listeners(message[:name], message[:key], params)
       end
 
-      ws.on :close do |event|
+      @driver.on :close do |event|
         find_and_execute_listeners('close')
+      end
+      # driver.on(:open) {|event| on_open(event) }
+      # driver.on(:message) {|event| on_message(event) }
+      # driver.on(:error) {|event| on_error(event) }
+      # driver.on(:close) {|event| on_close(event) }
+
+      @thread = Thread.new do
+        @driver.start
+        @driver.parse(@socket.read(1)) until @dead
       end
     end
 
     def emit(message, payload)
-      command = ->() {@socket.send(serialize(message, payload))}
-      @socket ? command.call : queue.push(command)
+      command = ->() { @driver.text(serialize(message, payload)) }
+      command.call
     end
 
     def command(name, fn)
