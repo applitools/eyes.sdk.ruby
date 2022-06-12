@@ -194,9 +194,9 @@ module Applitools::Connectivity
     def receive_result(name)
       timeout = 5 * 60 # seconds
       begin
-        web_socket_result = @web_socket.recvmsg.first
+        # web_socket_result = @web_socket.recvmsg.first
         # web_socket_result = @web_socket.read_nonblock(WebSocket.max_frame_size)
-        # web_socket_result = @web_socket.readpartial(WebSocket.max_frame_size)
+        web_socket_result = @web_socket.readpartial(WebSocket.max_frame_size)
       rescue IO::WaitReadable
         if IO.select([@web_socket], nil, nil, timeout)
           retry
