@@ -16,27 +16,29 @@ module Applitools::Connectivity
     def confirm_is_up(ip, port, attempt = 1)
       raise 'Universal server unavailable' if (attempt === 16)
       begin
-        TCPSocket.new(ip, port)
+        socket = TCPSocket.new(ip, port)
       rescue Errno::ECONNREFUSED
         sleep 1
-        confirm_is_up(ip, port, attempt + 1)
+        socket = confirm_is_up(ip, port, attempt + 1)
       end
+      socket
     end
 
     def check_or_run(ip = DEFAULT_SERVER_IP, port = DEFAULT_SERVER_PORT)
       server_uri = "#{ip}:#{port}"
       socket_uri = "ws://#{server_uri}/eyes"
       begin
-        TCPSocket.new(ip, port)
+        socket = TCPSocket.new(ip, port)
         msg = "Connect to #{server_uri}"
       rescue Errno::ECONNREFUSED
         run
-        confirm_is_up(ip, port)
+        socket = confirm_is_up(ip, port)
         msg = "Connect to #{server_libname} : #{filename}"
       end
 
       Applitools::EyesLogger.logger.debug(msg) if ENV['APPLITOOLS_SHOW_LOGS']
       socket_uri
+      socket
     end
 
     private

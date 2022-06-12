@@ -97,6 +97,19 @@ module Applitools::Utils
     end
   end
 
+  def deep_symbolize_keys(value)
+    case value
+      when Hash
+        value.each_with_object({}) do |(key, val), result|
+          result[key.to_sym] = deep_symbolize_keys(val)
+        end
+      when Array
+        value.map { |e| deep_symbolize_keys(e) }
+      else
+        value
+    end
+  end
+
   private
 
   def convert_hash_keys(value, method)
