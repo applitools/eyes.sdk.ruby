@@ -88,6 +88,5 @@ jobs:
           BUNDLE_GEMFILE: ${{ github.workspace }}/GemfileGithub
         run: |
             bundle install
-            bundle update
-            bundle exec rake github:platform_test
+            rake github:platform_test
 
