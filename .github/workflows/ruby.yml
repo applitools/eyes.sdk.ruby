@@ -22,11 +22,11 @@ jobs:
           BUILD_ONLY: true
         run: |
             gem install builder
-            rake --version
-            bundle install
-            bundle --version
-            rake --version
-            gem --version
+#            rake --version
+#            bundle install
+#            bundle --version
+#            rake --version
+#            gem --version
             rake clobber clean build
             cd pkg; mkdir gems; mv ./*.gem ./gems; gem generate_index; cd ..
       - name: Store gems
@@ -93,12 +93,15 @@ jobs:
           BUNDLE_GEMFILE: ${{ github.workspace }}/GemfileGithub
         run: |
             bundle install
-            gem list uri bundler rake
-            bundle show uri
-            bundle show bundler
-            bundle show rake
-            cat Gemfile.lock
-            bundle --version
-            bundle exec rake --version
-            bundle exec gem --version
+            bundle update uri
+#            gem list uri bundler rake
+#            bundle show uri
+#            bundle show bundler
+#            bundle show rake
+#            cat Gemfile.lock
+#            bundle --version
+#            bundle update uri
+#            bundle exec rake --version
+#            bundle exec gem --version
             bundle exec rake github:platform_test
+
