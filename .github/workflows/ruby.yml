@@ -22,6 +22,7 @@ jobs:
           BUILD_ONLY: true
         run: |
             gem install builder
+            bundle install
             bundle exec rake clobber clean build
             cd pkg; mkdir gems; mv ./*.gem ./gems; gem generate_index; cd ..
       - name: Store gems
