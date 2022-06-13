@@ -22,6 +22,7 @@ jobs:
           BUILD_ONLY: true
         run: |
             gem install builder
+            rake --version
             bundle install
             bundle exec rake clobber clean build
             cd pkg; mkdir gems; mv ./*.gem ./gems; gem generate_index; cd ..
@@ -88,8 +89,9 @@ jobs:
         env:
           BUNDLE_GEMFILE: ${{ github.workspace }}/GemfileGithub
         run: |
-            ls
-            gem list uri bundler
             bundle install
+            rake --version
+            gem list uri bundler
+            bundle -v
+            cat Gemfile.lock
             bundle exec rake github:platform_test
-          
