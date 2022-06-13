@@ -63,7 +63,7 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby-version }}
-          bundler-cache: true
+#          bundler-cache: true
       - name: Load gems
         uses: actions/download-artifact@v3
         with:
@@ -88,5 +88,5 @@ jobs:
           BUNDLE_GEMFILE: ${{ github.workspace }}/GemfileGithub
         run: |
             bundle install
-            rake github:platform_test
-
+            bundle exec rake github:platform_test
+          
