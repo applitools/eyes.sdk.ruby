@@ -20,8 +20,8 @@ module Applitools
       @eyes = @universal_client.eyes_manager_make_eyes(@manager, driver_config_json, config)
 
       if @eyes[:message] && @eyes[:stack]
-        Applitools::EyesLogger.logger.debug "Eyes not opened: #{@eyes[:message]}"
-        Applitools::EyesLogger.logger.debug "Stack for #{Applitools::Connectivity::UniversalClient::EYES_MANAGER_MAKE_EYES} : #{@eyes[:stack]}"
+        Applitools::EyesLogger.logger.error "Eyes not opened: #{@eyes[:message]}"
+        Applitools::EyesLogger.logger.error "Stack for #{Applitools::Connectivity::UniversalClient::EYES_MANAGER_MAKE_EYES} : #{@eyes[:stack]}"
         return nil
       end
 
