@@ -206,6 +206,7 @@ module Applitools::Connectivity
       end
       raise Applitools::EyesError.new "Empty result on #{name}" if web_socket_result.empty?
 
+      web_socket_result += receive_result(name) if @web_socket.ready?
       web_socket_result
     end
 
@@ -218,11 +219,14 @@ module Applitools::Connectivity
         incoming_payload = incoming_json['payload']
         # incoming_payload['level']
         puts incoming_payload['message']
-        result = receive_result(name)
+        new_web_socket_result = receive_result(name)
+        result = format_result(name, key, new_web_socket_result)
       elsif  incoming_json['name'] === name && incoming_json['key'] === key
         incoming_payload = incoming_json['payload']
         result = incoming_payload.key?('error') ? incoming_payload['error'] : incoming_payload['result']
         Applitools::Utils.deep_symbolize_keys result
+      elsif incoming_json.nil?
+        raise Applitools::EyesError.new "Result nil : #{name} #{key} (#{decoded_frame} #{encoded_frame})"
       else
         # require 'pry'
         # binding.pry
