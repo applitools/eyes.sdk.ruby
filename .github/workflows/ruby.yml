@@ -22,7 +22,7 @@ jobs:
           BUILD_ONLY: true
         run: |
             gem install builder
-            rake clobber clean build
+            bundle exec rake clobber clean build
             cd pkg; mkdir gems; mv ./*.gem ./gems; gem generate_index; cd ..
       - name: Store gems
         uses: actions/upload-artifact@v3
@@ -87,6 +87,8 @@ jobs:
         env:
           BUNDLE_GEMFILE: ${{ github.workspace }}/GemfileGithub
         run: |
+            ls
+            gem list uri bundler
             bundle install
             bundle exec rake github:platform_test
           
