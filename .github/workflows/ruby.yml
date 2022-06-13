@@ -49,10 +49,11 @@ jobs:
 
   test:
     needs: dist-build
-    runs-on: windows-latest
     strategy:
       matrix:
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
         ruby-version: ['2.6', '2.7', '3.0', '3.1']
+    runs-on: ${{ matrix.os }}
     env:
       APPLITOOLS_API_KEY: ${{ secrets.APPLITOOLS_API_KEY }}
 
