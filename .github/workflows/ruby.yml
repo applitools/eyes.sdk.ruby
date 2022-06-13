@@ -24,7 +24,10 @@ jobs:
             gem install builder
             rake --version
             bundle install
-            bundle exec rake clobber clean build
+            bundle --version
+            rake --version
+            gem --version
+            rake clobber clean build
             cd pkg; mkdir gems; mv ./*.gem ./gems; gem generate_index; cd ..
       - name: Store gems
         uses: actions/upload-artifact@v3
@@ -90,8 +93,12 @@ jobs:
           BUNDLE_GEMFILE: ${{ github.workspace }}/GemfileGithub
         run: |
             bundle install
-            rake --version
-            gem list uri bundler
-            bundle -v
+            gem list uri bundler rake
+            bundle show uri
+            bundle show bundler
+            bundle show rake
             cat Gemfile.lock
+            bundle --version
+            bundle exec rake --version
+            bundle exec gem --version
             bundle exec rake github:platform_test
