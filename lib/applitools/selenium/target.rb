@@ -344,6 +344,11 @@ module Applitools
         self
       end
 
+      def lazy_load(*args) # scroll_length, waiting_time, max_amount_to_scroll
+        options[:lazy_load] = args.is_a?(Hash) ? args : true
+        self
+      end
+
       private
 
       def reset_for_fullscreen

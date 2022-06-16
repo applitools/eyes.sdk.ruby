@@ -1,3 +1,6 @@
+## [vNext]
+### Added
+- add support lazy loading as part of the check-api [Trello](https://trello.com/c/BIHFMhVk)
 ## [4.1.0] - 2022-06-16
 ### Removed
 - alpha flag from version number
