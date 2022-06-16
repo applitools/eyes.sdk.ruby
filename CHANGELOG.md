@@ -1,3 +1,6 @@
+## [4.1.0] - 2022-06-16
+### Removed
+- alpha flag from version number
 ## [4.1.0.alpha] - 2022-06-13
 ### Updated
 - Update version of Universal SDK to 2.7.2
