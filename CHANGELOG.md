@@ -1,3 +1,6 @@
+## [vNext]
+### Updated
+- Update version of Universal SDK to 2.9.2
 ## [4.1.1] - 2022-06-16
 ### Added
 - add support lazy loading as part of the check-api [Trello](https://trello.com/c/BIHFMhVk)

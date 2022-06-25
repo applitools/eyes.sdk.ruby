@@ -39,7 +39,7 @@
     "universal:eg": "eyes-universal eg-client --port 8080"
   },
   "dependencies": {
-    "@applitools/eyes-universal": "2.8.0",
+    "@applitools/eyes-universal": "2.9.2",
     "@applitools/sdk-coverage-tests": "^2.3.17",
     "junit-merge": "^2.0.0",
     "@typescript-eslint/parser": "^2.14.0",
