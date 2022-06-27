@@ -100,7 +100,7 @@ RSpec.describe 'AccessibilityValidation' do
       eyes
     end
     shared_examples 'accessibility settings' do
-      it 'test', pending: true do
+      it 'test', skip: true do
         begin
           driver.get('https://applitools.github.io/demo/TestPages/FramesTestPage/')
           eyes.open(
