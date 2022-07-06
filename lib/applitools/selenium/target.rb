@@ -49,10 +49,8 @@ module Applitools
         if args.empty?
           reset_ignore
         else
-          value = convert_to_universal(args)
-          value = { type: args[0], selector: args[1] } if value.nil?
-          value = value[:selector] if value.is_a?(Hash) && (value[:type].to_s === 'id')
-          ignored_regions << value
+          region = region_from_args(args)
+          ignored_regions << region
         end
         self
       end
@@ -81,32 +79,39 @@ module Applitools
       # @!parse def floating(region_or_element, bounds, left,top, right, bottom, padding); end;
 
       def floating(*args)
-        requested_padding = get_requested_padding(args)
+        options = Applitools::Utils.extract_options!(args)
+        padding = options && options[:padding]
+        requested_padding = if padding && padding.is_a?(Applitools::PaddingBounds)
+          padding.to_hash
+        elsif padding && (padding.is_a?(Hash) || padding.is_a?(Numeric))
+          padding
+        else
+          get_requested_padding(args)
+        end
+        region_id = options[:region_id]
+        bounds = args.last.is_a?(Applitools::FloatingBounds) ? args.pop.to_hash : {}
         value = convert_to_universal(args)
         value = { type: args[0], selector: args[1] } if value.nil?
         value = value[:selector] if value.is_a?(Hash) && (value[:type].to_s === 'id')
-        value = { region: value }.merge(requested_padding)
-        floating_regions << value
+        region = { region: value }.merge(bounds).merge(padding: requested_padding).merge(regionId: region_id)
+        floating_regions << region
         self
       end
 
       def layout(*args)
-        return match_level(Applitools::MatchLevel::LAYOUT) if args.empty?
-        region = process_region(*args)
+        region = region_from_args(args)
         layout_regions << region
         self
       end
 
       def content(*args)
-        return match_level(Applitools::MatchLevel::CONTENT) if args.empty?
-        region = process_region(*args)
+        region = region_from_args(args)
         content_regions << region
         self
       end
 
       def strict(*args)
-        return match_level(Applitools::MatchLevel::STRICT) if args.empty?
-        region = process_region(*args)
+        region = region_from_args(args)
         strict_regions << region
         self
       end
@@ -403,13 +408,29 @@ module Applitools
       def get_requested_padding(args)
         if args.last.is_a? Applitools::PaddingBounds
           args.pop
-        elsif args.last.is_a?(Applitools::FloatingBounds)
-          args.pop.to_hash
+        # elsif args.last.is_a?(Applitools::FloatingBounds)
+        #   args.pop.to_hash
         else
           {}
         end
       end
 
+      def region_from_args(args)
+        options = Applitools::Utils.extract_options!(args)
+        padding = options && options[:padding]
+        requested_padding = if padding && padding.is_a?(Applitools::PaddingBounds)
+          padding.to_hash
+        elsif padding && (padding.is_a?(Hash) || padding.is_a?(Numeric))
+          padding
+        else
+          get_requested_padding(args)
+        end
+        region_id = options[:region_id]
+        value = convert_to_universal(args)
+        value = { type: args[0], selector: args[1] } if value.nil?
+        value = value[:selector] if value.is_a?(Hash) && (value[:type].to_s === 'id')
+        { region: value }.merge(padding: requested_padding).merge(regionId: region_id)
+      end
 
 
       def is_element?(el)

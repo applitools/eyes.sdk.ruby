@@ -23,5 +23,15 @@ module Applitools
 
     ZERO_PADDING = PaddingBounds.new(0, 0, 0, 0).freeze
     PIXEL_PADDING = PaddingBounds.new(1, 1, 1, 1).freeze
+
+    def to_hash
+      {
+        left: padding_left,
+        top: padding_top,
+        right: padding_right,
+        bottom: padding_bottom
+      }
+    end
+
   end
 end
