@@ -234,10 +234,54 @@ module Applitools::Connectivity
       end
     end
 
+    def get_command_result(name, key)
+      web_socket_result = receive_result(name)
+      results = convert_web_socket_result(web_socket_result)
+
+      this_key_responses, other_responses = results.partition {|h| h['name'] === name && h['key'] === key}
+      process_other_responses other_responses
+
+      if this_key_responses.empty?
+        get_command_result(name, key)
+      elsif this_key_responses.size === 1
+        convert_responses(this_key_responses)
+      else # size > 1
+        raise Applitools::EyesError.new "Result mismatch : #{name} #{key} (#{this_key_responses})"
+      end
+    end
+
+    def convert_web_socket_result(web_socket_result)
+      encoded_frame = WebSocket::Frame::Incoming::Client.new(version: @handshake_version)
+      encoded_frame << web_socket_result
+      decoded_frames = []
+      until (decoded_frame = encoded_frame.next).nil?
+        decoded_frames.push(decoded_frame)
+      end
+      decoded_frames.map {|frame| JSON.parse(frame.to_s)}
+    end
+
+    def process_other_responses(other_responses)
+      other_responses.each do |incoming_json|
+        if incoming_json['name'] === 'Server.log'
+          if ENV['APPLITOOLS_SHOW_UNIVERSAL_LOGS']
+            Applitools::EyesLogger.logger.debug "[Server.log] #{incoming_json['payload']['message']}"
+          end
+        else
+          Applitools::EyesLogger.logger.info "[Server.info] #{incoming_json}"
+        end
+      end
+    end
+
+    def convert_responses(one_response_array)
+      incoming_json = one_response_array.first
+      incoming_payload = incoming_json['payload']
+      result = incoming_payload.key?('error') ? incoming_payload['error'] : incoming_payload['result']
+      Applitools::Utils.deep_symbolize_keys result
+    end
+
     def command_with_result name, payload, key = SecureRandom.uuid
       command(name, payload, key)
-      web_socket_result = receive_result(name)
-      format_result(name, key, web_socket_result)
+      get_command_result(name, key)
     end
 
   end
