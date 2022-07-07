@@ -87,9 +87,9 @@ module Applitools
         value = { type: args[0], selector: args[1] } if value.nil?
         value = value[:selector] if value.is_a?(Hash) && (value[:type].to_s === 'id')
         region = { region: value }
-        region.merge(bounds) if bounds != {}
-        region.merge(padding: requested_padding) if requested_padding != {}
-        region.merge(regionId: options[:region_id]) if options[:region_id]
+        region.merge!(bounds) if bounds != {}
+        region.merge!(padding: requested_padding) if requested_padding != {}
+        region.merge!(regionId: options[:region_id]) if options[:region_id]
         floating_regions << region
         self
       end
@@ -432,8 +432,8 @@ module Applitools
         value = value[:selector] if value.is_a?(Hash) && (value[:type].to_s === 'id')
         return nil if value === {selector: nil, type: nil}
         region = { region: value }
-        region.merge(padding: requested_padding) if requested_padding != {}
-        region.merge(regionId: options[:region_id]) if options[:region_id]
+        region.merge!(padding: requested_padding) if requested_padding != {}
+        region.merge!(regionId: options[:region_id]) if options[:region_id]
         region
       end
 
