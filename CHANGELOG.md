@@ -1,6 +1,12 @@
-## [vNext]
+## [4.1.2] - 2022-07-07
+### Added
+- add padding support for regions [Trello 2929](https://trello.com/c/kHbnEdC7), [Trello 42](https://trello.com/c/PYKqJLbg)
+- add custom region id support for regions [Trello 47](https://trello.com/c/pv51sCYA)
 ### Updated
 - Update version of Universal SDK to 2.9.5
+### Fixed
+- fix freeze in communication with universal server
+- fix floating region bounds option(as 4 numbers) parsing
 ## [4.1.1] - 2022-06-16
 ### Added
 - add support lazy loading as part of the check-api [Trello](https://trello.com/c/BIHFMhVk)
