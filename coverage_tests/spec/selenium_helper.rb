@@ -38,17 +38,14 @@ RSpec.configure do |config|
     execution_grid = args[:executionGrid] ? true : false
     args = DEFAULT.merge(args)
     env = get_env(args)
-    cap_obj = Selenium::WebDriver::Remote::Capabilities.new(env[:capabilities])
-    if LEGACY_SELENIUM && !cap_obj.javascript_enabled? && env[:capabilities][:javascriptEnabled].nil?
-      cap_obj.javascript_enabled = true
-    end
+    caps = LEGACY_SELENIUM ? env[:capabilities] : Selenium::WebDriver::Remote::Capabilities.new(env[:capabilities])
     case env[:type]
     when 'chrome'
-      build_chrome(cap_obj, env[:url], execution_grid)
+      build_chrome(caps, env[:url], execution_grid)
     when 'firefox'
-      build_firefox(cap_obj, env[:url])
+      build_firefox(caps, env[:url])
     when 'sauce'
-      build_sauce(cap_obj, env[:url])
+      build_sauce(caps, env[:url])
     else
       raise "Unsupported type of the capabilities used #{env[:type]}"
     end
