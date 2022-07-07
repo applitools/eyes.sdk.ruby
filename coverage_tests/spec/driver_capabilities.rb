@@ -293,7 +293,7 @@ BROWSERS = {
         capabilities: {
             browserName: 'firefox',
             BROWSER_OPTIONS_NAME['firefox'] => {
-                args: ['-headless']
+                args: ['headless']
             }
         }
     },
