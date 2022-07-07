@@ -122,6 +122,7 @@ jobs:
         - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
         - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
         - export APPLITOOLS_LOG_DIR=$(pwd)
+        - export MOZ_HEADLESS=1
         - chmod +x ./generic_tests.sh && ./generic_tests.sh
         - cat $(ls | grep eyes-*.log)
     - stage: "Report all test results"
