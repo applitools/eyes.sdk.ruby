@@ -121,6 +121,7 @@ jobs:
       script:
         - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
         - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
+        - export MOZ_HEADLESS=1
         - chmod +x ./generic_tests.sh && ./generic_tests.sh
     - stage: "Report all test results"
       if: branch = master AND type = cron
