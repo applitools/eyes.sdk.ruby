@@ -116,13 +116,26 @@ jobs:
 #    - stage: "Appium"
 #      script: bundle exec rake travis:appium_tests
 #      name: "eyes_appium tests"
+    - stage: "Ruby Coverage tests 2.5.19"
+      name: "Ruby Coverage 2 tests 2.5.19"
+      script:
+        - chmod +x ./initGeckoDriver29.sh && ./initGeckoDriver29.sh
+        - yarn add @applitools/eyes-universal@2.5.19
+        - chmod +x ./generic_tests.sh && ./generic_tests.sh
+    - stage: "Ruby Coverage tests 2.5.19"
+      name: "Ruby Coverage 2 tests 2.5.19"
+      script:
+        - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
+        - yarn add @applitools/eyes-universal@2.5.19
+        - chmod +x ./generic_tests.sh && ./generic_tests.sh
     - stage: "Ruby Coverage tests"
       name: "Ruby Coverage 2 tests"
       script:
         - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
-#        - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
-#        - export MOZ_HEADLESS=1
         - chmod +x ./generic_tests.sh && ./generic_tests.sh
+    - stage: "Ruby Coverage tests"
+      name: "Ruby Coverage 2 tests"
+      script:
         - chmod +x ./initGeckoDriver29.sh && ./initGeckoDriver29.sh
         - chmod +x ./generic_tests.sh && ./generic_tests.sh
 #    - stage: "Report all test results"
