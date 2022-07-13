@@ -36,7 +36,7 @@
     "docker:start": "docker-compose up -d",
     "docker:stop": "docker-compose down",
     "universal:debug": "eyes-universal --version; eyes-universal --singleton --lazy",
-    "universal:eg": "eyes-universal eg-client --port 8080"
+    "universal:eg": "eyes-universal --version; eyes-universal eg-client --port 8080"
   },
   "dependencies": {
     "@applitools/eyes-universal": "2.9.5",

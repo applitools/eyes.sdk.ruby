@@ -8,5 +8,6 @@ module.exports = {
     template: 'https://raw.githubusercontent.com/applitools/sdk.coverage.tests/universal-sdk/ruby/template.hbs',
     tests: 'https://raw.githubusercontent.com/applitools/sdk.coverage.tests/universal-sdk/coverage-tests.js',
     ext: '_spec.rb',
+    emitOnly: ['/check window fully on page with horizontal scroll with/'],
     outPath: './spec/coverage/generic'
 };
