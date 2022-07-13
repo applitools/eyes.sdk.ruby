@@ -7,15 +7,16 @@ gem 'webdrivers'
 gem 'parallel_tests'
 gem 'rspec_junit_formatter'
 
-source "file://#{ENV['PWD']}/pkg" do
-  gem 'eyes_selenium'
-  #gem 'eyes_images'
-  #gem 'eyes_calabash'
-  gem 'eyes_core'
-  gem 'eyes_capybara'
-  gem 'eyes_appium'
-  gem 'eyes_universal'
-end
+# source "file://#{ENV['PWD']}/pkg" do
+#   gem 'eyes_selenium'
+#   #gem 'eyes_images'
+#   #gem 'eyes_calabash'
+#   gem 'eyes_core'
+#   gem 'eyes_capybara'
+#   gem 'eyes_appium'
+#   gem 'eyes_universal'
+# end
+gem 'eyes_selenium'
 
 CURRENT_RUBY_VERSION = Gem::Version.new RUBY_VERSION
 
