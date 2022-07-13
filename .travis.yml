@@ -128,15 +128,197 @@ jobs:
         - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
         - yarn add @applitools/eyes-universal@2.5.19
         - chmod +x ./generic_tests.sh && ./generic_tests.sh
-    - stage: "Ruby Coverage tests"
+    - stage: "Ruby Coverage tests 2.5.20"
+      name: "Ruby Coverage 2 tests 2.5.20"
+      script:
+        - chmod +x ./initGeckoDriver29.sh && ./initGeckoDriver29.sh
+        - yarn add @applitools/eyes-universal@2.5.20
+        - chmod +x ./generic_tests.sh && ./generic_tests.sh
+    - stage: "Ruby Coverage tests 2.5.20"
+      name: "Ruby Coverage 2 tests 2.5.20"
+      script:
+        - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
+        - yarn add @applitools/eyes-universal@2.5.20
+        - chmod +x ./generic_tests.sh && ./generic_tests.sh
+    - stage: "Ruby Coverage tests 2.5.21"
+      name: "Ruby Coverage 2 tests 2.5.21"
+      script:
+        - chmod +x ./initGeckoDriver29.sh && ./initGeckoDriver29.sh
+        - yarn add @applitools/eyes-universal@2.5.21
+        - chmod +x ./generic_tests.sh && ./generic_tests.sh
+    - stage: "Ruby Coverage tests 2.5.21"
+      name: "Ruby Coverage 2 tests 2.5.21"
+      script:
+        - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
+        - yarn add @applitools/eyes-universal@2.5.21
+        - chmod +x ./generic_tests.sh && ./generic_tests.sh
+    - stage: "Ruby Coverage tests 2.5.22"
+      name: "Ruby Coverage 2 tests 2.5.22"
+      script:
+        - chmod +x ./initGeckoDriver29.sh && ./initGeckoDriver29.sh
+        - yarn add @applitools/eyes-universal@2.5.22
+        - chmod +x ./generic_tests.sh && ./generic_tests.sh
+    - stage: "Ruby Coverage tests 2.5.22"
+      name: "Ruby Coverage 2 tests 2.5.22"
+      script:
+        - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
+        - yarn add @applitools/eyes-universal@2.5.22
+        - chmod +x ./generic_tests.sh && ./generic_tests.sh
+    - stage: "Ruby Coverage tests 2.6.0"
       name: "Ruby Coverage 2 tests"
       script:
         - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
+        - yarn add @applitools/eyes-universal@2.6.0
         - chmod +x ./generic_tests.sh && ./generic_tests.sh
-    - stage: "Ruby Coverage tests"
+    - stage: "Ruby Coverage tests 2.6.0"
       name: "Ruby Coverage 2 tests"
       script:
         - chmod +x ./initGeckoDriver29.sh && ./initGeckoDriver29.sh
+        - yarn add @applitools/eyes-universal@2.6.0
+        - chmod +x ./generic_tests.sh && ./generic_tests.sh
+    - stage: "Ruby Coverage tests 2.6.1"
+      name: "Ruby Coverage 2 tests"
+      script:
+        - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
+        - yarn add @applitools/eyes-universal@2.6.1
+        - chmod +x ./generic_tests.sh && ./generic_tests.sh
+    - stage: "Ruby Coverage tests 2.6.1"
+      name: "Ruby Coverage 2 tests"
+      script:
+        - chmod +x ./initGeckoDriver29.sh && ./initGeckoDriver29.sh
+        - yarn add @applitools/eyes-universal@2.6.1
+        - chmod +x ./generic_tests.sh && ./generic_tests.sh
+    - stage: "Ruby Coverage tests 2.7.0"
+      name: "Ruby Coverage 2 tests"
+      script:
+        - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
+        - yarn add @applitools/eyes-universal@2.7.0
+        - chmod +x ./generic_tests.sh && ./generic_tests.sh
+    - stage: "Ruby Coverage tests 2.7.0"
+      name: "Ruby Coverage 2 tests"
+      script:
+        - chmod +x ./initGeckoDriver29.sh && ./initGeckoDriver29.sh
+        - yarn add @applitools/eyes-universal@2.7.0
+        - chmod +x ./generic_tests.sh && ./generic_tests.sh
+    - stage: "Ruby Coverage tests 2.7.1"
+      name: "Ruby Coverage 2 tests"
+      script:
+        - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
+        - yarn add @applitools/eyes-universal@2.7.1
+        - chmod +x ./generic_tests.sh && ./generic_tests.sh
+    - stage: "Ruby Coverage tests 2.7.1"
+      name: "Ruby Coverage 2 tests"
+      script:
+        - chmod +x ./initGeckoDriver29.sh && ./initGeckoDriver29.sh
+        - yarn add @applitools/eyes-universal@2.7.1
+        - chmod +x ./generic_tests.sh && ./generic_tests.sh
+    - stage: "Ruby Coverage tests 2.7.2"
+      name: "Ruby Coverage 2 tests"
+      script:
+        - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
+        - yarn add @applitools/eyes-universal@2.7.2
+        - chmod +x ./generic_tests.sh && ./generic_tests.sh
+    - stage: "Ruby Coverage tests 2.7.2"
+      name: "Ruby Coverage 2 tests"
+      script:
+        - chmod +x ./initGeckoDriver29.sh && ./initGeckoDriver29.sh
+        - yarn add @applitools/eyes-universal@2.7.2
+        - chmod +x ./generic_tests.sh && ./generic_tests.sh
+    - stage: "Ruby Coverage tests 2.8.0"
+      name: "Ruby Coverage 2 tests"
+      script:
+        - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
+        - yarn add @applitools/eyes-universal@2.8.0
+        - chmod +x ./generic_tests.sh && ./generic_tests.sh
+    - stage: "Ruby Coverage tests 2.8.0"
+      name: "Ruby Coverage 2 tests"
+      script:
+        - chmod +x ./initGeckoDriver29.sh && ./initGeckoDriver29.sh
+        - yarn add @applitools/eyes-universal@2.8.0
+        - chmod +x ./generic_tests.sh && ./generic_tests.sh
+    - stage: "Ruby Coverage tests 2.9.0"
+      name: "Ruby Coverage 2 tests"
+      script:
+        - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
+        - yarn add @applitools/eyes-universal@2.9.0
+        - chmod +x ./generic_tests.sh && ./generic_tests.sh
+    - stage: "Ruby Coverage tests 2.9.0"
+      name: "Ruby Coverage 2 tests"
+      script:
+        - chmod +x ./initGeckoDriver29.sh && ./initGeckoDriver29.sh
+        - yarn add @applitools/eyes-universal@2.9.0
+        - chmod +x ./generic_tests.sh && ./generic_tests.sh
+    - stage: "Ruby Coverage tests 2.9.1"
+      name: "Ruby Coverage 2 tests"
+      script:
+        - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
+        - yarn add @applitools/eyes-universal@2.9.1
+        - chmod +x ./generic_tests.sh && ./generic_tests.sh
+    - stage: "Ruby Coverage tests 2.9.1"
+      name: "Ruby Coverage 2 tests"
+      script:
+        - chmod +x ./initGeckoDriver29.sh && ./initGeckoDriver29.sh
+        - yarn add @applitools/eyes-universal@2.9.1
+        - chmod +x ./generic_tests.sh && ./generic_tests.sh
+    - stage: "Ruby Coverage tests 2.9.2"
+      name: "Ruby Coverage 2 tests"
+      script:
+        - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
+        - yarn add @applitools/eyes-universal@2.9.2
+        - chmod +x ./generic_tests.sh && ./generic_tests.sh
+    - stage: "Ruby Coverage tests 2.9.2"
+      name: "Ruby Coverage 2 tests"
+      script:
+        - chmod +x ./initGeckoDriver29.sh && ./initGeckoDriver29.sh
+        - yarn add @applitools/eyes-universal@2.9.2
+        - chmod +x ./generic_tests.sh && ./generic_tests.sh
+    - stage: "Ruby Coverage tests 2.9.3"
+      name: "Ruby Coverage 2 tests"
+      script:
+        - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
+        - yarn add @applitools/eyes-universal@2.9.3
+        - chmod +x ./generic_tests.sh && ./generic_tests.sh
+    - stage: "Ruby Coverage tests 2.9.3"
+      name: "Ruby Coverage 2 tests"
+      script:
+        - chmod +x ./initGeckoDriver29.sh && ./initGeckoDriver29.sh
+        - yarn add @applitools/eyes-universal@2.9.3
+        - chmod +x ./generic_tests.sh && ./generic_tests.sh
+    - stage: "Ruby Coverage tests 2.9.4"
+      name: "Ruby Coverage 2 tests"
+      script:
+        - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
+        - yarn add @applitools/eyes-universal@2.9.4
+        - chmod +x ./generic_tests.sh && ./generic_tests.sh
+    - stage: "Ruby Coverage tests 2.9.4"
+      name: "Ruby Coverage 2 tests"
+      script:
+        - chmod +x ./initGeckoDriver29.sh && ./initGeckoDriver29.sh
+        - yarn add @applitools/eyes-universal@2.9.4
+        - chmod +x ./generic_tests.sh && ./generic_tests.sh
+    - stage: "Ruby Coverage tests 2.9.5"
+      name: "Ruby Coverage 2 tests"
+      script:
+        - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
+        - yarn add @applitools/eyes-universal@2.9.5
+        - chmod +x ./generic_tests.sh && ./generic_tests.sh
+    - stage: "Ruby Coverage tests 2.9.5"
+      name: "Ruby Coverage 2 tests"
+      script:
+        - chmod +x ./initGeckoDriver29.sh && ./initGeckoDriver29.sh
+        - yarn add @applitools/eyes-universal@2.9.5
+        - chmod +x ./generic_tests.sh && ./generic_tests.sh
+    - stage: "Ruby Coverage tests 2.9.6"
+      name: "Ruby Coverage 2 tests"
+      script:
+        - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
+        - yarn add @applitools/eyes-universal@2.9.6
+        - chmod +x ./generic_tests.sh && ./generic_tests.sh
+    - stage: "Ruby Coverage tests 2.9.6"
+      name: "Ruby Coverage 2 tests"
+      script:
+        - chmod +x ./initGeckoDriver29.sh && ./initGeckoDriver29.sh
+        - yarn add @applitools/eyes-universal@2.9.6
         - chmod +x ./generic_tests.sh && ./generic_tests.sh
 #    - stage: "Report all test results"
 #      if: branch = master AND type = cron
