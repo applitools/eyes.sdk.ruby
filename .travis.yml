@@ -22,135 +22,135 @@ before_script:
   - export DOCKER_TOKEN=$(curl "https://auth.docker.io/token?service=registry.docker.io&scope=repository:ratelimitpreview/test:pull" | jq -r .token)
   - "export DOCKER_RATE_LIMIT=$(curl --head -H \"Authorization: Bearer $DOCKER_TOKEN\" https://registry-1.docker.io/v2/ratelimitpreview/test/manifests/latest 2>&1 | grep ^ratelimit)"
   - echo $DOCKER_RATE_LIMIT
-  - if [[ ($TRAVIS_TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+(\.[0-9a-z]+)?$) || ($TRAVIS_TAG =~ ^RELEASE_CANDIDATE) ]]; then
-      export TEST_REPORT_SANDBOX=False;
-      export SDK_VERSION=$(echo $TRAVIS_TAG | sed 's/v[^.0-9a-z]*//g');
-      export TMP_CHANGELOG=$(bash ./extractChangeLog.sh "$SDK_VERSION" "CHANGELOG.md");
-      export CHANGELOG=$([ -z "$TMP_CHANGELOG" ] && echo "There is no change log for version $SDK_VERSION"; echo "$TMP_CHANGELOG");
-
-      if [[ (-z "$TMP_CHANGELOG") ]]; then
-        echo "THE CHANGELOG IS NOT CORRECT";
-        exit 1;
-      fi
-    fi
+#  - if [[ ($TRAVIS_TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+(\.[0-9a-z]+)?$) || ($TRAVIS_TAG =~ ^RELEASE_CANDIDATE) ]]; then
+#      export TEST_REPORT_SANDBOX=False;
+#      export SDK_VERSION=$(echo $TRAVIS_TAG | sed 's/v[^.0-9a-z]*//g');
+#      export TMP_CHANGELOG=$(bash ./extractChangeLog.sh "$SDK_VERSION" "CHANGELOG.md");
+#      export CHANGELOG=$([ -z "$TMP_CHANGELOG" ] && echo "There is no change log for version $SDK_VERSION"; echo "$TMP_CHANGELOG");
+#
+#      if [[ (-z "$TMP_CHANGELOG") ]]; then
+#        echo "THE CHANGELOG IS NOT CORRECT";
+#        exit 1;
+#      fi
+#    fi
 jobs:
   include:
-    - stage: "Version Checks"
-      name: "Version 3.1 Checks Ubuntu 20.04"
-      script: bundle exec rake travis:version_test
-      dist: focal
-      rvm:
-        - 3.1
-    - stage: "Version Checks"
-      name: "Version 3.0 Checks Ubuntu 20.04"
-      script: bundle exec rake travis:version_test
-      dist: focal
-      rvm:
-        - 3.0
-    - stage: "Version Checks"
-      name: "Version 2.7 Checks Ubuntu 20.04"
-      script: bundle exec rake travis:version_test
-      dist: focal
-      rvm:
-        - 2.7
-    - stage: "Version Checks"
-      name: "Version 2.6 Checks Ubuntu 20.04"
-      script: bundle exec rake travis:version_test
-      dist: focal
-      rvm:
-        - 2.6
-    - stage: "Version Checks"
-      name: "Version 2.5 Checks Ubuntu 20.04"
-      script: bundle exec rake travis:version_test
-      dist: focal
-      rvm:
-        - 2.5
-    - stage: "Version Checks"
-      name: "Version 2.4 Checks Ubuntu 20.04"
-      script: bundle exec rake travis:version_test
-      dist: focal
-      rvm:
-        - 2.4
-    - stage: "Version Checks"
-      name: "Version 3.1 Checks Ubuntu 18.04"
-      script: bundle exec rake travis:version_test
-      dist: bionic
-      rvm:
-        - 3.1
-    - stage: "Version Checks"
-      name: "Version 3.0 Checks Ubuntu 18.04"
-      script: bundle exec rake travis:version_test
-      dist: bionic
-      rvm:
-        - 3.0
-    - stage: "Version Checks"
-      name: "Version 2.7 Checks Ubuntu 18.04"
-      script: bundle exec rake travis:version_test
-      dist: bionic
-      rvm:
-        - 2.7
-    - stage: "Version Checks"
-      name: "Version 2.6 Checks Ubuntu 18.04"
-      script: bundle exec rake travis:version_test
-      dist: bionic
-      rvm:
-        - 2.6
-    - stage: "Version Checks"
-      name: "Version 2.5 Checks Ubuntu 18.04"
-      script: bundle exec rake travis:version_test
-      dist: bionic
-      rvm:
-        - 2.5
-    - stage: "Version Checks"
-      name: "Version 2.4 Checks Ubuntu 18.04"
-      script: bundle exec rake travis:version_test
-      dist: bionic
-      rvm:
-        - 2.4
-    - stage: "Unit Tests"
-      name: "Unit Tests"
-      script: bundle exec rake travis:unit_tests
-    - stage: "Visual tests"
-      script: bundle exec rake travis:vg_tests
-      name: "Visual Grid"
-    - stage: "Appium"
-      script: bundle exec rake travis:appium_tests
-      name: "eyes_appium tests"
+#    - stage: "Version Checks"
+#      name: "Version 3.1 Checks Ubuntu 20.04"
+#      script: bundle exec rake travis:version_test
+#      dist: focal
+#      rvm:
+#        - 3.1
+#    - stage: "Version Checks"
+#      name: "Version 3.0 Checks Ubuntu 20.04"
+#      script: bundle exec rake travis:version_test
+#      dist: focal
+#      rvm:
+#        - 3.0
+#    - stage: "Version Checks"
+#      name: "Version 2.7 Checks Ubuntu 20.04"
+#      script: bundle exec rake travis:version_test
+#      dist: focal
+#      rvm:
+#        - 2.7
+#    - stage: "Version Checks"
+#      name: "Version 2.6 Checks Ubuntu 20.04"
+#      script: bundle exec rake travis:version_test
+#      dist: focal
+#      rvm:
+#        - 2.6
+#    - stage: "Version Checks"
+#      name: "Version 2.5 Checks Ubuntu 20.04"
+#      script: bundle exec rake travis:version_test
+#      dist: focal
+#      rvm:
+#        - 2.5
+#    - stage: "Version Checks"
+#      name: "Version 2.4 Checks Ubuntu 20.04"
+#      script: bundle exec rake travis:version_test
+#      dist: focal
+#      rvm:
+#        - 2.4
+#    - stage: "Version Checks"
+#      name: "Version 3.1 Checks Ubuntu 18.04"
+#      script: bundle exec rake travis:version_test
+#      dist: bionic
+#      rvm:
+#        - 3.1
+#    - stage: "Version Checks"
+#      name: "Version 3.0 Checks Ubuntu 18.04"
+#      script: bundle exec rake travis:version_test
+#      dist: bionic
+#      rvm:
+#        - 3.0
+#    - stage: "Version Checks"
+#      name: "Version 2.7 Checks Ubuntu 18.04"
+#      script: bundle exec rake travis:version_test
+#      dist: bionic
+#      rvm:
+#        - 2.7
+#    - stage: "Version Checks"
+#      name: "Version 2.6 Checks Ubuntu 18.04"
+#      script: bundle exec rake travis:version_test
+#      dist: bionic
+#      rvm:
+#        - 2.6
+#    - stage: "Version Checks"
+#      name: "Version 2.5 Checks Ubuntu 18.04"
+#      script: bundle exec rake travis:version_test
+#      dist: bionic
+#      rvm:
+#        - 2.5
+#    - stage: "Version Checks"
+#      name: "Version 2.4 Checks Ubuntu 18.04"
+#      script: bundle exec rake travis:version_test
+#      dist: bionic
+#      rvm:
+#        - 2.4
+#    - stage: "Unit Tests"
+#      name: "Unit Tests"
+#      script: bundle exec rake travis:unit_tests
+#    - stage: "Visual tests"
+#      script: bundle exec rake travis:vg_tests
+#      name: "Visual Grid"
+#    - stage: "Appium"
+#      script: bundle exec rake travis:appium_tests
+#      name: "eyes_appium tests"
     - stage: "Ruby Coverage tests"
       name: "Ruby Coverage tests"
       script:
         - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
         - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
         - chmod +x ./generic_tests.sh && ./generic_tests.sh
-    - stage: "Report all test results"
-      if: branch = master AND type = cron
-      name: "Report all test results"
-      script:
-        - echo "v$SDK_VERSION $CHANGELOG"
-        - echo $TMP_CHANGELOG
-        - COMMITTER_EMAIL="$(git log -1 $TRAVIS_COMMIT --pretty="%cE")"
-        - if [[ ("$ALLOWED_RELEASE_COMMITERS" =~ .*"$COMMITTER_EMAIL".*) && $TMP_CHANGELOG ]]; then
-            echo "REPORTING...";
-            TEST_COVERAGE_GAP=$(cat testCoverageGap.txt);
-            bash ./all_tests_report.sh "$SDK" "$COMMITER_EMAIL";
-            echo "REPORTED SUCCESSFULLY";
-          else
-            echo "REPORT FAILED";
-            exit 1;
-          fi
-    - stage: "Build"
-      if: tag =~ ^v[0-9]+\.[0-9]+\.[0-9]+(\.[0-9a-z]+)?$ AND fork == false
-      name: "Release event"
-      script:
-        - echo "v$SDK_VERSION $CHANGELOG"
-        - echo $TMP_CHANGELOG
-        - COMMITTER_EMAIL="$(git log -1 $TRAVIS_COMMIT --pretty="%cE")"
-        - if [[ ("$ALLOWED_RELEASE_COMMITERS" =~ .*"$COMMITTER_EMAIL".*) && $TMP_CHANGELOG ]]; then
-            echo "DEPLOY";
-            TEST_COVERAGE_GAP=$(cat testCoverageGap.txt);
-            bash ./sendMail.sh "$SDK" "$TRAVIS_TAG" "$CHANGELOG" "$TEST_COVERAGE_GAP";
-            echo "DEPLOY SUCCESSFUL";
-          else
-            echo "DEPLOYMENT FAILED";
-            exit 1;
-          fi
+#    - stage: "Report all test results"
+#      if: branch = master AND type = cron
+#      name: "Report all test results"
+#      script:
+#        - echo "v$SDK_VERSION $CHANGELOG"
+#        - echo $TMP_CHANGELOG
+#        - COMMITTER_EMAIL="$(git log -1 $TRAVIS_COMMIT --pretty="%cE")"
+#        - if [[ ("$ALLOWED_RELEASE_COMMITERS" =~ .*"$COMMITTER_EMAIL".*) && $TMP_CHANGELOG ]]; then
+#            echo "REPORTING...";
+#            TEST_COVERAGE_GAP=$(cat testCoverageGap.txt);
+#            bash ./all_tests_report.sh "$SDK" "$COMMITER_EMAIL";
+#            echo "REPORTED SUCCESSFULLY";
+#          else
+#            echo "REPORT FAILED";
+#            exit 1;
+#          fi
+#    - stage: "Build"
+#      if: tag =~ ^v[0-9]+\.[0-9]+\.[0-9]+(\.[0-9a-z]+)?$ AND fork == false
+#      name: "Release event"
+#      script:
+#        - echo "v$SDK_VERSION $CHANGELOG"
+#        - echo $TMP_CHANGELOG
+#        - COMMITTER_EMAIL="$(git log -1 $TRAVIS_COMMIT --pretty="%cE")"
+#        - if [[ ("$ALLOWED_RELEASE_COMMITERS" =~ .*"$COMMITTER_EMAIL".*) && $TMP_CHANGELOG ]]; then
+#            echo "DEPLOY";
+#            TEST_COVERAGE_GAP=$(cat testCoverageGap.txt);
+#            bash ./sendMail.sh "$SDK" "$TRAVIS_TAG" "$CHANGELOG" "$TEST_COVERAGE_GAP";
+#            echo "DEPLOY SUCCESSFUL";
+#          else
+#            echo "DEPLOYMENT FAILED";
+#            exit 1;
+#          fi

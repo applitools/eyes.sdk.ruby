@@ -36,19 +36,19 @@ fi
 echo $EG_PID
 kill $EG_PID
 
-yarn report:merge
-if [ "$?" -ne 0 ]; then
-    ((RESULT+=1))
-    MESSAGE+=$'\nError occurred during merging reports from all threads'
-    echo "${MESSAGE}"
-fi
-
-yarn report
-if [ "$?" -ne 0 ]; then
-    ((RESULT+=1))
-    MESSAGE+=$'\nError occurred during send report action'
-    echo "${MESSAGE}"
-fi
+#yarn report:merge
+#if [ "$?" -ne 0 ]; then
+#    ((RESULT+=1))
+#    MESSAGE+=$'\nError occurred during merging reports from all threads'
+#    echo "${MESSAGE}"
+#fi
+#
+#yarn report
+#if [ "$?" -ne 0 ]; then
+#    ((RESULT+=1))
+#    MESSAGE+=$'\nError occurred during send report action'
+#    echo "${MESSAGE}"
+#fi
 
 echo "RESULT = ${RESULT}"
 echo "$MESSAGE"
