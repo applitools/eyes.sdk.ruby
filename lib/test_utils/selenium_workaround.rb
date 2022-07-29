@@ -94,7 +94,7 @@ RSpec.shared_context 'selenium workaround' do
     when 'chrome'
       Selenium::WebDriver.for :chrome, options: chrome_options
     else
-      Selenium::WebDriver.for :chrome
+      Selenium::WebDriver.for :chrome, options: Selenium::WebDriver::Chrome::Options.new(args: [:headless])
     end
   end
 
