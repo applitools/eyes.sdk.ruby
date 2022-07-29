@@ -2,7 +2,7 @@
 ### Added
 - add enum for edge-2 (EDGE_CHROMIUM_TWO_VERSIONS_BACK)
 ### Updated
-- Update version of Universal SDK to 2.9.11
+- Update version of Universal SDK to 2.10.2
 ## [4.1.2] - 2022-07-07
 ### Added
 - add padding support for regions [Trello 2929](https://trello.com/c/kHbnEdC7), [Trello 42](https://trello.com/c/PYKqJLbg)
