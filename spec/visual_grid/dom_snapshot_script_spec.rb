@@ -4,7 +4,7 @@ require 'eyes_selenium'
 require 'openssl'
 
 RSpec.describe Applitools::Selenium::DomSnapshotScript, skip: true do
-  let(:web_driver) { Selenium::WebDriver.for :chrome }
+  let(:web_driver) { Selenium::WebDriver.for :chrome, desired_capabilities: {'goog:chromeOptions' => {args: [:headless]}} }
   let(:runner) { Applitools::Selenium::VisualGridRunner.new(1) }
   let(:eyes) { Applitools::Selenium::Eyes.new(runner: runner) }
   let(:driver) { eyes.open(app_name: 'MyAppName', test_name: 'MyTestName', driver: web_driver, viewport_size: {width: 800, height: 550}) }

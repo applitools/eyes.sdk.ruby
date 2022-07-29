@@ -96,7 +96,7 @@ RSpec.describe 'TestSendDom' do
   let(:sauce_web_driver) do
     Selenium::WebDriver.for :remote, url: 'http://ondemand.saucelabs.com/wd/hub', desired_capabilities: capabilities
   end
-  let(:local_web_driver) { Selenium::WebDriver.for :chrome }
+  let(:local_web_driver) { Selenium::WebDriver.for :chrome, desired_capabilities: {'goog:chromeOptions' => {args: [:headless]}} }
   let(:web_driver) { ENV['SAUCE_USERNAME'] && ENV['SAUCE_ACCESSKEY'] ? sauce_web_driver : local_web_driver }
   let(:eyes_web_driver) do |example|
     eyes.open(

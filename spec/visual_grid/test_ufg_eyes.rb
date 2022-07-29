@@ -5,7 +5,7 @@ require 'openssl'
 
 RSpec.describe 'ufg_cookies' do
 
-  let(:web_driver) { Selenium::WebDriver.for :chrome }
+  let(:web_driver) { Selenium::WebDriver.for :chrome, desired_capabilities: {'goog:chromeOptions' => {args: [:headless]}} }
   let(:runner) { Applitools::Selenium::VisualGridRunner.new(1) }
   let(:eyes) { Applitools::Selenium::Eyes.new(runner: runner) }
   let(:driver) do

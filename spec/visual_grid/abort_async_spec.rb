@@ -10,7 +10,7 @@ RSpec.describe 'Abort Async' do
   end
 
   let(:eyes) { Applitools::Selenium::Eyes.new(runner: @runner) }
-  let(:web_driver) { Selenium::WebDriver.for :chrome }
+  let(:web_driver) { Selenium::WebDriver.for :chrome, desired_capabilities: {'goog:chromeOptions' => {args: [:headless]}} }
   let(:driver) do
     eyes.open(
       app_name: 'Eyes SDK Ruby',
