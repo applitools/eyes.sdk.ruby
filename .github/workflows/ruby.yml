@@ -44,16 +44,16 @@ jobs:
           name: platform-tests
           if-no-files-found: error
           path: "./coverage_tests/spec/**/*"
-      - name: Generate generic tests
-        run: |
-          npm install
-          npm run generate
-      - name: Store generic tests
-        uses: actions/upload-artifact@v3
-        with:
-          name: generic-tests
-          if-no-files-found: error
-          path: "./coverage_tests/spec/**/*"
+#      - name: Generate generic tests
+#        run: |
+#          npm install
+#          npm run generate
+#      - name: Store generic tests
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: generic-tests
+#          if-no-files-found: error
+#          path: "./coverage_tests/spec/**/*"
 
 
 
@@ -104,7 +104,7 @@ jobs:
     needs: dist-build
     strategy:
       matrix:
-        os: [ ubuntu-latest, macos-latest ]
+        os: [ ubuntu-latest ]
         ruby-version: ['2.6', '2.7', '3.0', '3.1']
     runs-on: ${{ matrix.os }}
     env:
@@ -132,7 +132,7 @@ jobs:
     needs: dist-build
     strategy:
       matrix:
-        os: [ ubuntu-latest, macos-latest ]
+        os: [ ubuntu-latest ]
         ruby-version: ['2.6', '2.7', '3.0', '3.1']
     runs-on: ${{ matrix.os }}
     env:
@@ -160,8 +160,8 @@ jobs:
     needs: dist-build
     strategy:
       matrix:
-        os: [ ubuntu-latest, macos-latest ]
-        ruby-version: ['2.6', '2.7', '3.0', '3.1']
+        os: [ ubuntu-latest ]
+        ruby-version: ['2.7', '3.1']
     runs-on: ${{ matrix.os }}
     env:
       APPLITOOLS_API_KEY: ${{ secrets.APPLITOOLS_API_KEY }}
@@ -185,3 +185,27 @@ jobs:
         run: |
           bundle install
           bundle exec rake github:appium_tests
+
+  generic-test:
+    needs: dist-build
+    runs-on: ubuntu-latest
+    env:
+      APPLITOOLS_API_KEY: ${{ secrets.APPLITOOLS_API_KEY }}
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '2.6'
+      - name: Load gems
+        uses: actions/download-artifact@v3
+        with:
+          name: gems
+          path: "./pkg/"
+      - name: Run tests
+        env:
+          BUNDLE_GEMFILE: ${{ github.workspace }}/GemfileGithub
+        run: |
+          bundle install
+          chmod +x ./generic_tests.sh && ./generic_tests.sh
