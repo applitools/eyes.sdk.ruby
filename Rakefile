@@ -123,6 +123,7 @@ unless ENV['BUILD_ONLY'] && !ENV['BUILD_ONLY'].empty?
     end
 
     task :travis => [:regression, :bugfix, :core, :selenium, :visual_grid, :calabash, :images]
+    task :github => [:regression, :bugfix, :core, :selenium, :visual_grid, :calabash, :images]
   end
 
   namespace 'travis' do
@@ -145,6 +146,16 @@ unless ENV['BUILD_ONLY'] && !ENV['BUILD_ONLY'].empty?
     task :platform_test => [:set_batch_info, :check] do
       Dir.chdir("coverage_tests")
       sh('bundle exec parallel_rspec -n 1 spec/coverage/generic')
+    end
+
+    task :unit_tests => [:set_batch_info, :check, 'unit_tests:github']
+
+    task :vg_tests => ['webdrivers:chromedriver:update', :set_batch_info, :check] do
+      sh('bundle exec parallel_rspec -n 1 -- --tag visual_grid -- spec/integration/*_spec.rb')
+    end
+
+    task :appium_tests => [:set_batch_info, :check] do
+      sh('bundle exec parallel_rspec -n 1 -- --tag appium -- spec/appium/*_spec.rb')
     end
   end
 
