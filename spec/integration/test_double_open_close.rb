@@ -16,7 +16,7 @@ RSpec.shared_examples 'Eyes Selenium SDK - Visual Grid TestDoubleOpenClose' do
     when 'chrome'
       Selenium::WebDriver.for(:chrome, options: chrome_options)
     else
-      Selenium::WebDriver.for :chrome, desired_capabilities: {'goog:chromeOptions' => {args: [:headless]}}
+      Selenium::WebDriver.for :chrome, options: Selenium::WebDriver::Chrome::Options.new(args: [:headless])
     end
   end
 

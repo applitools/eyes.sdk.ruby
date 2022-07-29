@@ -17,7 +17,7 @@ RSpec.describe "Version #{Applitools::VERSION} check on #{RUBY_PLATFORM} ruby-#{
     eyes
   end
 
-  let(:web_driver) { Selenium::WebDriver.for :chrome, desired_capabilities: {'goog:chromeOptions' => {args: [:headless]}} }
+  let(:web_driver) { Selenium::WebDriver.for :chrome, options: Selenium::WebDriver::Chrome::Options.new(args: [:headless]) }
 
   let(:driver) do
     eyes.open(
