@@ -20,6 +20,7 @@ fi
 # start eg client and save process id
 # commented out if need eg client logs
 export APPLITOOLS_SHOW_LOGS=true
+export MOZ_HEADLESS=1
 yarn universal:eg &
 EG_PID="$!"
 export EXECUTION_GRID_URL=http://localhost:8080
