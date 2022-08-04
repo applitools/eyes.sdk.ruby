@@ -1,4 +1,4 @@
-## [vNext]
+## [4.1.3] - 2022-08-04
 ### Added
 - add enum for edge-2 (EDGE_CHROMIUM_TWO_VERSIONS_BACK)
 - Android 12 device name [Trello 54](https://trello.com/c/SZAPDKSI)
