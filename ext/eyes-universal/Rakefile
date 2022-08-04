@@ -1,6 +1,8 @@
 require 'rubygems'
 require 'rake/clean'
 
+CURRENT_VERSION_PATH = File.expand_path('../../lib/applitools/version', File.dirname(__FILE__))
+require CURRENT_VERSION_PATH
 DOWNLOADER_PATH = File.expand_path('../../lib/applitools/universal_sdk/universal_server_downloader', File.dirname(__FILE__))
 require DOWNLOADER_PATH
 
