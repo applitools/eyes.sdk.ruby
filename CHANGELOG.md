@@ -1,3 +1,9 @@
+## [vNext]
+### Added
+- add enum for edge-2 (EDGE_CHROMIUM_TWO_VERSIONS_BACK)
+- Android 12 device name [Trello 54](https://trello.com/c/SZAPDKSI)
+### Updated
+- Update version of Universal SDK to 2.10.3
 ## [4.1.2] - 2022-07-07
 ### Added
 - add padding support for regions [Trello 2929](https://trello.com/c/kHbnEdC7), [Trello 42](https://trello.com/c/PYKqJLbg)

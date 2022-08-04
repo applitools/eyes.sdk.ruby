@@ -27,6 +27,7 @@ module BrowserType
 
   EDGE_CHROMIUM = :'edgechromium'
   EDGE_CHROMIUM_ONE_VERSION_BACK = :'edgechromium-one-version-back'
+  EDGE_CHROMIUM_TWO_VERSIONS_BACK = :'edgechromium-two-versions-back'
 
   IE_11 = :ie
   EDGE_LEGACY = :edgelegacy
@@ -65,6 +66,7 @@ module BrowserType
       IE_10,
       EDGE_CHROMIUM,
       EDGE_CHROMIUM_ONE_VERSION_BACK,
+      EDGE_CHROMIUM_TWO_VERSIONS_BACK,
       IOS_SAFARI
     ]
   end
