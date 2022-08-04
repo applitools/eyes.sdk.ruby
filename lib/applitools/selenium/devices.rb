@@ -66,6 +66,13 @@ module Devices
   Pixel4 = 'Pixel 4'.freeze
   Pixel4XL = 'Pixel 4 XL'.freeze
   Pixel5 = 'Pixel 5'.freeze
+  Pixel6 = 'Pixel 6'.freeze
+  XiaomiRedmiNote11 = 'Xiaomi Redmi Note 11'.freeze
+  XiaomiRedmiNote11Pro = 'Xiaomi Redmi Note 11 Pro'.freeze
+  GalaxyS22 = 'Galaxy S22'.freeze
+  GalaxyS22Plus = 'Galaxy S22 Plus'.freeze
+  GalaxyTabS7 = 'Galaxy Tab S7'.freeze
+  GalaxyTabS8 = 'Galaxy Tab S8'.freeze
 
   def enum_values
     [
@@ -130,7 +137,14 @@ module Devices
       Pixel3XL,
       Pixel4,
       Pixel4XL,
-      Pixel5
+      Pixel5,
+      Pixel6,
+      XiaomiRedmiNote11,
+      XiaomiRedmiNote11Pro,
+      GalaxyS22,
+      GalaxyS22Plus,
+      GalaxyTabS7,
+      GalaxyTabS8
     ]
   end
 end
