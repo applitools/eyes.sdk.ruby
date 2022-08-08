@@ -194,6 +194,7 @@ jobs:
       APPLITOOLS_API_KEY_READ: ${{ secrets.APPLITOOLS_API_KEY_READ }}
       SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
       SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
+      DISPLAY: ':99'
 
     steps:
       - uses: actions/checkout@v3
