@@ -209,6 +209,7 @@ jobs:
       - name: Setup xvfb
         run: |
           sudo apt-get install -y xvfb
+          Xvfb -ac $DISPLAY -screen 0 1280x1024x16 &
       - name: Run tests
         env:
           BUNDLE_GEMFILE: ${{ github.workspace }}/GemfileGithub
