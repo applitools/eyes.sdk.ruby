@@ -220,14 +220,16 @@ jobs:
 
       - name: ChangeLog check
 #        if: github.ref_type == 'tag'
-        if: github.ref_type == 'branch'
+        if: github.ref_type == 'branch' && GITHUB_REF##* == 'eyes-universal-4.1.3-ghactions'
         run: |
-          export SDK_VERSION='4.1.2'
+          export TAG_VERSION='v4.1.2'
+          export SDK_VERSION=$(echo $TAG_VERSION | sed 's/v[^.0-9a-z]*//g');
           echo $SDK_VERSION
 
           export TEST_REPORT_SANDBOX=False
           export TMP_CHANGELOG=$(bash ./extractChangeLog.sh "$SDK_VERSION" "CHANGELOG.md")
           export CHANGELOG=$([ -z "$TMP_CHANGELOG" ] && echo "There is no change log for version $SDK_VERSION"; echo "$TMP_CHANGELOG")
+          echo $CHANGELOG
         
           if [[ (-z "$TMP_CHANGELOG") ]]; then
             echo "THE CHANGELOG IS NOT CORRECT"
