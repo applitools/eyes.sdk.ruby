@@ -225,9 +225,6 @@ jobs:
     if: github.ref_type == 'branch' && github.ref_name == 'eyes-universal-4.1.3-ghactions'
     env:
       TEST_REPORT_SANDBOX: False
-      SDK_VERSION:
-      CHANGELOG:
-      TMP_CHANGELOG:
 
     steps:
       - uses: actions/checkout@v3
@@ -245,6 +242,10 @@ jobs:
             echo "THE CHANGELOG IS NOT CORRECT"
             exit 1
           fi
+          
+          echo "SDK_VERSION=$SDK_VERSION" >> $GITHUB_ENV
+          echo "CHANGELOG=$CHANGELOG" >> $GITHUB_ENV
+          echo "TMP_CHANGELOG=$TMP_CHANGELOG" >> $GITHUB_ENV
 
       - name: Release event check
         run: |
