@@ -236,20 +236,24 @@ jobs:
 
           export TMP_CHANGELOG=$(bash ./extractChangeLog.sh "$SDK_VERSION" "CHANGELOG.md")
           export CHANGELOG=$([ -z "$TMP_CHANGELOG" ] && echo "There is no change log for version $SDK_VERSION"; echo "$TMP_CHANGELOG")
-          echo $CHANGELOG
         
           if [[ (-z "$TMP_CHANGELOG") ]]; then
             echo "THE CHANGELOG IS NOT CORRECT"
             exit 1
           fi
-          
-          echo "SDK_VERSION=$SDK_VERSION" >> $GITHUB_ENV
-          echo "CHANGELOG=$CHANGELOG" >> $GITHUB_ENV
-          echo "TMP_CHANGELOG=$TMP_CHANGELOG" >> $GITHUB_ENV
 
-      - name: Release event check
-        run: |
           echo "v$SDK_VERSION $CHANGELOG"
           echo $TMP_CHANGELOG
           COMMITTER_EMAIL="$(git log -1 ${{ github.ref_name }} --pretty="%cE")"
           echo $COMMITTER_EMAIL
+
+          if [[ ("$ALLOWED_RELEASE_COMMITERS" =~ .*"$COMMITTER_EMAIL".*) && $TMP_CHANGELOG ]]; then
+            echo "DEPLOY";
+            SDK='ruby'
+            TEST_COVERAGE_GAP=$(cat testCoverageGap.txt);
+            bash ./sendMail.sh "$SDK" "$TAG_VERSION" "$CHANGELOG" "$TEST_COVERAGE_GAP";
+            echo "DEPLOY SUCCESSFUL";
+          else
+            echo "DEPLOYMENT FAILED";
+            exit 1;
+          fi
