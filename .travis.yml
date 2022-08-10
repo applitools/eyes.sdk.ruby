@@ -123,6 +123,10 @@ jobs:
 #        - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
 #        - export MOZ_HEADLESS=1
 #        - chmod +x ./generic_tests.sh && ./generic_tests.sh
+    - stage: "debug variables"
+      name: "debug env"
+      script:
+        - echo $TRAVIS_COMMIT
     - stage: "Report all test results"
       if: branch = master AND type = cron
       name: "Report all test results"
