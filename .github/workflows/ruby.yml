@@ -231,7 +231,7 @@ jobs:
       - name: ChangeLog check
         run: |
           export TAG_VERSION='v4.1.2'
-          export SDK_VERSION=$(echo $TAG_VERSION | sed 's/v[^.0-9a-z]*//g');
+          export SDK_VERSION=$(echo $TAG_VERSION | sed 's/v[^.0-9a-z]*//g')
 #          export SDK_VERSION=$(echo ${{ github.ref_name }} | sed 's/v[^.0-9a-z]*//g')
           echo $SDK_VERSION
 
