@@ -225,13 +225,11 @@ jobs:
           export SDK_VERSION=${GITHUB_REF##*/}
           echo $SDK_VERSION
 
-#          if [[ ($SDK_VERSION =~ ^v[0-9]+\.[0-9]+\.[0-9]+(\.[0-9a-z]+)?$) ]]; then
-          export TEST_REPORT_SANDBOX=False;
-          export TMP_CHANGELOG=$(bash ./extractChangeLog.sh "$SDK_VERSION" "CHANGELOG.md");
-          export CHANGELOG=$([ -z "$TMP_CHANGELOG" ] && echo "There is no change log for version $SDK_VERSION"; echo "$TMP_CHANGELOG");
+          export TEST_REPORT_SANDBOX=False
+          export TMP_CHANGELOG=$(bash ./extractChangeLog.sh "$SDK_VERSION" "CHANGELOG.md")
+          export CHANGELOG=$([ -z "$TMP_CHANGELOG" ] && echo "There is no change log for version $SDK_VERSION"; echo "$TMP_CHANGELOG")
         
           if [[ (-z "$TMP_CHANGELOG") ]]; then
-            echo "THE CHANGELOG IS NOT CORRECT";
-            exit 1;
+            echo "THE CHANGELOG IS NOT CORRECT"
+            exit 1
           fi
-#          fi
