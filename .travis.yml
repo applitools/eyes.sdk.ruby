@@ -35,98 +35,94 @@ before_script:
     fi
 jobs:
   include:
-#    - stage: "Version Checks"
-#      name: "Version 3.1 Checks Ubuntu 20.04"
-#      script: bundle exec rake travis:version_test
-#      dist: focal
-#      rvm:
-#        - 3.1
-#    - stage: "Version Checks"
-#      name: "Version 3.0 Checks Ubuntu 20.04"
-#      script: bundle exec rake travis:version_test
-#      dist: focal
-#      rvm:
-#        - 3.0
-#    - stage: "Version Checks"
-#      name: "Version 2.7 Checks Ubuntu 20.04"
-#      script: bundle exec rake travis:version_test
-#      dist: focal
-#      rvm:
-#        - 2.7
-#    - stage: "Version Checks"
-#      name: "Version 2.6 Checks Ubuntu 20.04"
-#      script: bundle exec rake travis:version_test
-#      dist: focal
-#      rvm:
-#        - 2.6
-#    - stage: "Version Checks"
-#      name: "Version 2.5 Checks Ubuntu 20.04"
-#      script: bundle exec rake travis:version_test
-#      dist: focal
-#      rvm:
-#        - 2.5
-#    - stage: "Version Checks"
-#      name: "Version 2.4 Checks Ubuntu 20.04"
-#      script: bundle exec rake travis:version_test
-#      dist: focal
-#      rvm:
-#        - 2.4
-#    - stage: "Version Checks"
-#      name: "Version 3.1 Checks Ubuntu 18.04"
-#      script: bundle exec rake travis:version_test
-#      dist: bionic
-#      rvm:
-#        - 3.1
-#    - stage: "Version Checks"
-#      name: "Version 3.0 Checks Ubuntu 18.04"
-#      script: bundle exec rake travis:version_test
-#      dist: bionic
-#      rvm:
-#        - 3.0
-#    - stage: "Version Checks"
-#      name: "Version 2.7 Checks Ubuntu 18.04"
-#      script: bundle exec rake travis:version_test
-#      dist: bionic
-#      rvm:
-#        - 2.7
-#    - stage: "Version Checks"
-#      name: "Version 2.6 Checks Ubuntu 18.04"
-#      script: bundle exec rake travis:version_test
-#      dist: bionic
-#      rvm:
-#        - 2.6
-#    - stage: "Version Checks"
-#      name: "Version 2.5 Checks Ubuntu 18.04"
-#      script: bundle exec rake travis:version_test
-#      dist: bionic
-#      rvm:
-#        - 2.5
-#    - stage: "Version Checks"
-#      name: "Version 2.4 Checks Ubuntu 18.04"
-#      script: bundle exec rake travis:version_test
-#      dist: bionic
-#      rvm:
-#        - 2.4
-#    - stage: "Unit Tests"
-#      name: "Unit Tests"
-#      script: bundle exec rake travis:unit_tests
-#    - stage: "Visual tests"
-#      script: bundle exec rake travis:vg_tests
-#      name: "Visual Grid"
-#    - stage: "Appium"
-#      script: bundle exec rake travis:appium_tests
-#      name: "eyes_appium tests"
-#    - stage: "Ruby Coverage tests"
-#      name: "Ruby Coverage tests"
-#      script:
-#        - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
-#        - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
-#        - export MOZ_HEADLESS=1
-#        - chmod +x ./generic_tests.sh && ./generic_tests.sh
-    - stage: "debug variables"
-      name: "debug env"
+    - stage: "Version Checks"
+      name: "Version 3.1 Checks Ubuntu 20.04"
+      script: bundle exec rake travis:version_test
+      dist: focal
+      rvm:
+        - 3.1
+    - stage: "Version Checks"
+      name: "Version 3.0 Checks Ubuntu 20.04"
+      script: bundle exec rake travis:version_test
+      dist: focal
+      rvm:
+        - 3.0
+    - stage: "Version Checks"
+      name: "Version 2.7 Checks Ubuntu 20.04"
+      script: bundle exec rake travis:version_test
+      dist: focal
+      rvm:
+        - 2.7
+    - stage: "Version Checks"
+      name: "Version 2.6 Checks Ubuntu 20.04"
+      script: bundle exec rake travis:version_test
+      dist: focal
+      rvm:
+        - 2.6
+    - stage: "Version Checks"
+      name: "Version 2.5 Checks Ubuntu 20.04"
+      script: bundle exec rake travis:version_test
+      dist: focal
+      rvm:
+        - 2.5
+    - stage: "Version Checks"
+      name: "Version 2.4 Checks Ubuntu 20.04"
+      script: bundle exec rake travis:version_test
+      dist: focal
+      rvm:
+        - 2.4
+    - stage: "Version Checks"
+      name: "Version 3.1 Checks Ubuntu 18.04"
+      script: bundle exec rake travis:version_test
+      dist: bionic
+      rvm:
+        - 3.1
+    - stage: "Version Checks"
+      name: "Version 3.0 Checks Ubuntu 18.04"
+      script: bundle exec rake travis:version_test
+      dist: bionic
+      rvm:
+        - 3.0
+    - stage: "Version Checks"
+      name: "Version 2.7 Checks Ubuntu 18.04"
+      script: bundle exec rake travis:version_test
+      dist: bionic
+      rvm:
+        - 2.7
+    - stage: "Version Checks"
+      name: "Version 2.6 Checks Ubuntu 18.04"
+      script: bundle exec rake travis:version_test
+      dist: bionic
+      rvm:
+        - 2.6
+    - stage: "Version Checks"
+      name: "Version 2.5 Checks Ubuntu 18.04"
+      script: bundle exec rake travis:version_test
+      dist: bionic
+      rvm:
+        - 2.5
+    - stage: "Version Checks"
+      name: "Version 2.4 Checks Ubuntu 18.04"
+      script: bundle exec rake travis:version_test
+      dist: bionic
+      rvm:
+        - 2.4
+    - stage: "Unit Tests"
+      name: "Unit Tests"
+      script: bundle exec rake travis:unit_tests
+    - stage: "Visual tests"
+      script: bundle exec rake travis:vg_tests
+      name: "Visual Grid"
+    - stage: "Appium"
+      script: bundle exec rake travis:appium_tests
+      name: "eyes_appium tests"
+    - stage: "Ruby Coverage tests"
+      name: "Ruby Coverage tests"
       script:
-        - echo $TRAVIS_COMMIT
+        - chmod +x ./initGeckoDriver.sh && ./initGeckoDriver.sh
+        - chmod +x ./initChromeDriver.sh && ./initChromeDriver.sh
+        - export MOZ_HEADLESS=1
+        - chmod +x ./generic_tests.sh && ./generic_tests.sh
     - stage: "Report all test results"
       if: branch = master AND type = cron
       name: "Report all test results"

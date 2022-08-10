@@ -57,172 +57,171 @@ jobs:
 
 
 
-#  platform-test:
-#    needs: dist-build
-#    strategy:
-#      matrix:
-#        os: [ ubuntu-latest, macos-latest, windows-latest ]
-#        ruby-version: ['2.6', '2.7', '3.0', '3.1']
-#    runs-on: ${{ matrix.os }}
-#    env:
-#      APPLITOOLS_API_KEY: ${{ secrets.APPLITOOLS_API_KEY }}
-#
-#    steps:
-#      - uses: actions/checkout@v3
-#      - name: Set up Ruby
-#        uses: ruby/setup-ruby@v1
-#        with:
-#          ruby-version: ${{ matrix.ruby-version }}
-##          bundler-cache: true
-#      - name: Load gems
-#        uses: actions/download-artifact@v3
-#        with:
-#          name: gems
-#          path: "./pkg/"
-##      - name: Check gems
-##        run: |
-##          ls pkg
-##          ls pkg\gems
-#      - name: Load tests
-#        uses: actions/download-artifact@v3
-#        with:
-#          name: platform-tests
-#          path: "./coverage_tests/spec/"
-##      - name: Check tests
-##        run: |
-##          ls coverage_tests
-##          ls coverage_tests/spec
-##          ls coverage_tests/spec/coverage/generic
-#      - name: Run tests
-#        env:
-#          BUNDLE_GEMFILE: ${{ github.workspace }}/GemfileGithub
+  platform-test:
+    needs: dist-build
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
+        ruby-version: ['2.6', '2.7', '3.0', '3.1']
+    runs-on: ${{ matrix.os }}
+    env:
+      APPLITOOLS_API_KEY: ${{ secrets.APPLITOOLS_API_KEY }}
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby-version }}
+#          bundler-cache: true
+      - name: Load gems
+        uses: actions/download-artifact@v3
+        with:
+          name: gems
+          path: "./pkg/"
+#      - name: Check gems
 #        run: |
-#            bundle install
-#            bundle exec rake github:platform_test
-#
-#  unit-test:
-#    needs: dist-build
-#    strategy:
-#      matrix:
-#        os: [ ubuntu-latest ]
-#        ruby-version: ['2.6', '2.7', '3.0', '3.1']
-#    runs-on: ${{ matrix.os }}
-#    env:
-#      APPLITOOLS_API_KEY: ${{ secrets.APPLITOOLS_API_KEY }}
-#
-#    steps:
-#      - uses: actions/checkout@v3
-#      - name: Set up Ruby
-#        uses: ruby/setup-ruby@v1
-#        with:
-#          ruby-version: ${{ matrix.ruby-version }}
-#      - name: Load gems
-#        uses: actions/download-artifact@v3
-#        with:
-#          name: gems
-#          path: "./pkg/"
-#      - name: Run tests
-#        env:
-#          BUNDLE_GEMFILE: ${{ github.workspace }}/GemfileGithub
+#          ls pkg
+#          ls pkg\gems
+      - name: Load tests
+        uses: actions/download-artifact@v3
+        with:
+          name: platform-tests
+          path: "./coverage_tests/spec/"
+#      - name: Check tests
 #        run: |
-#          bundle install
-#          bundle exec rake github:unit_tests
-#
-#  visual-test:
-#    needs: dist-build
-#    strategy:
-#      matrix:
-#        os: [ ubuntu-latest ]
-#        ruby-version: ['2.6', '2.7', '3.0', '3.1']
-#    runs-on: ${{ matrix.os }}
-#    env:
-#      APPLITOOLS_API_KEY: ${{ secrets.APPLITOOLS_API_KEY }}
-#
-#    steps:
-#      - uses: actions/checkout@v3
-#      - name: Set up Ruby
-#        uses: ruby/setup-ruby@v1
-#        with:
-#          ruby-version: ${{ matrix.ruby-version }}
-#      - name: Load gems
-#        uses: actions/download-artifact@v3
-#        with:
-#          name: gems
-#          path: "./pkg/"
-#      - name: Run visual tests
-#        env:
-#          BUNDLE_GEMFILE: ${{ github.workspace }}/GemfileGithub
-#        run: |
-#          bundle install
-#          bundle exec rake github:vg_tests
-#
-#  appium-test:
-#    needs: dist-build
-#    strategy:
-#      matrix:
-#        os: [ ubuntu-latest ]
-#        ruby-version: ['2.7', '3.1']
-#    runs-on: ${{ matrix.os }}
-#    env:
-#      APPLITOOLS_API_KEY: ${{ secrets.APPLITOOLS_API_KEY }}
-#      BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
-#      BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
-#
-#    steps:
-#      - uses: actions/checkout@v3
-#      - name: Set up Ruby
-#        uses: ruby/setup-ruby@v1
-#        with:
-#          ruby-version: ${{ matrix.ruby-version }}
-#      - name: Load gems
-#        uses: actions/download-artifact@v3
-#        with:
-#          name: gems
-#          path: "./pkg/"
-#      - name: Run Appium tests
-#        env:
-#          BUNDLE_GEMFILE: ${{ github.workspace }}/GemfileGithub
-#        run: |
-#          bundle install
-#          bundle exec rake github:appium_tests
-#
-#  generic-test:
-#    needs: dist-build
-#    runs-on: ubuntu-latest
-#    env:
-#      APPLITOOLS_API_KEY: ${{ secrets.APPLITOOLS_API_KEY }}
-#      APPLITOOLS_API_KEY_READ: ${{ secrets.APPLITOOLS_API_KEY_READ }}
-#      SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
-#      SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
-#      DISPLAY: ':99'
-#
-#    steps:
-#      - uses: actions/checkout@v3
-#      - name: Set up Ruby
-#        uses: ruby/setup-ruby@v1
-#        with:
-#          ruby-version: '2.6'
-#      - name: Load gems
-#        uses: actions/download-artifact@v3
-#        with:
-#          name: gems
-#          path: "./pkg/"
-#      - name: Setup xvfb
-#        run: |
-#          sudo apt-get install -y xvfb
-#          Xvfb -ac $DISPLAY -screen 0 1280x1024x16 &
-#      - name: Run tests
-#        env:
-#          BUNDLE_GEMFILE: ${{ github.workspace }}/GemfileGithub
-#        run: |
-#          bundle install
-#          chmod +x ./generic_tests.sh && ./generic_tests.sh
+#          ls coverage_tests
+#          ls coverage_tests/spec
+#          ls coverage_tests/spec/coverage/generic
+      - name: Run tests
+        env:
+          BUNDLE_GEMFILE: ${{ github.workspace }}/GemfileGithub
+        run: |
+            bundle install
+            bundle exec rake github:platform_test
+
+  unit-test:
+    needs: dist-build
+    strategy:
+      matrix:
+        os: [ ubuntu-latest ]
+        ruby-version: ['2.6', '2.7', '3.0', '3.1']
+    runs-on: ${{ matrix.os }}
+    env:
+      APPLITOOLS_API_KEY: ${{ secrets.APPLITOOLS_API_KEY }}
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby-version }}
+      - name: Load gems
+        uses: actions/download-artifact@v3
+        with:
+          name: gems
+          path: "./pkg/"
+      - name: Run tests
+        env:
+          BUNDLE_GEMFILE: ${{ github.workspace }}/GemfileGithub
+        run: |
+          bundle install
+          bundle exec rake github:unit_tests
+
+  visual-test:
+    needs: dist-build
+    strategy:
+      matrix:
+        os: [ ubuntu-latest ]
+        ruby-version: ['2.6', '2.7', '3.0', '3.1']
+    runs-on: ${{ matrix.os }}
+    env:
+      APPLITOOLS_API_KEY: ${{ secrets.APPLITOOLS_API_KEY }}
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby-version }}
+      - name: Load gems
+        uses: actions/download-artifact@v3
+        with:
+          name: gems
+          path: "./pkg/"
+      - name: Run visual tests
+        env:
+          BUNDLE_GEMFILE: ${{ github.workspace }}/GemfileGithub
+        run: |
+          bundle install
+          bundle exec rake github:vg_tests
+
+  appium-test:
+    needs: dist-build
+    strategy:
+      matrix:
+        os: [ ubuntu-latest ]
+        ruby-version: ['2.7', '3.1']
+    runs-on: ${{ matrix.os }}
+    env:
+      APPLITOOLS_API_KEY: ${{ secrets.APPLITOOLS_API_KEY }}
+      BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
+      BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby-version }}
+      - name: Load gems
+        uses: actions/download-artifact@v3
+        with:
+          name: gems
+          path: "./pkg/"
+      - name: Run Appium tests
+        env:
+          BUNDLE_GEMFILE: ${{ github.workspace }}/GemfileGithub
+        run: |
+          bundle install
+          bundle exec rake github:appium_tests
+
+  generic-test:
+    needs: dist-build
+    runs-on: ubuntu-latest
+    env:
+      APPLITOOLS_API_KEY: ${{ secrets.APPLITOOLS_API_KEY }}
+      APPLITOOLS_API_KEY_READ: ${{ secrets.APPLITOOLS_API_KEY_READ }}
+      SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
+      SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
+      DISPLAY: ':99'
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '2.6'
+      - name: Load gems
+        uses: actions/download-artifact@v3
+        with:
+          name: gems
+          path: "./pkg/"
+      - name: Setup xvfb
+        run: |
+          sudo apt-get install -y xvfb
+          Xvfb -ac $DISPLAY -screen 0 1280x1024x16 &
+      - name: Run tests
+        env:
+          BUNDLE_GEMFILE: ${{ github.workspace }}/GemfileGithub
+        run: |
+          bundle install
+          chmod +x ./generic_tests.sh && ./generic_tests.sh
 
   tag-only:
     needs: dist-build
     runs-on: ubuntu-latest
-#    if: github.ref_type == 'tag' && github.ref_name =~ ^v[0-9]+\.[0-9]+\.[0-9]+(\.[0-9a-z]+)?$
-    if: github.ref_type == 'branch'
+    if: github.ref_type == 'tag'
     env:
       TEST_REPORT_SANDBOX: False
 
