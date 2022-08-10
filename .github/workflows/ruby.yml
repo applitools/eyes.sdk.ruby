@@ -197,7 +197,7 @@ jobs:
       DISPLAY: ':99'
 
     steps:
-#      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 #      - name: Set up Ruby
 #        uses: ruby/setup-ruby@v1
 #        with:
