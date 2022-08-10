@@ -220,7 +220,7 @@ jobs:
 
       - name: ChangeLog check
 #        if: github.ref_type == 'tag'
-        if: github.ref_type == 'branch' && GITHUB_REF##* == 'eyes-universal-4.1.3-ghactions'
+        if: github.ref_type == 'branch' && ${GITHUB_REF##*/} == 'eyes-universal-4.1.3-ghactions'
         run: |
           export TAG_VERSION='v4.1.2'
           export SDK_VERSION=$(echo $TAG_VERSION | sed 's/v[^.0-9a-z]*//g');
