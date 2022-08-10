@@ -250,8 +250,8 @@ jobs:
             exit 1
           fi
 
-          COMMITTER_EMAIL="$(git log -1 ${{ GITHUB_SHA }} --pretty="%cE")"
-          echo ${{ GITHUB_SHA }}
+          COMMITTER_EMAIL="$(git log -1 ${{ github.sha }} --pretty="%cE")"
+          echo ${{ github.sha }}
           echo $COMMITTER_EMAIL
 
           if [[ ("$ALLOWED_RELEASE_COMMITERS" =~ .*"$COMMITTER_EMAIL".*) && $TMP_CHANGELOG ]]; then
