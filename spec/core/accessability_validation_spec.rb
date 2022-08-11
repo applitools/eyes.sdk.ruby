@@ -89,7 +89,7 @@ RSpec.describe 'AccessibilityValidation' do
     end
   end
   context 'integration' do
-    let(:driver) { Selenium::WebDriver.for :chrome }
+    let(:driver) { Selenium::WebDriver.for :chrome, options: Selenium::WebDriver::Chrome::Options.new(args: [:headless]) }
     let(:eyes) do
       eyes = Applitools::Selenium::Eyes.new(runner: runner)
       eyes.configure do |config|

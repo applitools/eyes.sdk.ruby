@@ -17,7 +17,7 @@ RSpec.describe 'TestMatchWindow', mock_connection: true, skip: true do
     $local_classic_runner ||= Applitools::ClassicRunner.new
     Applitools::EyesLogger.log_handler = Logger.new(STDOUT)
   end
-  let(:web_driver) { Selenium::WebDriver.for :chrome }
+  let(:web_driver) { Selenium::WebDriver.for :chrome, options: Selenium::WebDriver::Chrome::Options.new(args: [:headless]) }
   let(:runner) { $local_classic_runner }
   let(:eyes) { Applitools::Selenium::Eyes.new(runner: runner) }
 

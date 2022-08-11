@@ -77,7 +77,7 @@ RSpec.describe 'iOS device info' do
 
   context 'happy flow test' do
     before(:all) { @runner = Applitools::Selenium::VisualGridRunner.new(5) }
-    let(:web_driver) { Selenium::WebDriver.for :chrome }
+    let(:web_driver) { Selenium::WebDriver.for :chrome, options: Selenium::WebDriver::Chrome::Options.new(args: [:headless]) }
     let(:runner) { @runner }
     let(:eyes) { Applitools::Selenium::Eyes.new(runner: runner) }
     let(:driver) { eyes.open(app_name: 'Eyes SDK Ruby', test_name: 'IosDeviceSimulationHappyFlow', driver: web_driver) }

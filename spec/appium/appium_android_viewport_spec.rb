@@ -5,7 +5,7 @@ require 'eyes_appium'
 RSpec.describe 'Android viewport test', appium: true do
   let(:caps) do
     {
-      device: 'Google Pixel 3 XL',
+      deviceName: 'Google Pixel 3 XL',
       platformName: 'android',
       os_version: '9.0',
       app: 'app_android',

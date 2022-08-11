@@ -1,6 +1,6 @@
 RSpec.describe 'Convert Region Coordinates' do
   context 'Updates target' do
-    let(:web_driver) { Selenium::WebDriver.for :chrome }
+    let(:web_driver) { Selenium::WebDriver.for :chrome, options: Selenium::WebDriver::Chrome::Options.new(args: [:headless]) }
     let(:eyes) { Applitools::Selenium::Eyes.new(runner: runner) }
     let(:runner) { Applitools::Selenium::VisualGridRunner.new(5) }
     let(:driver) { eyes.open(app_name: 'MyAppName', test_name: 'MyTestName', driver: web_driver, viewport_size: {width: 800, height: 550}) }

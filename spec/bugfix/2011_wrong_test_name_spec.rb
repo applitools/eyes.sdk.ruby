@@ -31,7 +31,7 @@ RSpec.describe '2011_bugfix_wrong_test_name' do
     let(:runner) { Applitools::Selenium::VisualGridRunner.new(1) }
     let(:eyes) { Applitools::Selenium::Eyes.new(runner: runner) }
     let(:driver) do
-      Selenium::WebDriver.for :chrome
+      Selenium::WebDriver.for :chrome, options: Selenium::WebDriver::Chrome::Options.new(args: [:headless])
       # TestDriver.new
     end
 

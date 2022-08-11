@@ -3,7 +3,7 @@
 require 'eyes_selenium'
 
 RSpec.describe 'Render Fail' do
-  let(:web_driver) { Selenium::WebDriver.for :chrome }
+  let(:web_driver) { Selenium::WebDriver.for :chrome, options: Selenium::WebDriver::Chrome::Options.new(args: [:headless]) }
   let(:runner) { Applitools::Selenium::VisualGridRunner.new(5) }
   let(:eyes) { Applitools::Selenium::Eyes.new(runner: runner) }
   before(:all) do
