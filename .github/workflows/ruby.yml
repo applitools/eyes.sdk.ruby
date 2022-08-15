@@ -223,6 +223,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref_type == 'tag'
     env:
+      ALLOWED_RELEASE_COMMITERS: ${{ secrets.ALLOWED_RELEASE_COMMITERS }}
       TEST_REPORT_SANDBOX: False
 
     steps:
@@ -250,8 +251,6 @@ jobs:
           fi
 
           COMMITTER_EMAIL="$(git log -1 ${{ github.sha }} --pretty="%cE")"
-          echo ${{ github.sha }}
-          echo $COMMITTER_EMAIL
 
           if [[ ("$ALLOWED_RELEASE_COMMITERS" =~ .*"$COMMITTER_EMAIL".*) && $TMP_CHANGELOG ]]; then
             echo "DEPLOY";
