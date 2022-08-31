@@ -1,3 +1,11 @@
+## [vNext]
+### Updated
+- Update version of Universal SDK to 2.10.8
+## [4.1.4.alpha] - 2022-08-15
+### Updated
+- Update version of Universal SDK to 2.10.5
+### Changed
+- ci moved to github
 ## [4.1.3] - 2022-08-04
 ### Added
 - add enum for edge-2 (EDGE_CHROMIUM_TWO_VERSIONS_BACK)
