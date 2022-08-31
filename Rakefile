@@ -157,6 +157,10 @@ unless ENV['BUILD_ONLY'] && !ENV['BUILD_ONLY'].empty?
     task :appium_tests => [:set_batch_info, :check] do
       sh('bundle exec parallel_rspec -n 1 -- --tag appium -- spec/appium/*_spec.rb')
     end
+
+    task :server_tests => [:set_batch_info, :check] do
+      sh('bundle exec parallel_rspec -n 1 -- --tag universal_server -- spec/universal_server/*_spec.rb')
+    end
   end
 
   # case ENV['END_TO_END_TESTS']
