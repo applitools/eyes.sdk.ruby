@@ -100,91 +100,91 @@ jobs:
             bundle install
             bundle exec rake github:platform_test
 
-  unit-test:
-    needs: dist-build
-    strategy:
-      matrix:
-        os: [ ubuntu-latest ]
-        ruby-version: ['2.6', '2.7', '3.0', '3.1']
-    runs-on: ${{ matrix.os }}
-    env:
-      APPLITOOLS_API_KEY: ${{ secrets.APPLITOOLS_API_KEY }}
-
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ matrix.ruby-version }}
-      - name: Load gems
-        uses: actions/download-artifact@v3
-        with:
-          name: gems
-          path: "./pkg/"
-      - name: Run tests
-        env:
-          BUNDLE_GEMFILE: ${{ github.workspace }}/GemfileGithub
-        run: |
-          bundle install
-          bundle exec rake github:unit_tests
-
-  visual-test:
-    needs: dist-build
-    strategy:
-      matrix:
-        os: [ ubuntu-latest ]
-        ruby-version: ['2.6', '2.7', '3.0', '3.1']
-    runs-on: ${{ matrix.os }}
-    env:
-      APPLITOOLS_API_KEY: ${{ secrets.APPLITOOLS_API_KEY }}
-
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ matrix.ruby-version }}
-      - name: Load gems
-        uses: actions/download-artifact@v3
-        with:
-          name: gems
-          path: "./pkg/"
-      - name: Run visual tests
-        env:
-          BUNDLE_GEMFILE: ${{ github.workspace }}/GemfileGithub
-        run: |
-          bundle install
-          bundle exec rake github:vg_tests
-
-  appium-test:
-    needs: dist-build
-    strategy:
-      matrix:
-        os: [ ubuntu-latest ]
-        ruby-version: ['2.7', '3.1']
-    runs-on: ${{ matrix.os }}
-    env:
-      APPLITOOLS_API_KEY: ${{ secrets.APPLITOOLS_API_KEY }}
-      BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
-      BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
-
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ matrix.ruby-version }}
-      - name: Load gems
-        uses: actions/download-artifact@v3
-        with:
-          name: gems
-          path: "./pkg/"
-      - name: Run Appium tests
-        env:
-          BUNDLE_GEMFILE: ${{ github.workspace }}/GemfileGithub
-        run: |
-          bundle install
-          bundle exec rake github:appium_tests
+#  unit-test:
+#    needs: dist-build
+#    strategy:
+#      matrix:
+#        os: [ ubuntu-latest ]
+#        ruby-version: ['2.6', '2.7', '3.0', '3.1']
+#    runs-on: ${{ matrix.os }}
+#    env:
+#      APPLITOOLS_API_KEY: ${{ secrets.APPLITOOLS_API_KEY }}
+#
+#    steps:
+#      - uses: actions/checkout@v3
+#      - name: Set up Ruby
+#        uses: ruby/setup-ruby@v1
+#        with:
+#          ruby-version: ${{ matrix.ruby-version }}
+#      - name: Load gems
+#        uses: actions/download-artifact@v3
+#        with:
+#          name: gems
+#          path: "./pkg/"
+#      - name: Run tests
+#        env:
+#          BUNDLE_GEMFILE: ${{ github.workspace }}/GemfileGithub
+#        run: |
+#          bundle install
+#          bundle exec rake github:unit_tests
+#
+#  visual-test:
+#    needs: dist-build
+#    strategy:
+#      matrix:
+#        os: [ ubuntu-latest ]
+#        ruby-version: ['2.6', '2.7', '3.0', '3.1']
+#    runs-on: ${{ matrix.os }}
+#    env:
+#      APPLITOOLS_API_KEY: ${{ secrets.APPLITOOLS_API_KEY }}
+#
+#    steps:
+#      - uses: actions/checkout@v3
+#      - name: Set up Ruby
+#        uses: ruby/setup-ruby@v1
+#        with:
+#          ruby-version: ${{ matrix.ruby-version }}
+#      - name: Load gems
+#        uses: actions/download-artifact@v3
+#        with:
+#          name: gems
+#          path: "./pkg/"
+#      - name: Run visual tests
+#        env:
+#          BUNDLE_GEMFILE: ${{ github.workspace }}/GemfileGithub
+#        run: |
+#          bundle install
+#          bundle exec rake github:vg_tests
+#
+#  appium-test:
+#    needs: dist-build
+#    strategy:
+#      matrix:
+#        os: [ ubuntu-latest ]
+#        ruby-version: ['2.7', '3.1']
+#    runs-on: ${{ matrix.os }}
+#    env:
+#      APPLITOOLS_API_KEY: ${{ secrets.APPLITOOLS_API_KEY }}
+#      BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
+#      BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
+#
+#    steps:
+#      - uses: actions/checkout@v3
+#      - name: Set up Ruby
+#        uses: ruby/setup-ruby@v1
+#        with:
+#          ruby-version: ${{ matrix.ruby-version }}
+#      - name: Load gems
+#        uses: actions/download-artifact@v3
+#        with:
+#          name: gems
+#          path: "./pkg/"
+#      - name: Run Appium tests
+#        env:
+#          BUNDLE_GEMFILE: ${{ github.workspace }}/GemfileGithub
+#        run: |
+#          bundle install
+#          bundle exec rake github:appium_tests
 
   universal-server-test:
     needs: dist-build
@@ -212,79 +212,79 @@ jobs:
           bundle install
           bundle exec rake github:server_tests
 
-  generic-test:
-    needs: dist-build
-    runs-on: ubuntu-latest
-    env:
-      APPLITOOLS_API_KEY: ${{ secrets.APPLITOOLS_API_KEY }}
-      APPLITOOLS_API_KEY_READ: ${{ secrets.APPLITOOLS_API_KEY_READ }}
-      SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
-      SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
-      DISPLAY: ':99'
-
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '2.6'
-      - name: Load gems
-        uses: actions/download-artifact@v3
-        with:
-          name: gems
-          path: "./pkg/"
-      - name: Setup xvfb
-        run: |
-          sudo apt-get install -y xvfb
-          Xvfb -ac $DISPLAY -screen 0 1280x1024x16 &
-      - name: Run tests
-        env:
-          BUNDLE_GEMFILE: ${{ github.workspace }}/GemfileGithub
-        run: |
-          bundle install
-          chmod +x ./generic_tests.sh && ./generic_tests.sh
-
-  tag-only:
-    needs: generic-test
-    runs-on: ubuntu-latest
-    if: github.ref_type == 'tag'
-    env:
-      ALLOWED_RELEASE_COMMITERS: ${{ secrets.ALLOWED_RELEASE_COMMITERS }}
-      TEST_REPORT_SANDBOX: False
-
-    steps:
-      - uses: actions/checkout@v3
-      - name: ChangeLog check
-        run: |
-          export TAG_VERSION=${{ github.ref_name }}
-          echo $TAG_VERSION
-          if [[ ! ($TAG_VERSION =~ ^v[0-9]+\.[0-9]+\.[0-9]+(\.[0-9a-z]+)?$) ]]; then
-            echo 'Tag Version check Failed'
-            exit 1
-          fi
-          export SDK_VERSION=$(echo $TAG_VERSION | sed 's/v[^.0-9a-z]*//g')
-          echo $SDK_VERSION
-
-          export TMP_CHANGELOG=$(bash ./extractChangeLog.sh "$SDK_VERSION" "CHANGELOG.md")
-          export CHANGELOG=$([ -z "$TMP_CHANGELOG" ] && echo "There is no change log for version $SDK_VERSION"; echo "$TMP_CHANGELOG")
-
-          echo $CHANGELOG
-          echo $TMP_CHANGELOG
-
-          if [[ (-z "$TMP_CHANGELOG") ]]; then
-            echo "THE CHANGELOG IS NOT CORRECT"
-            exit 1
-          fi
-
-          COMMITTER_EMAIL="$(git log -1 ${{ github.sha }} --pretty="%cE")"
-
-          if [[ ("$ALLOWED_RELEASE_COMMITERS" =~ .*"$COMMITTER_EMAIL".*) && $TMP_CHANGELOG ]]; then
-            echo "DEPLOY";
-            SDK='ruby'
-            TEST_COVERAGE_GAP=$(cat testCoverageGap.txt);
-            bash ./sendMail.sh "$SDK" "$TAG_VERSION" "$CHANGELOG" "$TEST_COVERAGE_GAP";
-            echo "DEPLOY SUCCESSFUL";
-          else
-            echo "DEPLOYMENT FAILED";
-            exit 1;
-          fi
+#  generic-test:
+#    needs: dist-build
+#    runs-on: ubuntu-latest
+#    env:
+#      APPLITOOLS_API_KEY: ${{ secrets.APPLITOOLS_API_KEY }}
+#      APPLITOOLS_API_KEY_READ: ${{ secrets.APPLITOOLS_API_KEY_READ }}
+#      SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
+#      SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
+#      DISPLAY: ':99'
+#
+#    steps:
+#      - uses: actions/checkout@v3
+#      - name: Set up Ruby
+#        uses: ruby/setup-ruby@v1
+#        with:
+#          ruby-version: '2.6'
+#      - name: Load gems
+#        uses: actions/download-artifact@v3
+#        with:
+#          name: gems
+#          path: "./pkg/"
+#      - name: Setup xvfb
+#        run: |
+#          sudo apt-get install -y xvfb
+#          Xvfb -ac $DISPLAY -screen 0 1280x1024x16 &
+#      - name: Run tests
+#        env:
+#          BUNDLE_GEMFILE: ${{ github.workspace }}/GemfileGithub
+#        run: |
+#          bundle install
+#          chmod +x ./generic_tests.sh && ./generic_tests.sh
+#
+#  tag-only:
+#    needs: generic-test
+#    runs-on: ubuntu-latest
+#    if: github.ref_type == 'tag'
+#    env:
+#      ALLOWED_RELEASE_COMMITERS: ${{ secrets.ALLOWED_RELEASE_COMMITERS }}
+#      TEST_REPORT_SANDBOX: False
+#
+#    steps:
+#      - uses: actions/checkout@v3
+#      - name: ChangeLog check
+#        run: |
+#          export TAG_VERSION=${{ github.ref_name }}
+#          echo $TAG_VERSION
+#          if [[ ! ($TAG_VERSION =~ ^v[0-9]+\.[0-9]+\.[0-9]+(\.[0-9a-z]+)?$) ]]; then
+#            echo 'Tag Version check Failed'
+#            exit 1
+#          fi
+#          export SDK_VERSION=$(echo $TAG_VERSION | sed 's/v[^.0-9a-z]*//g')
+#          echo $SDK_VERSION
+#
+#          export TMP_CHANGELOG=$(bash ./extractChangeLog.sh "$SDK_VERSION" "CHANGELOG.md")
+#          export CHANGELOG=$([ -z "$TMP_CHANGELOG" ] && echo "There is no change log for version $SDK_VERSION"; echo "$TMP_CHANGELOG")
+#
+#          echo $CHANGELOG
+#          echo $TMP_CHANGELOG
+#
+#          if [[ (-z "$TMP_CHANGELOG") ]]; then
+#            echo "THE CHANGELOG IS NOT CORRECT"
+#            exit 1
+#          fi
+#
+#          COMMITTER_EMAIL="$(git log -1 ${{ github.sha }} --pretty="%cE")"
+#
+#          if [[ ("$ALLOWED_RELEASE_COMMITERS" =~ .*"$COMMITTER_EMAIL".*) && $TMP_CHANGELOG ]]; then
+#            echo "DEPLOY";
+#            SDK='ruby'
+#            TEST_COVERAGE_GAP=$(cat testCoverageGap.txt);
+#            bash ./sendMail.sh "$SDK" "$TAG_VERSION" "$CHANGELOG" "$TEST_COVERAGE_GAP";
+#            echo "DEPLOY SUCCESSFUL";
+#          else
+#            echo "DEPLOYMENT FAILED";
+#            exit 1;
+#          fi
