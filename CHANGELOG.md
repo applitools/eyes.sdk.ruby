@@ -1,6 +1,9 @@
 ## [vNext]
 ### Updated
 - Update version of Universal SDK to 2.10.8
+### Changed
+- U-SDK server spawn once per process
+- U-SDK server shutdown-mode changed
 ## [4.1.4.alpha] - 2022-08-15
 ### Updated
 - Update version of Universal SDK to 2.10.5
