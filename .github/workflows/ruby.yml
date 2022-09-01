@@ -200,6 +200,9 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby-version }}
+      - uses: actions/setup-python@v3
+        with:
+          python-version: "3.10"
       - name: Load gems
         uses: actions/download-artifact@v3
         with:
@@ -211,6 +214,8 @@ jobs:
         run: |
           bundle install
           bundle exec rake github:server_tests
+          pip install pytest psutil
+          pytest -vv spec/universal_server/universal_bindings_termination_test.py
 
   generic-test:
     needs: dist-build
