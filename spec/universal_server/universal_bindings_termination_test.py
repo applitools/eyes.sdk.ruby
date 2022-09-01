@@ -8,7 +8,7 @@ import pytest
 
 @pytest.mark.parametrize("reason", ["normal", "crash"])
 def test_automatic_eyes_universal_termination_on_ruby_termination(reason):
-    ruby_process = Popen(["ruby", "single-server-sdk.rb"], stdin=PIPE, stdout=PIPE)
+    ruby_process = Popen(["ruby", "spec/universal_server/single-server-sdk.rb"], stdin=PIPE, stdout=PIPE)
     output_line = ruby_process.stdout.readline()
     assert output_line.startswith(b"SDKServer")
     (eyes_universal,) = psutil.Process(ruby_process.pid).children()
@@ -26,7 +26,7 @@ def test_automatic_eyes_universal_termination_on_ruby_termination(reason):
 def test_parallel_eyes_universal_termination_on_ruby_termination(reason):
     processes = []
     for _ in range(2):
-        ruby_process = Popen(["ruby", "single-server-sdk.rb"], stdin=PIPE, stdout=PIPE)
+        ruby_process = Popen(["ruby", "spec/universal_server/single-server-sdk.rb"], stdin=PIPE, stdout=PIPE)
         output_line = ruby_process.stdout.readline()
         assert output_line.startswith(b"SDKServer")
         (eyes_universal,) = psutil.Process(ruby_process.pid).children()
