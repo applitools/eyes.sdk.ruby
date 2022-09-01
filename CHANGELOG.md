@@ -1,4 +1,4 @@
-## [vNext]
+## [4.1.4.beta] - 2022-09-01
 ### Updated
 - Update version of Universal SDK to 2.10.8
 ### Changed
