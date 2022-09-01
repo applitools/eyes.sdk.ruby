@@ -132,7 +132,8 @@ module Applitools::Connectivity
 
 
     def prepare_socket
-      @web_socket = ::Applitools::Connectivity::UniversalServer.check_or_run
+      @universal_server_control = Applitools::Connectivity::UniversalServerControl.instance
+      @web_socket = @universal_server_control.new_server_socket_connection
       socket_handshake
       session_init
       # connect_and_configure_socket(socket_uri)
@@ -165,9 +166,7 @@ module Applitools::Connectivity
 
 
     def socket_handshake
-      ip = @web_socket.remote_address.ip_address
-      port = @web_socket.remote_address.ip_port
-      socket_uri = "ws://#{ip}:#{port}/eyes"
+      socket_uri = "ws://#{@web_socket.remote_address.inspect_sockaddr}/eyes"
       handshake = WebSocket::Handshake::Client.new(url: socket_uri)
       @web_socket.write(handshake)
       web_socket_result = receive_result('handshake')
