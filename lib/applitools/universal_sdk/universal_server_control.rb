@@ -47,6 +47,10 @@ module Applitools::Connectivity
       sleep(1)
     end
 
+    def to_s # for test & debug
+      "SDKServer(port=#{@port}; pid=#{@usdk_pid})"
+    end
+
     private
 
     def start_server_with_pipe
