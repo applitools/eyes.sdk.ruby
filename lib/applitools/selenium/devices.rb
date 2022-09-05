@@ -9,12 +9,12 @@ module Devices
   GalaxyNote2 = 'Galaxy Note 2'.freeze
   GalaxyNote3 = 'Galaxy Note 3'.freeze
   GalaxyNote4 = 'Galaxy Note 4'.freeze
-  GalaxyNote8 = 'Galaxy Note 8'.freeze
+  # GalaxyNote8 = 'Galaxy Note 8'.freeze
   GalaxyNote9 = 'Galaxy Note 9'.freeze
   GalaxyS3 = 'Galaxy S3'.freeze
   GalaxyS5 = 'Galaxy S5'.freeze
-  GalaxyS8 = 'Galaxy S8'.freeze
-  GalaxyS8Plus = 'Galaxy S8 Plus'.freeze
+  # GalaxyS8 = 'Galaxy S8'.freeze
+  # GalaxyS8Plus = 'Galaxy S8 Plus'.freeze
   GalaxyS9 = 'Galaxy S9'.freeze
   GalaxyS9Plus = 'Galaxy S9 Plus'.freeze
   GalaxyS10 = 'Galaxy S10'.freeze
@@ -84,12 +84,12 @@ module Devices
       GalaxyNote2,
       GalaxyNote3,
       GalaxyNote4,
-      GalaxyNote8,
+      # GalaxyNote8,
       GalaxyNote9,
       GalaxyS3,
       GalaxyS5,
-      GalaxyS8,
-      GalaxyS8Plus,
+      # GalaxyS8,
+      # GalaxyS8Plus,
       GalaxyS9,
       GalaxyS9Plus,
       GalaxyS10,

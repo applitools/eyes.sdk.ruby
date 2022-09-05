@@ -1,3 +1,6 @@
+## [vNext]
+### Removed
+- removed device name Galaxy S8, S8 Plus, Note 8
 ## [4.1.4] - 2022-09-02
 ### Updated
 - Update version of Universal SDK to 2.10.8
