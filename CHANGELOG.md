@@ -1,4 +1,4 @@
-## [vNext]
+## [4.2.0] - 2022-09-05
 ### Removed
 - removed device name Galaxy S8, S8 Plus, Note 8
 ## [4.1.4] - 2022-09-02
