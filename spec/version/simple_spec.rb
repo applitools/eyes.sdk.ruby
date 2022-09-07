@@ -17,7 +17,12 @@ RSpec.describe "Version #{Applitools::VERSION} check on #{RUBY_PLATFORM} ruby-#{
     eyes
   end
 
-  let(:web_driver) { Selenium::WebDriver.for :chrome, options: Selenium::WebDriver::Chrome::Options.new(args: [:headless, 'no-sandbox']) }
+  let(:web_driver) {
+    if File.exist?('/etc/alpine-release')
+      Selenium::WebDriver::Chrome::Service.driver_path = '/usr/bin/chromedriver'
+    end
+    Selenium::WebDriver.for :chrome, options: Selenium::WebDriver::Chrome::Options.new(args: [:headless, 'no-sandbox'])
+  }
 
   let(:driver) do
     eyes.open(
