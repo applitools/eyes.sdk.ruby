@@ -6,7 +6,7 @@ require 'eyes_calabash'
 require 'eyes_capybara'
 require 'uri'
 require 'net/http'
-require 'webdrivers'
+require 'selenium-webdriver'
 require 'test_utils'
 require 'test_utils/selenium_workaround'
 

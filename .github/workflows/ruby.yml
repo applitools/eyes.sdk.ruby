@@ -100,6 +100,25 @@ jobs:
           bundle install
           bundle exec rake github:platform_test
 
+  alpine-test:
+    needs: dist-build
+    runs-on: ubuntu-latest
+    container: "ruby:2-alpine"
+    env:
+      APPLITOOLS_API_KEY: ${{ secrets.APPLITOOLS_API_KEY }}
+      DISPLAY: ':99'
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Load gems
+        uses: actions/download-artifact@v3
+        with:
+          name: gems
+          path: "./pkg/"
+      - run: apk add --no-cache g++ musl-dev make git chromium chromium-chromedriver xvfb xvfb-run
+      - run: bundle install
+      - run: xvfb-run bundle exec rspec spec/version/simple_spec.rb
+
   unit-test:
     needs: dist-build
     strategy:
