@@ -1,3 +1,13 @@
+## [vNext]
+### Updated
+- Update version of Universal SDK to 2.12.0
+### Added
+- Add proxy support when using NML for NMG
+- Add NML NMG support for iOS
+- Added support for lazy loading views in android native apps
+### Fixed
+- Sending correct commands with android helper lib
+- Fixed issue that prevented NMG from working when NML was enabled
 ## [4.2.0] - 2022-09-05
 ### Removed
 - removed device name Galaxy S8, S8 Plus, Note 8
