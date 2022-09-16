@@ -1,3 +1,11 @@
+## [vNext]
+### Updated
+- Update version of Universal SDK to 2.12.3
+### Added
+- Created testing client for eyes-universal
+### Fixed
+- Using lazyLoad.waitingTime as a delay between stitches by default
+- Using proxy while polling for the result of the nml command
 ## [4.3.0] - 2022-09-16
 ### Updated
 - Update version of Universal SDK to 2.12.0
