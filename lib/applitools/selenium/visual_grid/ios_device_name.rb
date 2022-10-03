@@ -1,5 +1,7 @@
 module IosDeviceName
   extend self
+  IPhone_14 = 'iPhone 14'
+  IPhone_14_Pro_Max = 'iPhone 14 Pro Max'
   IPhone_13_Pro_Max = 'iPhone 13 Pro Max'
   IPhone_13_Pro = 'iPhone 13 Pro'
   IPhone_13 = 'iPhone 13'
@@ -24,6 +26,8 @@ module IosDeviceName
 
   def enum_values
     [
+      IPhone_14,
+      IPhone_14_Pro_Max,
       IPhone_13_Pro_Max,
       IPhone_13_Pro,
       IPhone_13,

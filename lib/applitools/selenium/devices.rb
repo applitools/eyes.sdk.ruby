@@ -37,6 +37,8 @@ module Devices
   IPhoneXR = 'iPhone XR'.freeze
   IPhoneXS = 'iPhone XS'.freeze
   IPhoneXSMax = 'iPhone XS Max'.freeze
+  IPhone14 = 'iPhone 14'.freeze
+  IPhone14ProMax = 'iPhone 14 Pro Max'.freeze
   KindleFireHDX = 'Kindle Fire HDX'.freeze
   LaptopWithHIDPIScreen = 'Laptop with HiDPI screen'.freeze
   LaptopWithMDPIScreen = 'Laptop with MDPI screen'.freeze
@@ -112,6 +114,8 @@ module Devices
       IPhoneXR,
       IPhoneXS,
       IPhoneXSMax,
+      IPhone14,
+      IPhone14ProMax,
       KindleFireHDX,
       LaptopWithHIDPIScreen,
       LaptopWithMDPIScreen,
