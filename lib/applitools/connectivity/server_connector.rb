@@ -21,7 +21,7 @@ module Applitools::Connectivity
     DEFAULT_SERVER_URL = 'https://eyesapi.applitools.com'.freeze
 
     SSL_CERT = File.join(File.dirname(File.expand_path(__FILE__)), '../../../certs/cacert.pem').to_s.freeze
-    DEFAULT_TIMEOUT = 300
+    DEFAULT_TIMEOUT = 300_000
     API_SESSIONS = '/api/sessions'.freeze
     API_SESSIONS_RUNNING = API_SESSIONS + '/running/'.freeze
     API_SINGLE_TEST = API_SESSIONS + '/'.freeze

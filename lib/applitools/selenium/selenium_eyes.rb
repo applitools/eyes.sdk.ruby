@@ -13,7 +13,7 @@ module Applitools::Selenium
 
     DEFAULT_WAIT_BEFORE_SCREENSHOTS = 0.1 # Seconds
 
-    DEFAULT_STITCHING_OVERLAP = 50 # Pixels
+    DEFAULT_STITCHING_OVERLAP = 0 # Pixels
 
     ENTIRE_ELEMENT_SCREENSHOT = 0
 
