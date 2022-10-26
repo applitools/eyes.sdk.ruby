@@ -12,6 +12,8 @@ module Applitools
     def extract_text(targets_array)
       targets_array.map do |target|
         target['target'] = { elementId: target['target'].ref } if target['target'].is_a?(::Selenium::WebDriver::Element)
+        target['target']['x'] = target['target'].delete('left') if target['target']['left']
+        target['target']['y'] = target['target'].delete('top') if target['target']['top']
         target
       end
       universal_eyes.extract_text(targets_array)
