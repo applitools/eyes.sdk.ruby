@@ -463,7 +463,7 @@ module Applitools
         if is_finder?(args)
           if Applitools::Selenium::Driver::FINDERS.has_key?(args[0])
             selector = args[1]
-            selector = "##{args[1]}" if args[0] === :id && !args[1].start_with?('#')
+            selector = "##{args[1]}" if args[0] === :id && !args[1].start_with?('#') && !is_a?(Applitools::Selenium::Target)
             return {type: Applitools::Selenium::Driver::FINDERS[args[0]], selector: selector}
           end
           case args[0]
