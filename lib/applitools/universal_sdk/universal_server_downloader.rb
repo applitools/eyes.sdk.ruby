@@ -35,16 +35,16 @@ module Applitools
       end
 
       def expected_binary_sha
-        return 'c8ec2e2e21934362841a56cd94337680a5ff650593f29baffa258de42c7434fd' if Gem.win_platform?
+        return 'f31480f28e13cdc4bc4c3c41d5afb3c077da31b11cbc20311d5a6f1155218710' if Gem.win_platform?
         case RUBY_PLATFORM
           when /mswin|windows|mingw/i
-            'c8ec2e2e21934362841a56cd94337680a5ff650593f29baffa258de42c7434fd'
+            'f31480f28e13cdc4bc4c3c41d5afb3c077da31b11cbc20311d5a6f1155218710'
           when /musl/i
-            '7439a9d1ba93913f8431d918b3aff6a8b0a9724c24348a03ac3ce91b06c31485'
+            '720eb087ce7494584ec1a197a51d2702ca6411abfb90306acec8b4482d355d13'
           when /linux|arch/i
-            '01bc4599a95e75022356353934b7ddb6b4b14d54c9a66444804425000440d02c'
+            'f1c49c3cb17c247f6e7e81cb954f665904db042abda38c2c4b1add57de9df3ca'
           when /darwin/i
-            'd5be7580e09ef7b8db05233095fc6f9a2e1a1e8e448575684796cf46cc6a6899'
+            'ff07816b7454b5a37ee029c40cd4a4bc71c5f33a75f7e44fd49f33c92b20d891'
           else
             raise 'Unsupported platform'
         end
