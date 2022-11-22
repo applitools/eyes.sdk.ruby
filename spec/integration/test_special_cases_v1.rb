@@ -5,6 +5,7 @@ RSpec.shared_examples 'Eyes Selenium SDK - Special Cases' do
   let(:url_for_test) { 'http://applitools.github.io/demo/TestPages/WixLikeTestPage/index.html' }
 
   it 'TestCheckRegionInAVeryBigFrame' do |e|
+    skip 'UFG Frames' if self.class.metadata[:visual_grid]
     eyes.check('map', Applitools::Selenium::Target.frame('frame1').region(:tag_name, 'img'))
   end
 

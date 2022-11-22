@@ -17,6 +17,7 @@ RSpec.shared_examples 'Classic API' do
   it('TestCheckFrame') { eyes.check_frame(name_or_id: 'frame1', tag: 'frame1') }
 
   it('TestCheckRegionInFrame') do
+    skip 'UFG Frames' if self.class.metadata[:visual_grid]
     eyes.check_region_in_frame(
       name_or_id: 'frame1',
       by: [:id, 'inner-frame-div'],

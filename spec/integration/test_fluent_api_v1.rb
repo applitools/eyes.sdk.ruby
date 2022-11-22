@@ -92,6 +92,7 @@ RSpec.shared_examples 'Fluent API' do
   end
 
   it('TestScrollbarsHiddenAndReturned_Fluent') do
+    skip 'UFG Frames' if self.class.metadata[:visual_grid]
     eyes.check('Fluent - Window (Before)', Applitools::Selenium::Target.window.fully)
     eyes.check(
       'Fluent - Inner frame div',

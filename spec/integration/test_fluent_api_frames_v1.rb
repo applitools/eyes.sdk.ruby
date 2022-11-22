@@ -21,6 +21,7 @@ RSpec.shared_examples 'Fluent API Frames' do
   end
 
   it 'TestCheckRegionInFrame_Fluent' do
+    skip 'UFG Frames' if self.class.metadata[:visual_grid]
     eyes.check(
       'Fluent - Region in Frame',
       Applitools::Selenium::Target.frame('frame1').region(:id, 'inner-frame-div').fully
@@ -38,6 +39,7 @@ RSpec.shared_examples 'Fluent API Frames' do
   end
 
   it 'TestCheckRegionInFrame2_Fluent' do
+    skip 'UFG Frames' if self.class.metadata[:visual_grid]
     eyes.check(
       'Fluent - Inner frame div 1',
       Applitools::Selenium::Target.frame('frame1')
