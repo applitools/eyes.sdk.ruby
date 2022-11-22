@@ -462,7 +462,9 @@ module Applitools
         return args.first.to_hash if is_region?(args.first)
         if is_finder?(args)
           if Applitools::Selenium::Driver::FINDERS.has_key?(args[0])
-            return {type: Applitools::Selenium::Driver::FINDERS[args[0]], selector: args[1]}
+            selector = args[1]
+            selector = "##{args[1]}" if args[0] === :id && !args[1].start_with?('#')
+            return {type: Applitools::Selenium::Driver::FINDERS[args[0]], selector: selector}
           end
           case args[0]
             when :uiautomator # ANDROID_UI_AUTOMATOR: '-android uiautomator'

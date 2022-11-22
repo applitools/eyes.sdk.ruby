@@ -93,14 +93,16 @@ module Applitools
 
     def to_hash
       {
-        'top' => top,
-        'left' => left,
-        'width' => width,
-        'height' => height,
-        'maxUpOffset' => max_top_offset + padding_top,
-        'maxLeftOffset' => max_left_offset + padding_left,
-        'maxRightOffset' => max_right_offset + padding_right,
-        'maxDownOffset' => max_bottom_offset + padding_bottom
+        x: left,
+        y: top,
+        width: width,
+        height: height,
+        offset: {
+          top: max_top_offset + padding_top,
+          bottom: max_bottom_offset + padding_bottom,
+          left: max_left_offset + padding_left,
+          right: max_right_offset + padding_right
+        }
       }
     end
   end
