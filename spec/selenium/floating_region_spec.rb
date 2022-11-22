@@ -48,19 +48,19 @@ RSpec.describe Applitools::FloatingRegion do
     end
 
     it 'adds padding bounds to an external rectangle' do
-      expect(subject.padding(valid_padding).to_hash).to include(
-        'maxLeftOffset' => 10,
-        'maxRightOffset' => 12,
-        'maxUpOffset' => 11,
-        'maxDownOffset' => 13
-      )
+      expect(subject.padding(valid_padding).to_hash).to include(offset: {
+        left: 10,
+        right: 12,
+        top: 11,
+        bottom: 13
+      })
     end
   end
 
   context 'to_hash' do
     it 'conteins necessary keys' do
       expect(subject.to_hash.keys).to contain_exactly(
-        'top', 'left', 'width', 'height', 'maxLeftOffset', 'maxRightOffset', 'maxUpOffset', 'maxDownOffset'
+                                        :y, :x, :width, :height, :offset
       )
     end
   end
