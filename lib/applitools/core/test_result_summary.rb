@@ -18,7 +18,7 @@ module Applitools
 
     def old_style_results_array
       Applitools::Utils.deep_stringify_keys(results).map do |e|
-        r = e['testResults'] ? e['testResults'] : {}
+        r = e['result'] ? e['result'] : {}
         Applitools::TestResults.new(r)
       end
     end
