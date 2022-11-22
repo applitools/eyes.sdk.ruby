@@ -18,7 +18,7 @@ module Applitools
     # }
     attr_reader :type, :concurrency, :legacy
 
-    VG = 'vg'.freeze
+    VG = 'ufg'.freeze
     CLASSIC = 'classic'.freeze
     def type_enum_values
       [VG, CLASSIC]

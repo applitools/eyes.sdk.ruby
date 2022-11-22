@@ -19,7 +19,7 @@ module Applitools::Selenium
     FINDERS = {
       class: 'class name',
       class_name: 'class name',
-      css: 'css selector',
+      css: 'css',
       id: 'id',
       link: 'link text',
       link_text: 'link text',

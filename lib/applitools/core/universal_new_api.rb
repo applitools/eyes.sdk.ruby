@@ -14,9 +14,11 @@ module Applitools
         target['target'] = { elementId: target['target'].ref } if target['target'].is_a?(::Selenium::WebDriver::Element)
         target['target']['x'] = target['target'].delete('left') if target['target']['left']
         target['target']['y'] = target['target'].delete('top') if target['target']['top']
+        target[:region] = target.delete('target')
         target
       end
-      universal_eyes.extract_text(targets_array)
+      driver_target = driver.universal_driver_config
+      universal_eyes.extract_text(targets_array, driver_target)
     end
 
 
@@ -27,7 +29,8 @@ module Applitools
     #   language?: string
     # }
     def extract_text_regions(patterns_array)
-      results = universal_eyes.extract_text_regions(patterns_array)
+      driver_target = driver.universal_driver_config
+      results = universal_eyes.extract_text_regions(patterns_array, driver_target)
       Applitools::Utils.deep_stringify_keys(results)
     end
 
@@ -37,7 +40,8 @@ module Applitools
         locatorNames: locate_settings[:locator_names],
         firstOnly: !!locate_settings[:first_only]
       }
-      results = universal_eyes.locate(settings)
+      driver_target = driver.universal_driver_config
+      results = universal_eyes.locate(settings, driver_target)
       Applitools::Utils.deep_stringify_keys(results)
     end
 

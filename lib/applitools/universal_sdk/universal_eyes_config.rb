@@ -123,6 +123,13 @@ module Applitools
       :layoutBreakpoints,
       :disableBrowserFetching
 
+    # v3
+    json_fields :environment
+    # :updateBaselineIfDifferent,
+    # :updateBaselineIfNew,
+    # :ignoreGitBranching,
+    # :abortIdleTestTimeout
+
     # 23 + 3 + 2 + 11 = 39
     FROM_ORIGINAL_EYES = [:api_key, :app_name, :batch, :browsers_info, :concurrent_sessions, :debug_screenshots,
       :force_full_page_screenshot, :hide_caret, :hide_scrollbars, :host_app, :host_os, :match_timeout, :proxy,
@@ -181,8 +188,26 @@ module Applitools
       self.default_match_settings = default_match_settings.to_hash if default_match_settings.is_a?(Applitools::ImageMatchSettings)
       self.proxy = proxy.to_hash if proxy.is_a?(Applitools::Connectivity::Proxy)
       self.viewport_size = viewport_size.to_h if viewport_size.is_a?(Applitools::RectangleSize)
+      v3api_change
       # require 'pry'
       # binding.pry
+    end
+
+    def v3api_change
+      # self.updateBaselineIfDifferent = saveFailedTests unless saveFailedTests.nil?
+      # self.updateBaselineIfNew = saveNewTests unless saveNewTests.nil?
+      environment = {}
+      environment[:hostApp] = hostApp unless hostApp.nil?
+      environment[:hostAppInfo] = hostAppInfo unless hostAppInfo.nil?
+      environment[:hostOS] = hostOS unless hostOS.nil?
+      environment[:hostOSInfo] = hostOSInfo unless hostOSInfo.nil?
+      environment[:deviceInfo] = deviceInfo unless deviceInfo.nil?
+      unless viewportSize.nil?
+        environment[:viewportSize] = viewportSize
+        self.viewportSize = nil
+      end
+      self.environment = environment unless environment.empty?
+      # :ignoreGitBranching, :abortIdleTestTimeout
     end
 
     def to_hash

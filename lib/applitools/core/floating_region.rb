@@ -126,10 +126,12 @@ module Applitools
 
     def to_hash
       {
-        maxUpOffset: max_top_offset,
-        maxDownOffset: max_bottom_offset,
-        maxLeftOffset: max_left_offset,
-        maxRightOffset: max_right_offset
+        offset: {
+          top: max_top_offset,
+          bottom: max_bottom_offset,
+          left: max_left_offset,
+          right: max_right_offset
+        }
       }
     end
   end

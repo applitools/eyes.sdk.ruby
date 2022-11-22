@@ -23,7 +23,7 @@ module Applitools
       end
 
       if check_result != {}
-        result = Applitools::MatchResult.new(Applitools::Utils.deep_stringify_keys(check_result))
+        result = Applitools::MatchResult.new(Applitools::Utils.deep_stringify_keys(check_result[0]))
 
         check_fail_result_processing(name) unless result.as_expected?
       end

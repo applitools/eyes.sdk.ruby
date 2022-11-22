@@ -80,6 +80,10 @@ module Applitools
       :scrollRootElement,
       :fully
 
+    # v3
+    json_fields :ufgOptions,
+                :userCommandId
+
     def initialize(*args)
       options = Applitools::Utils.extract_options! args
       options.keys.select {|k| options[k] && respond_to?("#{k}=") }.each {|k| send("#{k}=", options[k]) }
@@ -160,6 +164,8 @@ module Applitools
       self.send_dom = from_target_options_or_eyes(:send_dom, target.options, eyes)
       self.use_dom = from_target_options_or_eyes(:use_dom, target.options, eyes)
       self.visual_grid_options = from_target_options_or_eyes(:visual_grid_options, target.options, eyes)
+      self.ufg_options = self.visual_grid_options
+      self.user_command_id = self.variation_group_id
     # rescue => e
     #   require('pry')
     #   binding.pry

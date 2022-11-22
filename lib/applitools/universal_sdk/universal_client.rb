@@ -16,29 +16,37 @@ module Applitools::Connectivity
     extend Forwardable
     def_delegators 'Applitools::EyesLogger', :logger
 
-    SESSION_INIT = 'Core.makeSDK'
+    SESSION_INIT = 'Core.makeCore'
 
     CORE_MAKE_MANAGER = 'Core.makeManager'
     CORE_GET_VIEWPORT_SIZE = 'Core.getViewportSize'
     CORE_SET_VIEWPORT_SIZE = 'Core.setViewportSize'
-    CORE_CLOSE_BATCHES = 'Core.closeBatches'
+    CORE_CLOSE_BATCHES = 'Core.closeBatch'
     CORE_DELETE_TEST = 'Core.deleteTest'
 
     EYES_MANAGER_MAKE_EYES = 'EyesManager.openEyes'
     EYES_MANAGER_CLOSE_ALL_EYES = 'EyesManager.closeManager'
     EYES_CHECK = 'Eyes.check'
-    EYES_LOCATE = 'Eyes.locate'
-    EYES_EXTRACT_TEXT_REGIONS = 'Eyes.extractTextRegions'
+    EYES_CHECK_AND_CLOSE = 'Eyes.checkAndClose' # ...
+    EYES_LOCATE = 'Core.locate'
+    EYES_EXTRACT_TEXT_REGIONS = 'Eyes.locateText'
     EYES_EXTRACT_TEXT = 'Eyes.extractText'
     EYES_CLOSE = 'Eyes.close'
     EYES_ABORT = 'Eyes.abort'
 
+    attr_accessor :commands_config
 
     def initialize
       # @socket = Applitools::Connectivity::UniversalClientSocket.new
       prepare_socket
       # store on open for next check calls
       @open_config = nil
+      @commands_config = {
+        open: {},
+        screenshot: {},
+        check: {},
+        close: {}
+      }
     end
 
     def make_manager(eyes_manager_config)
@@ -50,66 +58,201 @@ module Applitools::Connectivity
 
 
     def core_make_manager(eyes_manager_config)
-      # await(->(cb) { @socket.request(CORE_MAKE_MANAGER, eyes_manager_config, cb) })
+      # interface MakeManagerRequestPayload {
+      #   type: 'ufg' | 'classic'
+      #   concurrency?: number
+      #   legacyConcurrency?: number
+      #   agentId?: string
+      # }
+      #
+      # type MakeManagerResponsePayload = Ref<EyesManager>
       command_with_result(CORE_MAKE_MANAGER, eyes_manager_config)
     end
+
+    def config_mapping(old_config, command_config, name)
+      return if old_config[name].nil?
+      command_config[name] = old_config.delete(name)
+    end
+
+    def map_open_eyes_config_to_commands_config(config)
+      [
+        :serverUrl, :apiKey, :proxy, :connectionTimeout, :removeSession, :agentId, :appName, :testName, :displayName,
+        :userTestId, :sessionType, :properties, :batch, :keepBatchOpen, :environmentName, :environment, :branchName,
+        :parentBranchName, :baselineEnvName, :baselineBranchName, :compareWithParentBranch, :ignoreBaseline,
+        :ignoreGitBranching, :saveDiffs, :abortIdleTestTimeout
+      ].each do |k|
+        config_mapping(config, commands_config[:open], k)
+      end
+
+      commands_config[:open][:keepBatchOpen] = config.delete(:dontCloseBatches) unless config[:dontCloseBatches].nil?
+
+      [:hideCaret, :hideScrollbars, :disableBrowserFetching, :sendDom, :stitchMode,
+       :layoutBreakpoints, :waitBeforeCapture].each do |k|
+        config_mapping(config, commands_config[:check], k)
+      end
+
+      commands_config[:check][:renderers] = config.delete(:browsersInfo) unless config[:browsersInfo].nil?
+
+      unless config[:defaultMatchSettings].nil?
+        if config[:defaultMatchSettings][:accessibilitySettings]
+          commands_config[:check][:accessibilitySettings] = {}
+          commands_config[:check][:accessibilitySettings][:level] = config[:defaultMatchSettings][:accessibilitySettings].delete(:level) unless config[:defaultMatchSettings][:accessibilitySettings][:level].nil?
+          commands_config[:check][:accessibilitySettings][:version] = config[:defaultMatchSettings][:accessibilitySettings].delete(:guidelinesVersion) unless config[:defaultMatchSettings][:accessibilitySettings][:guidelinesVersion].nil?
+          config[:defaultMatchSettings].delete(:accessibilitySettings) if config[:defaultMatchSettings][:accessibilitySettings].empty?
+        end
+        commands_config[:check][:ignoreCaret] = config[:defaultMatchSettings].delete(:ignoreCaret) unless config[:defaultMatchSettings][:ignoreCaret].nil?
+        commands_config[:check][:matchLevel] = config[:defaultMatchSettings].delete(:matchLevel) unless config[:defaultMatchSettings][:matchLevel].nil?
+        config.delete(:defaultMatchSettings) if config[:defaultMatchSettings].empty?
+      end
+
+      if commands_config[:check][:fully].nil?
+        commands_config[:check][:fully] = config.delete(:forceFullPageScreenshot) unless config[:forceFullPageScreenshot].nil?
+      end
+
+      commands_config[:close][:updateBaselineIfNew] = config.delete(:saveNewTests) unless config[:saveNewTests].nil?
+      commands_config[:close][:updateBaselineIfDifferent] = config.delete(:saveFailedTests) unless config[:saveFailedTests].nil?
+
+      commands_config[:screenshot] = commands_config[:check]
+    end
+
+
+
 
     def eyes_manager_make_eyes(manager, driver_config, config)
       @open_config = config
 
-      # await(->(cb) {
-      #   @socket.request(EYES_MANAGER_MAKE_EYES, {manager: manager, driver: driver_config, config: config}, cb)
-      # })
-      command_with_result(EYES_MANAGER_MAKE_EYES, {manager: manager, driver: driver_config, config: config})
+      map_open_eyes_config_to_commands_config(config)
+      # interface OpenEyesRequestPayload {
+      #   manager: Ref<EyesManager>
+      #   target?: DriverTarget
+      #   settings?: OpenSettings
+      #   config?: Config
+      # }
+      #
+      # type OpenEyesResponsePayload = Ref<Eyes>
+      command_with_result(EYES_MANAGER_MAKE_EYES, {manager: manager, target: driver_config, settings: commands_config[:open], config: commands_config})
     end
 
     def eyes_manager_close_all_eyes(manager)
-      # await(->(cb) { @socket.request(EYES_MANAGER_CLOSE_ALL_EYES, {manager: manager}, cb) })
-      command_with_result(EYES_MANAGER_CLOSE_ALL_EYES, {manager: manager})
+      # interface CloseManagerRequestPayload {
+      #   manager: Ref<EyesManager>
+      #   settings?: {throwErr?: boolean}
+      # }
+      #
+      # interface CloseManagerResponsePayload {
+      #   results: Array<{
+      #     error?: Error
+      #     result?: TestResult
+      #     renderer?: TType extends 'ufg' ? Renderer : never
+      #     userTestId: string
+      #   }>
+      #   passed: number
+      #   unresolved: number
+      #   failed: number
+      #   exceptions: number
+      #   mismatches: number
+      #   missing: number
+      #   matches: number
+      # }
+      command_with_result(EYES_MANAGER_CLOSE_ALL_EYES, {manager: manager, config: commands_config})
     end
 
     def eyes_check(eyes, settings)
-      # await(->(cb) { @socket.request(EYES_CHECK, {eyes: eyes, settings: settings, config: @open_config}, cb) })
-      command_with_result(EYES_CHECK, {eyes: eyes, settings: settings, config: @open_config})
+      # interface CheckRequestPayload {
+      #   eyes: Ref<Eyes>
+      #   target?: ImageTarget | DriverTarget
+      #   settings?: CheckSettings
+      #   config?: Config
+      # }
+      #
+      # type CheckResponsePayload = CheckResult[]
+      command_with_result(EYES_CHECK, {eyes: eyes, settings: settings, config: commands_config})
     end
 
-    def eyes_locate(eyes, settings)
-      # await(->(cb) { @socket.request(EYES_LOCATE, {eyes: eyes, settings: settings, config: @open_config}, cb) })
-      command_with_result(EYES_LOCATE, {eyes: eyes, settings: settings, config: @open_config})
+    def eyes_locate(eyes, settings, driver_target)
+      # interface LocateRequestPayload {
+      #   target?: ImageTarget | DriverTarget
+      #   settings?: LocateSettings
+      #   config?: Config
+      # }
+      #
+      # interface LocateResponsePayload {
+      #   [key: string]: Array<{x: number, y: number, width: number, height: number}>
+      # }
+
+      command_with_result(EYES_LOCATE, {target: driver_target, settings: settings, config: commands_config})
     end
 
-    def eyes_extract_text_regions(eyes, settings)
-      # await(->(cb) { @socket.request(EYES_EXTRACT_TEXT_REGIONS, {eyes: eyes, settings: settings, config: @open_config}, cb) })
-      command_with_result(EYES_EXTRACT_TEXT_REGIONS, {eyes: eyes, settings: settings, config: @open_config})
+    def eyes_extract_text_regions(eyes, settings, driver_target)
+      # interface LocateTextRequestPayload {
+      #   eyes: Ref<Eyes>
+      #   target?: ImageTarget | DriverTarget
+      #   settings?: LocateTextSettings
+      #   config?: Config
+      # }
+      #
+      # type LocateTextResponcePayload = Record<string, Array<{text: string, x: number, y: number, width: number, hieght: number}>>
+      command_with_result(EYES_EXTRACT_TEXT_REGIONS, {eyes: eyes, settings: settings, config: commands_config})
     end
 
-    def eyes_extract_text(eyes, regions)
-      # await(->(cb) { @socket.request(EYES_EXTRACT_TEXT, {eyes: eyes, regions: regions, config: @open_config}, cb) })
-      command_with_result(EYES_EXTRACT_TEXT, {eyes: eyes, regions: regions, config: @open_config})
+    def eyes_extract_text(eyes, regions, driver_target)
+      # interface ExtractTextRequestPayload {
+      #   eyes: Ref<Eyes>
+      #   target?: ImageTarget | DriverTarget
+      #   settings?: ExtractTextSettings | ExtractTextSettings[]
+      #   config?: Config
+      # }
+      #
+      # type ExtractTextResponcePayload = string[]
+      command_with_result(EYES_EXTRACT_TEXT, {eyes: eyes, settings: regions, config: commands_config})
     end
 
     def eyes_close(eyes)
-      # await(->(cb) { @socket.request(EYES_CLOSE, {eyes: eyes}, cb) })
-      command_with_result(EYES_CLOSE, {eyes: eyes})
+      # interface CloseResponsePayload {
+      #   eyes: Ref<Eyes>
+      #   settings?: CloseSettings
+      #   config?: Config
+      # }
+      #
+      # type CloseResponsePayload = TestResult[]
+      settings = {throwErr: false}
+
+      command_with_result(EYES_CLOSE, {eyes: eyes, settings: settings, config: commands_config})
     end
 
     def eyes_abort(eyes)
-      # await(->(cb) { @socket.request(EYES_ABORT, {eyes: eyes}, cb) })
+      # interface AbortPayload {
+      #   eyes: Ref<Eyes>
+      # }
+      #
+      # type AbortResponsePayload = TestResult[]
       command_with_result(EYES_ABORT, {eyes: eyes})
     end
 
     def core_get_viewport_size(driver)
-      # await(->(cb) { @socket.request(CORE_GET_VIEWPORT_SIZE, {driver: driver}, cb) })
-      command_with_result(CORE_GET_VIEWPORT_SIZE, {driver: driver})
+      # interface GetViewportSizeRequestPayload {
+      #   target: DriverTarget
+      # }
+      #
+      # interface GetViewportSizeResponsePayload {
+      #   width: number
+      #   height: number
+      # }
+      command_with_result(CORE_GET_VIEWPORT_SIZE, {target: driver})
     end
 
     def core_set_viewport_size(driver, size)
-      # await(->(cb) { @socket.request(CORE_SET_VIEWPORT_SIZE, {driver: driver, size: size}, cb) })
-      command_with_result(CORE_SET_VIEWPORT_SIZE, {driver: driver, size: size})
+      # interface SetViewportSizeRequestPayload {
+      #   target: DriverTarget
+      #   size: {width: number, height: number}
+      # }
+      command_with_result(CORE_SET_VIEWPORT_SIZE, {target: driver, size: size})
     end
 
     def core_close_batches(close_batch_settings=nil)
-      # batchIds, serverUrl?, apiKey?, proxy?
+      # interface CloseBatchRequestPayload {
+      #   settings: CloseBatchSettings | CloseBatchSettings[]
+      # }
       unless close_batch_settings.is_a?(Hash)
         batch_ids = [@open_config[:batch][:id]]
         batch_ids = [close_batch_settings] if close_batch_settings.is_a?(String)
@@ -117,13 +260,13 @@ module Applitools::Connectivity
         optional = [:serverUrl, :apiKey, :proxy].map {|k| [k, @open_config[k]] }.to_h
         close_batch_settings = { settings: ({ batchIds: batch_ids }.merge(optional).compact) }
       end
-      # await(->(cb) { @socket.request(CORE_CLOSE_BATCHES, close_batch_settings, cb) })
       command_with_result(CORE_CLOSE_BATCHES, close_batch_settings)
     end
 
     def core_delete_test(delete_test_settings)
-      # testId, batchId, secretToken, serverUrl, apiKey?, proxy?
-      # await(->(cb) { @socket.request(CORE_DELETE_TEST, delete_test_settings, cb) })
+      # interface DeleteTestRequestPayload {
+      #   settings: DeleteTestSettings | DeleteTestSettings[]
+      # }
       command_with_result(CORE_DELETE_TEST, delete_test_settings)
     end
 
@@ -175,12 +318,13 @@ module Applitools::Connectivity
     end
 
     def session_init
-      command(SESSION_INIT, {
+      make_core_payload = {
         name: :rb,
         version: Applitools::VERSION,
         protocol: :webdriver,
         cwd: Dir.pwd
-      })
+      }
+      command(SESSION_INIT, make_core_payload)
       # no response
     end
 

@@ -28,16 +28,16 @@ module Applitools
       @universal_client.eyes_abort(@eyes)
     end
 
-    def locate(settings)
-      @universal_client.eyes_locate(@eyes, settings)
+    def locate(settings, driver_target)
+      @universal_client.eyes_locate(@eyes, settings, driver_target)
     end
 
-    def extract_text_regions(patterns_array)
-      @universal_client.eyes_extract_text_regions(@eyes, patterns_array)
+    def extract_text_regions(patterns_array, driver_target)
+      @universal_client.eyes_extract_text_regions(@eyes, patterns_array, driver_target)
     end
 
-    def extract_text(targets_array)
-      @universal_client.eyes_extract_text(@eyes, targets_array)
+    def extract_text(targets_array, driver_target)
+      @universal_client.eyes_extract_text(@eyes, targets_array, driver_target)
     end
 
   end
