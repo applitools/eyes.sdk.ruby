@@ -1,3 +1,5 @@
+## [4.5.0.alpha] - 2022-11-23
+- Update version of Universal SDK to v3 (sdk: 3.0.2)
 ## [4.4.1] - 2022-10-03
 ### Added
 - Added iPhone 14 and iPhone 14 Pro Max devices [Trello 73](https://trello.com/c/M1YiwtHb)
