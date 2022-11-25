@@ -84,6 +84,15 @@ module Applitools
     json_fields :ufgOptions,
                 :userCommandId
 
+    # ImageTarget
+    json_fields :image
+                # :name,
+                # :source,
+                # :dom,
+                # :locationInViewport,
+                # :locationInView,
+                # :fullViewSize
+
     def initialize(*args)
       options = Applitools::Utils.extract_options! args
       options.keys.select {|k| options[k] && respond_to?("#{k}=") }.each {|k| send("#{k}=", options[k]) }
@@ -166,6 +175,8 @@ module Applitools
       self.visual_grid_options = from_target_options_or_eyes(:visual_grid_options, target.options, eyes)
       self.ufg_options = self.visual_grid_options
       self.user_command_id = self.variation_group_id
+
+      self.image = target.image if target.respond_to?(:image)
     # rescue => e
     #   require('pry')
     #   binding.pry

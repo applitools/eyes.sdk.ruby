@@ -13,9 +13,11 @@ module Applitools
 
       raise Applitools::EyesNotOpenException.new('Eyes not open!') if @universal_eyes.nil?
       Applitools::EyesLogger.logger.info "#{test_name} : check(#{name}) started  ..."
+      settings = get_universal_check_settings(name, target)
+      image_target = settings[:image].nil? ? {} : { image: settings.delete(:image) }
       # require 'pry'
       # binding.pry
-      check_result = @universal_eyes.check(get_universal_check_settings(name, target))
+      check_result = @universal_eyes.check(settings, image_target)
       if server_error?(check_result)
         # require 'pry'
         # binding.pry

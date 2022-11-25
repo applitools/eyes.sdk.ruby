@@ -157,7 +157,7 @@ module Applitools::Connectivity
       command_with_result(EYES_MANAGER_CLOSE_ALL_EYES, {manager: manager, config: commands_config})
     end
 
-    def eyes_check(eyes, settings)
+    def eyes_check(eyes, settings, image_target = {})
       # interface CheckRequestPayload {
       #   eyes: Ref<Eyes>
       #   target?: ImageTarget | DriverTarget
@@ -166,7 +166,9 @@ module Applitools::Connectivity
       # }
       #
       # type CheckResponsePayload = CheckResult[]
-      command_with_result(EYES_CHECK, {eyes: eyes, settings: settings, config: commands_config})
+      payload = {eyes: eyes, settings: settings, config: commands_config}
+      payload[:target] = image_target unless image_target.empty?
+      command_with_result(EYES_CHECK, payload)
     end
 
     def eyes_locate(eyes, settings, driver_target)

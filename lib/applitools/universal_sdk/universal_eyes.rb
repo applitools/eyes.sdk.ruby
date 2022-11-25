@@ -11,10 +11,10 @@ module Applitools
       @universal_client = universal_client
     end
 
-    def check(settings)
+    def check(settings, image_target = {})
       elapsed_time_start = Time.now
       # Applitools::EyesLogger.logger.debug "check settings: #{settings}"
-      check_result = @universal_client.eyes_check(@eyes, settings)
+      check_result = @universal_client.eyes_check(@eyes, settings, image_target)
       # Applitools::EyesLogger.logger.debug "check_result: #{check_result}"
       Applitools::EyesLogger.logger.info "Completed in #{format('%.2f', Time.now - elapsed_time_start)} seconds"
       check_result
