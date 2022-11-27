@@ -166,8 +166,27 @@ module Applitools
       end
     end
 
+    def from_eyes_images
+      FROM_ORIGINAL_EYES - [
+        :browsers_info,
+        :concurrent_sessions,
+        :debug_screenshots,
+        :force_full_page_screenshot,
+        :hide_caret,
+        :hide_scrollbars,
+        :send_dom,
+        :stitch_mode,
+        :visual_grid_options,
+        :wait_before_screenshots,
+        :wait_before_capture,
+        :stitching_overlap
+      ]
+
+    end
+
     def from_original_sdk(original_eyes)
-      FROM_ORIGINAL_EYES.each {|m| copy_from(m, original_eyes) }
+      from_eyes = original_eyes.class.name != 'Applitools::Images::Eyes' ? FROM_ORIGINAL_EYES : from_eyes_images
+      from_eyes.each {|m| copy_from(m, original_eyes) }
       self.agent_id = original_eyes.base_agent_id if original_eyes.respond_to?(:base_agent_id)
       self.agent_id = original_eyes.full_agent_id if original_eyes.respond_to?(:full_agent_id)
       # self.display_name = original_eyes.app_name

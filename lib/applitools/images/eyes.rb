@@ -42,7 +42,8 @@ module Applitools::Images
     def open(options = {})
       Applitools::ArgumentGuard.hash options, 'open(options)', [:app_name, :test_name]
       options[:viewport_size] = Applitools::RectangleSize.from_any_argument options[:viewport_size]
-      open_base options
+      # options = Applitools::Utils.extract_options!(args)
+      universal_open(options)
     end
 
     # Opens eyes using passed options, yields the block and then closes eyes session.
@@ -93,6 +94,9 @@ module Applitools::Images
 
     def check_it(name, target, match_window_data)
       Applitools::ArgumentGuard.not_nil(name, 'name')
+
+      return universal_check(name, target)
+
       region_provider = get_region_provider(target)
 
       match_window_data.tag = name
@@ -164,8 +168,8 @@ module Applitools::Images
     #   eyes.check_image(image: my_image, tag: 'My Test', ignore_mismatch: true)
     def check_image(options)
       options = { tag: '', ignore_mismatch: false }.merge options
-      image = get_image_from_options(options)
-      target = Applitools::Images::Target.any(image).ignore_mismatch(options[:ignore_mismatch])
+      # image = get_image_from_options(options)
+      target = Applitools::Images::Target.any(options).ignore_mismatch(options[:ignore_mismatch])
       check(options[:tag], target)
     end
 
@@ -185,10 +189,10 @@ module Applitools::Images
     # @example Image is a +String+
     #   eyes.check_region(image_bytes: string_represents_image, tag: 'My Test', region: my_region)
     def check_region(options)
-      options = { tag: nil, ignore_mismatch: false }.merge options
+      options = { tag: '', ignore_mismatch: false }.merge options
       Applitools::ArgumentGuard.not_nil options[:region], 'options[:region] can\'t be nil!'
-      image = get_image_from_options options
-      target = Applitools::Images::Target.any(image).ignore_mismatch(options[:ignore_mismatch])
+      # image = get_image_from_options options
+      target = Applitools::Images::Target.any(options).ignore_mismatch(options[:ignore_mismatch])
       target.region(options[:region])
       logger.info "check_region(image, #{options[:region]}, #{options[:tag]}, #{options[:ignore_mismatch]})"
       check(options[:tag], target)
@@ -232,22 +236,22 @@ module Applitools::Images
     alias get_viewport_size vp_size
     alias set_viewport_size vp_size=
 
-    def get_image_from_options(options)
-      image = if options[:image].nil? || !options[:image].is_a?(Applitools::Screenshot)
-                # if options[:image].is_a? ChunkyPNG::Image
-                #   Applitools::Screenshot.from_image options[:image]
-                # if !options[:image_path].nil? && !options[:image_path].empty?
-                #   Applitools::Screenshot.from_datastream ChunkyPNG::Datastream.from_file(options[:image_path]).to_s
-                if !options[:image_bytes].nil? && !options[:image_bytes].empty?
-                  Applitools::Screenshot.from_datastream options[:image_bytes]
-                end
-              else
-                options[:image]
-              end
-
-      Applitools::ArgumentGuard.not_nil image, 'options[:image] can\'t be nil!'
-
-      image
-    end
+    # def get_image_from_options(options)
+    #   image = if options[:image].nil? || !options[:image].is_a?(Applitools::Screenshot)
+    #             # if options[:image].is_a? ChunkyPNG::Image
+    #             #   Applitools::Screenshot.from_image options[:image]
+    #             # if !options[:image_path].nil? && !options[:image_path].empty?
+    #             #   Applitools::Screenshot.from_datastream ChunkyPNG::Datastream.from_file(options[:image_path]).to_s
+    #             if !options[:image_bytes].nil? && !options[:image_bytes].empty?
+    #               Applitools::Screenshot.from_datastream options[:image_bytes]
+    #             end
+    #           else
+    #             options[:image]
+    #           end
+    #
+    #   Applitools::ArgumentGuard.not_nil image, 'options[:image] can\'t be nil!'
+    #
+    #   image
+    # end
   end
 end

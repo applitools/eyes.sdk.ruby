@@ -31,6 +31,7 @@ module Applitools
       end
 
       logger.info 'Done!'
+      result
     end
 
     private

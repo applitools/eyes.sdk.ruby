@@ -194,7 +194,9 @@ module Applitools::Connectivity
       # }
       #
       # type LocateTextResponcePayload = Record<string, Array<{text: string, x: number, y: number, width: number, hieght: number}>>
-      command_with_result(EYES_EXTRACT_TEXT_REGIONS, {eyes: eyes, settings: settings, config: commands_config})
+      payload = {eyes: eyes, target: driver_target, settings: settings, config: commands_config}
+      payload.delete(:target) if driver_target.nil? || driver_target.empty?
+      command_with_result(EYES_EXTRACT_TEXT_REGIONS, payload)
     end
 
     def eyes_extract_text(eyes, regions, driver_target)
@@ -206,7 +208,9 @@ module Applitools::Connectivity
       # }
       #
       # type ExtractTextResponcePayload = string[]
-      command_with_result(EYES_EXTRACT_TEXT, {eyes: eyes, settings: regions, config: commands_config})
+      payload = {eyes: eyes, target: driver_target, settings: regions, config: commands_config}
+      payload.delete(:settings) if regions.empty?
+      command_with_result(EYES_EXTRACT_TEXT, payload)
     end
 
     def eyes_close(eyes)

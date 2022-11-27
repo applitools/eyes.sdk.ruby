@@ -9,7 +9,9 @@ module Applitools
     #   minMatch?: number
     #   language?: string
     # }
-    def extract_text(targets_array)
+    def extract_text(*args)
+      image_target = args[0].is_a?(Hash) ? args[0] : nil
+      targets_array = args[0].is_a?(Hash) ? args[1].to_a : args[0]
       targets_array.map do |target|
         target['target'] = { elementId: target['target'].ref } if target['target'].is_a?(::Selenium::WebDriver::Element)
         target['target']['x'] = target['target'].delete('left') if target['target']['left']
@@ -17,7 +19,7 @@ module Applitools
         target[:region] = target.delete('target')
         target
       end
-      driver_target = driver.universal_driver_config
+      driver_target = respond_to?(:driver) ? driver.universal_driver_config : image_target
       universal_eyes.extract_text(targets_array, driver_target)
     end
 
@@ -29,7 +31,7 @@ module Applitools
     #   language?: string
     # }
     def extract_text_regions(patterns_array)
-      driver_target = driver.universal_driver_config
+      driver_target = respond_to?(:driver) ? driver.universal_driver_config : { image: patterns_array.delete('image') }
       results = universal_eyes.extract_text_regions(patterns_array, driver_target)
       Applitools::Utils.deep_stringify_keys(results)
     end

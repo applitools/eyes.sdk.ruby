@@ -18,17 +18,19 @@ module Applitools
     #   trigger recording and frame handling
     def universal_open(options = {})
       original_driver = options.delete(:driver)
-      Applitools::ArgumentGuard.not_nil original_driver, 'options[:driver]'
+      if self.class.name != 'Applitools::Images::Eyes'
+        Applitools::ArgumentGuard.not_nil original_driver, 'options[:driver]'
 
-      if respond_to?(:disabled?) && disabled?
-        logger.info('Ignored')
-        return original_driver
+        if respond_to?(:disabled?) && disabled?
+          logger.info('Ignored')
+          return original_driver
+        end
+
+        self.driver = Applitools::Selenium::SeleniumEyes.eyes_driver(original_driver, self)
       end
 
-      self.driver = Applitools::Selenium::SeleniumEyes.eyes_driver(original_driver, self)
-
       update_config_from_options(options)
-      universal_driver_config = driver.universal_driver_config
+      universal_driver_config = driver.universal_driver_config if self.class.name != 'Applitools::Images::Eyes'
       universal_eyes_manager = runner.get_universal_eyes_manager
 
       universal_eyes_config = Applitools::UniversalEyesConfig.new
@@ -42,7 +44,11 @@ module Applitools
 
       self.open = true if respond_to?(:open=, true)
       self.running_session = true if respond_to?(:running_session=, true)
-      driver
+      if self.class.name != 'Applitools::Images::Eyes'
+        driver
+      else
+        self.open?
+      end
     rescue Applitools::EyesError => e
       logger.error e.message
       raise e

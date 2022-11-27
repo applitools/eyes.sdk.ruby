@@ -7,7 +7,7 @@ require 'applitools/version'
 
 Gem::Specification.new do |spec|
   spec.name          = 'eyes_images'
-  spec.version       = Applitools::VERSION
+  spec.version       = Applitools::IMAGES_VERSION
   spec.authors       = ['Applitools Team']
   spec.email         = ['team@applitools.com']
   spec.description   = 'Provides Images SDK for Applitools tests.'

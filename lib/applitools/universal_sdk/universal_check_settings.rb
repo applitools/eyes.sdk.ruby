@@ -113,6 +113,7 @@ module Applitools
     def from_original_target(target, eyes)
       # require('pry')
       # binding.pry
+      return from_eyes_images(target, eyes) if eyes.class.name === 'Applitools::Images::Eyes'
 
       self.accessibility_settings = eyes.accessibility_validation
       self.disable_browser_fetching = eyes.dont_fetch_resources
@@ -180,6 +181,30 @@ module Applitools
     # rescue => e
     #   require('pry')
     #   binding.pry
+    end
+
+    def from_eyes_images(target, eyes)
+      self.accessibility_settings = eyes.accessibility_validation
+      self.disable_browser_fetching = eyes.dont_fetch_resources
+      self.accessibility_regions = target.accessibility_regions
+      self.floating_regions = target.floating_regions
+
+      self.ignore_regions = target.ignored_regions.map do |ir|
+        ir.is_a?(Proc) ? normalize_element_selector(ir.call(eyes.driver)) : ir
+      end
+
+      if target.region_to_check.is_a?(Hash)
+        self.region = target.region_to_check
+      elsif target.region_to_check.is_a?(String)
+        self.region = target.region_to_check
+      elsif target.region_to_check.is_a?(Proc)
+        el = target.region_to_check.call(eyes.driver)
+        self.region = normalize_element_selector(el) unless el.respond_to?(:empty?) && el.empty?
+      end
+
+      self.exact = (target.options[:exact] && target.options[:exact].to_hash) || (eyes.exact && eyes.exact.to_hash)
+
+      self.image = target.image
     end
 
     def to_hash
