@@ -1,3 +1,10 @@
+## [4.0.0.alpha-eyes-images] - 2022-11-28
+### Added
+- eyes_images updated to universal server sdk(v3)
+### Deprecated (eyes_images)
+- eyes_images inputs Applitools::Screenshot and ChunkyPNG::Image now are image_path and image (examples in spec/images/eyes_images_functional_spec.rb)
+### Added (eyes_images)
+- eyes_images: Applitools::MatchLevel::IGNORE_COLORS
 ## [4.5.0.alpha] - 2022-11-23
 - Update version of Universal SDK to v3 (sdk: 3.0.2)
 ## [4.4.1] - 2022-10-03

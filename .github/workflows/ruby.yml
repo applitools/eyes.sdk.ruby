@@ -280,13 +280,14 @@ jobs:
       - uses: actions/checkout@v3
       - name: ChangeLog check
         run: |
-          export TAG_VERSION=${{ github.ref_name }}
+          export GITHUB_TAG_VERSION=${{ github.ref_name }}
+          export TAG_VERSION="${GITHUB_TAG_VERSION%-eyes-images}"
           echo $TAG_VERSION
           if [[ ! ($TAG_VERSION =~ ^v[0-9]+\.[0-9]+\.[0-9]+(\.[0-9a-z]+)?$) ]]; then
             echo 'Tag Version check Failed'
             exit 1
           fi
-          export SDK_VERSION=$(echo $TAG_VERSION | sed 's/v[^.0-9a-z]*//g')
+          export SDK_VERSION=$(echo $GITHUB_TAG_VERSION | sed 's/v[^.0-9a-z]*//g')
           echo $SDK_VERSION
 
           export TMP_CHANGELOG=$(bash ./extractChangeLog.sh "$SDK_VERSION" "CHANGELOG.md")

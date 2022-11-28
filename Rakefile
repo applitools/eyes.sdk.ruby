@@ -7,6 +7,18 @@ require_relative 'lib/eyes_consts'
 CLOBBER.include ['pkg', Applitools::JS_PATH]
 
 require 'bundler/gem_helper'
+# Monkey patch the Bundler release class to change tags for eyes_images
+module Bundler
+  class GemHelper
+
+    def version_tag
+      return "v#{version}-eyes-images" if gemspec.name === 'eyes_images'
+      "v#{version}"
+    end
+
+  end
+end
+
 Bundler::GemHelper.install_tasks name: 'eyes_core'
 Bundler::GemHelper.install_tasks name: 'eyes_images'
 Bundler::GemHelper.install_tasks name: 'eyes_selenium'
