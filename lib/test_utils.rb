@@ -3,7 +3,7 @@ require 'eyes_core'
 
 module Applitools
   module TestUtils
-    TEST_REPORT_SERVER_URL = 'http://sdk-test-results.herokuapp.com'
+    TEST_REPORT_SERVER_URL = 'http://applitools-quality-server.herokuapp.com'
     SDK_TEST_REPORT_ENDPOINT = '/result'
     def self.load_dir
       File.dirname(File.expand_path(__FILE__))
