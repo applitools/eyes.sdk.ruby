@@ -1,4 +1,4 @@
-## [4.5.0] - 2022-11-28
+## [4.5.1] - 2022-11-28
 ### Fixed
 - releasing as stable all eyes
 ## [4.0.0.alpha-eyes-images] - 2022-11-28
