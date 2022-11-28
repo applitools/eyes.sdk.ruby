@@ -1,3 +1,6 @@
+## [4.5.0] - 2022-11-28
+### Fixed
+- releasing as stable all eyes
 ## [4.0.0.alpha-eyes-images] - 2022-11-28
 ### Added
 - eyes_images updated to universal server sdk(v3)
