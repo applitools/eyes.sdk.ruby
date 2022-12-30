@@ -1,3 +1,6 @@
+## [4.5.3] - 2022-12-30
+### Fixed
+- skip yanked gem versions
 ## [4.5.2] - 2022-12-30
 ### Updated
 - Update version of Universal SDK to 3.2.0
