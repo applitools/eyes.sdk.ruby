@@ -1,3 +1,15 @@
+## [vNext]
+### Updated (eyes_universal)
+- Update version of Universal SDK to 3.2.0
+### Features
+- add server support for arm
+- Additional internal event logs
+### Bug fixes
+- Fixed OCR functionality with latest Eyes server
+- Fixed issue when helper lib inputs were not cleaned up before calling new command
+- Fixed issue with element scroll position not being restored after screenshot is taken on native platforms
+- Handed error during polling in long requests to eyes server
+- Handle fake shadowRoot with UFG
 ## [4.5.1] - 2022-11-28
 ### Fixed
 - releasing as stable all eyes
