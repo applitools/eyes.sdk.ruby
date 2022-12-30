@@ -37,8 +37,6 @@ module Applitools
       boolean_field :rendering_grid_force_put
       object_field :visual_grid_options, Hash, true
 
-      boolean_field :dont_close_batches
-
       def custom_setter_for_visual_grid_options(value)
         return {} if value.nil?
         value
