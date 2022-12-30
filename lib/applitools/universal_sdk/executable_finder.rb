@@ -26,6 +26,8 @@ module Applitools::Connectivity
     def filename
       return 'eyes-universal-win.exe' if Gem.win_platform?
       case RUBY_PLATFORM
+        when /arm/i
+          'eyes-universal-linux-arm64'
         when /mswin|windows|mingw/i
           'eyes-universal-win.exe'
         when /musl/i
