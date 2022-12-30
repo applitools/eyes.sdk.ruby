@@ -45,7 +45,7 @@ module Applitools
           'id' => id,
           'name' => name,
           'startedAt' => @started_at.iso8601,
-          'batchSequenceName' => sequence_name,
+          'sequenceName' => sequence_name,
           'notifyOnCompletion' => notify_on_completion,
           'properties' => properties
       }
@@ -79,4 +79,3 @@ module Applitools
     end
   end
 end
-# U-Notes : change 'batchSequenceName' to 'sequenceName'

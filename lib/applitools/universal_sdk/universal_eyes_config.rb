@@ -190,6 +190,7 @@ module Applitools
       self.agent_id = original_eyes.base_agent_id if original_eyes.respond_to?(:base_agent_id)
       self.agent_id = original_eyes.full_agent_id if original_eyes.respond_to?(:full_agent_id)
       # self.display_name = original_eyes.app_name
+      self.dont_close_batches = original_eyes.dont_close_batches unless original_eyes.dont_close_batches.nil?
       prepare_for_json!
     end
 

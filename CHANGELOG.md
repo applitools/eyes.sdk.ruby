@@ -1,11 +1,13 @@
 ## [vNext]
-### Updated (eyes_universal)
+### Updated
 - Update version of Universal SDK to 3.2.0
+### Added
+- Add dont_close_batches flag to eyes [Trello 3093](https://trello.com/c/3E0ilb0A)
 ### Features
-- add server support for arm
+- Add server support for arm
 - Additional internal event logs
 ### Bug fixes
-- Fixed OCR functionality with latest Eyes server
+- Fixed OCR functionality with latest eyes server
 - Fixed issue when helper lib inputs were not cleaned up before calling new command
 - Fixed issue with element scroll position not being restored after screenshot is taken on native platforms
 - Handed error during polling in long requests to eyes server
