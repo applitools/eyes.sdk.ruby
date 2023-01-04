@@ -1,4 +1,4 @@
-## [vNext] - 2023-01-04
+## [4.5.4] - 2023-01-04
 ### Updated
 - Update version of Universal SDK to 3.2.1
 - Update arm64-darwin server recognition
