@@ -35,18 +35,18 @@ module Applitools
       end
 
       def expected_binary_sha
-        return 'e3b548c6bbca494577fbf91a4443227c2ae0d8e11fd08464d5f7b23102541844' if Gem.win_platform?
+        return '7fd183305434793ea56eb221cad72e454510f0f2bc8e873ffe79ef7349f75d74' if Gem.win_platform?
         case RUBY_PLATFORM
-          when /arm/i
-            '22e26eb31a007b01b34601fd0cc0fb44b268e38fa820217cadba165bc29cbfa6'
-          when /mswin|windows|mingw/i
-            'e3b548c6bbca494577fbf91a4443227c2ae0d8e11fd08464d5f7b23102541844'
-          when /musl/i
-            '5a6b12d37dcfbb4ec12ecf9a9e2f08a5fac9ee1922dc1b92833f0cea9511b1bb'
-          when /linux|arch/i
-            '5dd299732d87008618685a0b4a2ebc3e1040e6f5674fb7c53f1914a9443a008c'
           when /darwin/i
-            '4553e6e4d8502f7a45beca6785370a00ce5f66520ec963bf62b0485054bb6436'
+            'ef22cf88310823f07b5afab33ae24142d63755c6af57ed00499e991733472746'
+          when /arm/i
+            '45c84d46bf1ef6cc2403bad53fbd10bbecbbc80a82bcec08a72d4a7eb3e81e9b'
+          when /mswin|windows|mingw/i
+            '7fd183305434793ea56eb221cad72e454510f0f2bc8e873ffe79ef7349f75d74'
+          when /musl/i
+            '8f71533ff7fffa01e09d3837efa9a8634129ef566bc6e1012511dfdbc5cb2e50'
+          when /linux|arch/i
+            'f0834d22ddd74a3fac6203702f2fa42a37d69ccf058e606adc5b20b4b6c7ac6b'
           else
             raise 'Unsupported platform'
         end
@@ -55,6 +55,8 @@ module Applitools
       def filename
         return 'eyes-universal-win.exe' if Gem.win_platform?
         case RUBY_PLATFORM
+          when /darwin/i
+            'eyes-universal-macos'
           when /arm/i
             'eyes-universal-linux-arm64'
           when /mswin|windows|mingw/i
@@ -63,8 +65,6 @@ module Applitools
             'eyes-universal-alpine'
           when /linux|arch/i
             'eyes-universal-linux'
-          when /darwin/i
-            'eyes-universal-macos'
           else
             raise "Unsupported platform #{RUBY_PLATFORM}"
         end

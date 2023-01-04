@@ -1,3 +1,11 @@
+## [vNext] - 2023-01-04
+### Updated
+- Update version of Universal SDK to 3.2.1
+- Update arm64-darwin server recognition
+### Features
+- Filter styles and resources with non-screen media queries
+### Bug fixes
+- Fixed issue with parsing capabilities for iOS with native app
 ## [4.5.3] - 2022-12-30
 ### Fixed
 - skip yanked gem versions
