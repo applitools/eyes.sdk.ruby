@@ -19,13 +19,15 @@ module Bundler
   end
 end
 
-Bundler::GemHelper.install_tasks name: 'eyes_core'
-Bundler::GemHelper.install_tasks name: 'eyes_images'
-Bundler::GemHelper.install_tasks name: 'eyes_selenium'
-Bundler::GemHelper.install_tasks name: 'eyes_calabash'
-Bundler::GemHelper.install_tasks name: 'eyes_capybara'
-Bundler::GemHelper.install_tasks name: 'eyes_appium'
-Bundler::GemHelper.install_tasks name: 'eyes_universal'
+ALL_GEMS = [
+  :eyes_core,
+  :eyes_images,
+  :eyes_selenium,
+  :eyes_calabash,
+  :eyes_capybara,
+  :eyes_appium,
+  :eyes_universal
+]
 
 # namespace :applitools do
 #   namespace :js do
@@ -48,6 +50,22 @@ Bundler::GemHelper.install_tasks name: 'eyes_universal'
 #   end
 # end
 # task :build => 'applitools:js:scripts'
+
+namespace :applitools do
+  task :select_gems do
+    gems = ENV['GEMS'] && !ENV['GEMS'].empty? && ENV['GEMS'] != 'all' ? ENV['GEMS'].split(',') : ALL_GEMS
+    gems.each do |gem_name|
+      puts "install task added #{gem_name}"
+      Bundler::GemHelper.install_tasks name: gem_name
+    end
+  end
+
+  task :release => [:select_gems] do
+    Rake::Task['release'].invoke # from Bundler::GemHelper
+  end
+end
+
+task :build => 'applitools:select_gems'
 
 unless ENV['BUILD_ONLY'] && !ENV['BUILD_ONLY'].empty?
   require 'rspec/core/rake_task'
