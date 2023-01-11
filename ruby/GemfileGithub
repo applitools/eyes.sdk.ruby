@@ -12,7 +12,7 @@ gem 'rake'
 gem 'capybara', '~> 3.32'
 gem 'eventmachine', '1.2.7', git: 'https://github.com/eventmachine/eventmachine.git', tag: 'v1.2.7'
 
-source "file://#{ENV['GITHUB_WORKSPACE'].gsub(/\\/, '/')}/pkg" do
+source "file://#{ENV['GITHUB_WORKSPACE'].gsub(/\\/, '/')}/ruby/pkg" do
   gem 'eyes_selenium'
   gem 'eyes_images'
   gem 'eyes_core'
