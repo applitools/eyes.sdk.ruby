@@ -140,7 +140,7 @@ jobs:
 #          ls coverage_tests/spec/coverage/generic
       - name: Run tests
         env:
-          BUNDLE_GEMFILE: ${{ github.workspace }}/GemfileGithub
+          BUNDLE_GEMFILE: ${{ github.workspace }}/ruby/GemfileGithub
         working-directory: ruby
         run: |
           bundle install
@@ -197,7 +197,7 @@ jobs:
           path: "ruby/pkg/"
       - name: Run tests
         env:
-          BUNDLE_GEMFILE: ${{ github.workspace }}/GemfileGithub
+          BUNDLE_GEMFILE: ${{ github.workspace }}/ruby/GemfileGithub
         working-directory: ruby
         run: |
           bundle install
@@ -229,7 +229,7 @@ jobs:
           path: "ruby/pkg/"
       - name: Run visual tests
         env:
-          BUNDLE_GEMFILE: ${{ github.workspace }}/GemfileGithub
+          BUNDLE_GEMFILE: ${{ github.workspace }}/ruby/GemfileGithub
         working-directory: ruby
         run: |
           bundle install
@@ -263,7 +263,7 @@ jobs:
           path: "ruby/pkg/"
       - name: Run Appium tests
         env:
-          BUNDLE_GEMFILE: ${{ github.workspace }}/GemfileGithub
+          BUNDLE_GEMFILE: ${{ github.workspace }}/ruby/GemfileGithub
         working-directory: ruby
         run: |
           bundle install
@@ -296,7 +296,7 @@ jobs:
           path: "ruby/pkg/"
       - name: Run Server tests
         env:
-          BUNDLE_GEMFILE: ${{ github.workspace }}/GemfileGithub
+          BUNDLE_GEMFILE: ${{ github.workspace }}/ruby/GemfileGithub
         working-directory: ruby
         run: |
           bundle install
@@ -336,7 +336,7 @@ jobs:
       - name: Run tests
         working-directory: ruby
         env:
-          BUNDLE_GEMFILE: ${{ github.workspace }}/GemfileGithub
+          BUNDLE_GEMFILE: ${{ github.workspace }}/ruby/GemfileGithub
         run: |
           bundle install
           chmod +x ./generic_tests.sh && ./generic_tests.sh
