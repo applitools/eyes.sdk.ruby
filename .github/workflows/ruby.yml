@@ -2,8 +2,8 @@ name: Ruby
 
 on:
   push:
-#    paths:
-#      - 'ruby/**'
+    paths:
+      - 'ruby/**'
   workflow_dispatch:
     inputs:
       basic-tests:
