@@ -67,7 +67,7 @@ jobs:
         with:
           name: gems
           if-no-files-found: error
-          path: "./pkg/*"
+          path: "ruby/pkg/*"
       - name: Install node
         uses: actions/setup-node@v3
         with:
@@ -82,7 +82,7 @@ jobs:
         with:
           name: platform-tests
           if-no-files-found: error
-          path: "./coverage_tests/spec/**/*"
+          path: "ruby/coverage_tests/spec/**/*"
 #      - name: Generate generic tests
 #        working-directory: ruby
 #        run: |
@@ -93,7 +93,7 @@ jobs:
 #        with:
 #          name: generic-tests
 #          if-no-files-found: error
-#          path: "./coverage_tests/spec/**/*"
+#          path: "ruby/coverage_tests/spec/**/*"
 
 
 
@@ -121,7 +121,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: gems
-          path: "./pkg/"
+          path: "ruby/pkg/"
 #      - name: Check gems
 #        working-directory: ruby
 #        run: |
@@ -131,7 +131,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: platform-tests
-          path: "./coverage_tests/spec/"
+          path: "ruby/coverage_tests/spec/"
 #      - name: Check tests
 #        working-directory: ruby
 #        run: |
@@ -163,7 +163,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: gems
-          path: "./pkg/"
+          path: "ruby/pkg/"
       - run: apk add --no-cache g++ musl-dev make git chromium chromium-chromedriver xvfb xvfb-run
         working-directory: ruby
       - run: bundle install
@@ -194,7 +194,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: gems
-          path: "./pkg/"
+          path: "ruby/pkg/"
       - name: Run tests
         env:
           BUNDLE_GEMFILE: ${{ github.workspace }}/GemfileGithub
@@ -226,7 +226,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: gems
-          path: "./pkg/"
+          path: "ruby/pkg/"
       - name: Run visual tests
         env:
           BUNDLE_GEMFILE: ${{ github.workspace }}/GemfileGithub
@@ -260,7 +260,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: gems
-          path: "./pkg/"
+          path: "ruby/pkg/"
       - name: Run Appium tests
         env:
           BUNDLE_GEMFILE: ${{ github.workspace }}/GemfileGithub
@@ -293,7 +293,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: gems
-          path: "./pkg/"
+          path: "ruby/pkg/"
       - name: Run Server tests
         env:
           BUNDLE_GEMFILE: ${{ github.workspace }}/GemfileGithub
@@ -327,7 +327,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: gems
-          path: "./pkg/"
+          path: "ruby/pkg/"
       - name: Setup xvfb
         working-directory: ruby
         run: |
